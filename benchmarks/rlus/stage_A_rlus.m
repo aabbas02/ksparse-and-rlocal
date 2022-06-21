@@ -1,21 +1,22 @@
-function [pi_lp] =  stage_A_rlus(B,Y,r_)
+function [pi_lp] =  stage_A_rlus(B,Y,r_,r_local)
     n        = size(B,1);
     d        = size(B,2);
     m        = size(Y,2);
     s        = length(r_);
     max_iter = d - s;
+    num_iter = 0;
     idx_B = zeros(max_iter,1); %at iteration#num_iter, idx_B(num_iter) = p_star
     idx_Y = zeros(max_iter,1); %at iteration#num_iter, idx_B(num_iter) = q_star
     idx_K = 1 : s;
     B_tilde = zeros(s+max_iter,d);
-    Y_tilde = zeros(s+max_iter,m);
+    Y_tilde = zeros(s+max_iter,m);  
     for i = 1 : s
         start = sum(r_(1:i)) - r_(i) + 1;
         stop  = sum(r_(1:i));
         B_tilde(i,:) = sum(B(start : stop,: ) );
         Y_tilde(i,:) = sum(Y(start : stop,: ) );
     end
-    num_iter = 0;
+    if r_local
     while(num_iter < max_iter)
         min_err = 1e15;
         Y_hat = B*...
@@ -54,7 +55,10 @@ function [pi_lp] =  stage_A_rlus(B,Y,r_)
         end
         num_iter = num_iter + 1;
     end
-    X_hat = B_tilde \ Y_tilde;
+        X_hat = B_tilde \ Y_tilde;
+    else
+        X_hat = B_tilde(1,:) \ Y_tilde(1,:);
+    end
     Y_hat = B*X_hat;
     assignment = zeros(n,1);
     for i = 1 : s

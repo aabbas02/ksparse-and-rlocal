@@ -36,7 +36,7 @@ for j = 1 : length(r_)
                 %---rlus  https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=9440727 
                 %t1_start = tic;
                 tic
-                pi_rlus          = rlus(B,Y_permuted_noisy,r_arr);
+                pi_rlus          = rlus(B,Y_permuted_noisy,r_arr,r_local);
                 toc
                 %toc(t1_start)
                 d_H              = sum(pi_ ~= pi_rlus)/n;
