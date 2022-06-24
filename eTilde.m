@@ -13,11 +13,11 @@ yticks([0])
 xticklabels([{'-c','0'},'Fontsize',18]);
 ax = gca;
 ax.FontSize = 21; 
-title(['$\tilde \mathbf{e}_i - c$'...
+title(['$\tilde \mathbf{e} - c$'...
        ' against  $|| \mathbf{x}^* - \hat \mathbf {x} ||_2^2 - c$'],...
        'interpreter','Latex',...
-       'Fontsize',17)
-ylabel('$\tilde \mathbf{e}_i - c$','interpreter','Latex','Fontsize',21);
+       'Fontsize',19)
+ylabel('$\tilde \mathbf{e} - c$','interpreter','Latex','Fontsize',21);
 xlabel('$|| \mathbf{x}^* - \hat \mathbf {x} ||_2^2 - c$', 'interpreter','Latex','Fontsize',21)
 xlim([-1.25 +3])
 ylim([-0.05 3])

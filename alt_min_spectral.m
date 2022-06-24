@@ -6,12 +6,12 @@ addpath(genpath('.\misc'),...
         genpath('.\alt_min'),...
         genpath('.\benchmarks')); 
 tic
-MC              = 5;
+MC              = 1;
 SNR             = 100;
 d               = 100;
 m               = 50;
-k_              = [200 225 250 275 300 325 350 375 400];
-n               = 500;
+k_              = [200 300 400 500];
+n               = 1000;
 d_H_one_step    = zeros(1,length(k_));
 d_H_alt_min     = zeros(1,length(k_));
 r_local         = 0;

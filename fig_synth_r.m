@@ -17,7 +17,7 @@ d_H_one_step    = zeros(1,length(r_));
 d_H_rlus        = zeros(1,length(r_));
 d_H_biconvex    = zeros(1,length(r_));
 d_H_alt_min     = zeros(1,length(r_));
-rho_            = -3:1:0;
+rho_            = -3:1:1;
 rho_            = 10.^rho_;
 r_local         = 1;
 for j = 1 : length(r_)
@@ -100,7 +100,7 @@ plot(1:length(r_),d_H_alt_min,styles(6),...
 xticks = 1:length(r_);
 set(gca, 'XTick', xticks, 'XTickLabel', r_,'Fontsize',14);
 grid('on');
-xlabel('$r$','interpreter','Latex','Fontsize',14);
+xlabel('block size $r$','interpreter','Latex','Fontsize',14);
 ylabel('$d_H/n$','interpreter','Latex','Fontsize',14)
 Lgnd =  legend('show');
 %set(Lgnd, 'Interpreter','Latex','Fontsize',12,'Location','Northwest')

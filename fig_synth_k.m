@@ -10,7 +10,8 @@ MC              = 5;
 SNR             = 100;
 d               = 100;
 m               = 50;
-k_              = 2*[200 225 250 275 300 325 350 375 400 450];
+k_              = 2*[300 325 350 375 400 450];
+k_              = 850;
 n               = 2*500;
 d_H_levsort     = zeros(1,length(k_));
 d_H_one_step    = zeros(1,length(k_));
@@ -18,7 +19,6 @@ d_H_biconvex    = zeros(1,length(k_));
 d_H_sls         = zeros(1,length(k_));
 d_H_alt_min     = zeros(1,length(k_));
 d_H_rlus        = zeros(1,length(k_));
-options         = optimoptions('linprog','Display','none');
 rho_            = -3:1;
 rho_            = 10.^rho_;
 r_local         = 0;
@@ -122,6 +122,6 @@ title(['$ \mathbf P^*_k. \, n = $ ',num2str(n), ' $ m = $ ', num2str(m), ' $ d =
         'interpreter','Latex','Fontsize',16)
 set(gca,'FontSize',16)
 ax = gca;
-exportgraphics(ax,'kSparserandnrandn3.pdf','Resolution',300) 
-saveas(gcf,'kSparserandnrandn3.fig')
+exportgraphics(ax,'kSparserandnrandn4.pdf','Resolution',300) 
+saveas(gcf,'kSparserandnrandn4.fig')
 toc
