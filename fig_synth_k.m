@@ -6,12 +6,12 @@ addpath(genpath('.\misc'),...
         genpath('.\alt_min'),...
         genpath('.\benchmarks')); 
 tic
-MC              = 9;
+MC              = 5;
 SNR             = 100;
 d               = 100;
 m               = 50;
-k_              = [200 250 300 350 400];
-n               = 500;
+k_              = 2*[200 225 250 275 300 325 350 375 400 450];
+n               = 2*500;
 d_H_levsort     = zeros(1,length(k_));
 d_H_one_step    = zeros(1,length(k_));
 d_H_biconvex    = zeros(1,length(k_));
@@ -41,19 +41,19 @@ for j = 1 : length(k_)
         d_H              = sum(pi_ ~= pi_rlus)/n;
         d_H_rlus(j)      = d_H + d_H_rlus(1,j);
         %---biconvex https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8849447
-        d_H_min = 1;
-        tic
-        for i = 1 : length(rho_) % cross validate across rho paramter
-            %for i = 1 : 1
-            rho              = rho_(i);
-            pi_admm          = admm(B,Y_permuted_noisy,r_arr,rho);
-            d_H_             = sum(pi_ ~= pi_admm)/n;
-            if d_H_ < d_H_min
-                d_H_min = d_H_;
-            end
-        end
-        toc
-        d_H_biconvex(j) = d_H_biconvex(j) + d_H_min;
+%         d_H_min = 1;
+%         tic
+%         for i = 1 : length(rho_) % cross validate across rho paramter
+%             %for i = 1 : 1
+%             rho              = rho_(i);
+%             pi_admm          = admm(B,Y_permuted_noisy,r_arr,rho);
+%             d_H_             = sum(pi_ ~= pi_admm)/n;
+%             if d_H_ < d_H_min
+%                 d_H_min = d_H_;
+%             end
+%         end
+%         toc
+%         d_H_biconvex(j) = d_H_biconvex(j) + d_H_min;
         %---icml https://proceedings.mlr.press/v119/zhang20n.html
         tic
         pi_icml            = icml_20(B,Y_permuted_noisy,r_arr);
@@ -65,7 +65,7 @@ for j = 1 : length(k_)
         t_levsort = toc
         d_H_levsort(j)     = d_H_levsort(j) + sum(pi_ ~= pi_lev)/n;
         %---Slawaski URL?
-        tic
+%         tic
         [pi_sls,~]         = slawski(B,Y_permuted_noisy,noise_var,r_arr);
         t_sls = toc
         d_H_sls(j)         = d_H_sls(j) + sum(pi_ ~= pi_sls)/n;
@@ -122,6 +122,6 @@ title(['$ \mathbf P^*_k. \, n = $ ',num2str(n), ' $ m = $ ', num2str(m), ' $ d =
         'interpreter','Latex','Fontsize',16)
 set(gca,'FontSize',16)
 ax = gca;
-exportgraphics(ax,'kSparse3.pdf','Resolution',300) 
-saveas(gcf,'kSparse3.fig')
+exportgraphics(ax,'kSparserandnrandn3.pdf','Resolution',300) 
+saveas(gcf,'kSparserandnrandn3.fig')
 toc
