@@ -118,12 +118,12 @@ xlabel('number of shuffles $k$','interpreter','Latex','Fontsize',14);
 ylabel('$d_H/n$','interpreter','Latex','Fontsize',14)
 Lgnd =  legend('show');
 %set(Lgnd, 'Interpreter','Latex','Fontsize',12,'Location','Northwest')
-set(Lgnd, 'Interpreter','Latex','Fontsize',12,'Location','Northwest')
+set(Lgnd, 'Interpreter','Latex','Fontsize',12,'Location','Southwest')
 title(['$ \mathbf P^*_k. \, n = $ ',num2str(n), ' $ m = $ ', num2str(m), ' $ d = $ ', num2str(d),...
-        ],...
+        '$\mathbf{B} \sim N(0,1)$'],...
         'interpreter','Latex','Fontsize',16)
 set(gca,'FontSize',16)
 ax = gca;
-exportgraphics(ax,'kSparserandrandn.pdf','Resolution',300) 
-saveas(gcf,'kSparserandrandn.fig')
+exportgraphics(ax,'kSparserandnrandn.pdf','Resolution',300) 
+saveas(gcf,'kSparserandnrandn.fig')
 toc

@@ -5,7 +5,7 @@ str = pwd;
 addpath(genpath('.\misc'),...
         genpath('.\alt_min'),...
         genpath('.\benchmarks')); 
-MC              = 15;
+MC              = 5;
 SNR             = 100;
 d               = 100;
 m               = 50;
