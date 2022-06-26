@@ -6,15 +6,14 @@ addpath(genpath('.\misc'),...
         genpath('.\alt_min'),...
         genpath('.\benchmarks')); 
 tic
-MC              = 1;
+MC              = 5;
 SNR             = 100;
 d               = 100;
 m               = 50;
 %k_              = 2*[300 325 350 375 400 450];
 %k_              = 850;
-k_              = [600 650 700 750 800 825 850 875 900];
-%k_              = [100 200]
-n               = 1000;
+k_              = [600 650 700 750 800 850 900];
+n               = 2*500;
 d_H_levsort     = zeros(1,length(k_));
 d_H_one_step    = zeros(1,length(k_));
 d_H_biconvex    = zeros(1,length(k_));
@@ -28,7 +27,7 @@ r_arr           = n;
 for j = 1 : length(k_)
 	k = k_(j);
     for t = 1 : MC
-        B                = rand(n,d);
+        B                = randn(n,d);
         X                = randn(d,m);
         Y                = B*X;
         noise_var   	 = 1*norm(X,'fro')^2  / (SNR*m);
@@ -88,7 +87,7 @@ d_H_sls          = d_H_sls/MC;
 d_H_alt_min      = d_H_alt_min/MC;
 %styles =["r-x","g-x","b-x","m-x","y-x","k-x"];
 hold on;
-plot(1:length(k_),d_H_one_step,'-x','Color','#0072BD',...
+plot(1:length(k_),d_H_one_step,styles(4),...
     'DisplayName','Spectral',...
     'MarkerSize',11,'Linewidth',1.65);
 
@@ -100,14 +99,14 @@ plot(1:length(k_),d_H_one_step,'-x','Color','#0072BD',...
 %      'DisplayName','Biconvex',...
 %      'MarkerSize',11,'Linewidth',1.65);
 
-plot(1:length(k_),d_H_rlus,'-x','Color','#D95319',...
+plot(1:length(k_),d_H_rlus,,...
     'DisplayName','RLUS',...
     'MarkerSize',11,'Linewidth',1.65);
 
-plot(1:length(k_),d_H_sls,'-x','Color','#EDB120',...
-    'DisplayName','$\ell_2$-regularized',...
+plot(1:length(k_),d_H_sls,,...
+    'DisplayName','$\ell_2$','interpreter','Latex',...
     'MarkerSize',11,'Linewidth',1.65);
-plot(1:length(k_),d_H_alt_min,'-x','Color','#7E2F8E',...
+plot(1:length(k_),d_H_alt_min,,...
     'DisplayName','Proposed',...
     'MarkerSize',11,'Linewidth',1.65);
 %xticks = r_;
@@ -118,12 +117,12 @@ xlabel('number of shuffles $k$','interpreter','Latex','Fontsize',14);
 ylabel('$d_H/n$','interpreter','Latex','Fontsize',14)
 Lgnd =  legend('show');
 %set(Lgnd, 'Interpreter','Latex','Fontsize',12,'Location','Northwest')
-set(Lgnd, 'Interpreter','Latex','Fontsize',12,'Location','Northwest')
+set(Lgnd, 'Interpreter','Latex','Fontsize',12)
 title(['$ \mathbf P^*_k. \, n = $ ',num2str(n), ' $ m = $ ', num2str(m), ' $ d = $ ', num2str(d),...
         ],...
         'interpreter','Latex','Fontsize',16)
 set(gca,'FontSize',16)
 ax = gca;
-exportgraphics(ax,'kSparserandrandn.pdf','Resolution',300) 
-saveas(gcf,'kSparserandrandn.fig')
+exportgraphics(ax,'kSparserandnrandn4.pdf','Resolution',300) 
+saveas(gcf,'kSparserandnrandn4.fig')
 toc
