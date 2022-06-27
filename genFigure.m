@@ -18,7 +18,7 @@ xlabels = k_;
 set(gca, 'XTick', xticks, 'XTickLabel', k_,'Fontsize',14);
 grid('on');
 xlabel('number of shuffles $k$','interpreter','Latex','Fontsize',14);
-ylabel('$d_H/n$','interpreter','Latex','Fontsize',14)
+ylabel('$|| ||_2^2$','interpreter','Latex','Fontsize',14)
 Lgnd =  legend('show');
 %set(Lgnd, 'Interpreter','Latex','Fontsize',12,'Location','Northwest')
 set(Lgnd, 'Interpreter','Latex','Fontsize',12)
