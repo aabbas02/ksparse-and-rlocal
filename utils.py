@@ -249,7 +249,7 @@ def mean_ols_with_noise(features,labels, groups, noise=0.01, alpha=0.01):
     lr.fit(xs, ys)
     return lr.coef_.T
 
-def generate_distribution(dim=2, n=100, noise=0, dist='normal', mean=0, var=1, WA=None, bias=False, n_clusters=None):
+def generate_distribution(dim=2, n=100, SNR=100, dist='normal', mean=0, var=1, WA=None, bias=False, n_clusters=None):
     """generates data of a given dimension and distribution with given parameters
     WA -- if you would like to set the weight matrix, provide it here
     """
@@ -276,6 +276,7 @@ def generate_distribution(dim=2, n=100, noise=0, dist='normal', mean=0, var=1, W
     else:
         WA = np.array(WA)
         WA = WA.reshape(dim, 1)
+    noise = np.linalg.norm(WA.flatten(),2)**2/SNR
     y = np.dot(X,WA) + noise*np.random.normal(0,1,size=[n,1]); #Ordered labels
     if (n_clusters is None):
         return X, y, WA

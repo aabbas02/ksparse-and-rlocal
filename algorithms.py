@@ -135,13 +135,13 @@ def sls(x, y, steps=15, alpha=0, w_initial=None, return_all_weights = False, enh
 
 
 # Hard EM Algorithm - Identity init
-def sls_init(x, y, steps=100, r_local,r):
+def sls_init(x, y,  r_local,r, steps=100):
         ordery = np.argsort(y.flatten())
-        numBlocks = int(n/r)
-        d = x.shape[1]
-        xTilde = np.zeros(numBlocks,d)
-        yTilde = np.zeros(numBlocks,d)
         if r_local:
+            numBlocks = int(n/r)
+            d = x.shape[1]
+            xTilde = np.zeros(numBlocks,d)
+            yTilde = np.zeros(numBlocks,d)
             for i in range (numBlocks):
                 xTilde[i,:] = np.sum(x[i*r:(i+1)*r,:],axis=0)
                 yTilde[i,:] = np.sum(y[i*r:(i+1)*r,:],axis=0)

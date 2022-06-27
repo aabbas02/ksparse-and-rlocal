@@ -27,6 +27,6 @@ function [pi_hat] =  lp_ls_alt_min_prox(B,Y,r_,r_local)
             Xhat = B(pi_hat,:)\Y;
             Yhat = B*Xhat;
             fold = fnew;
-            fnew = norm(Y-Yhat(pi_hat,:),'fro')
+            fnew = norm(Y-Yhat(pi_hat,:),'fro');
     end
 end
