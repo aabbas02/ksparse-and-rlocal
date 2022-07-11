@@ -1,6 +1,7 @@
 clc 
 close all 
 clear all
+rng('default')
 addpath(genpath('.\misc'),...
         genpath('.\alt_min'),...
         genpath('.\benchmarks')); 
@@ -51,7 +52,7 @@ for i = 1 : length(temp)
 end
 blk_label = A(:,1) + A(:,2) + A(:,9) + A(:,10);
 blk_label = A(:,1) + A(:,2) + A(:,9);
-%blk_label = A(:,1) + A(:,9);
+blk_label = A(:,1) + A(:,9);
 %blk_label = A(:,1) + A(:,10);              % large r, proposed better
 [blk_label_s,idx] = sort(blk_label);
 %length(unique(blk_label)) number of labels
