@@ -21,12 +21,12 @@ function [pi_hat] =  lp_ls_alt_min_prox(B,Y,r_,r_local)
     fold = 1e10;
     %for i = 1 : 50
 	while fnew/fold < 99e-2 
-            %tic
+            tic
             pi_hat = lp_r_prox(Yhat,Y,r_);
-            %toc
+            toc
             Xhat = B(pi_hat,:)\Y;
             Yhat = B*Xhat;
             fold = fnew;
-            fnew = norm(Y-Yhat(pi_hat,:),'fro');
+            fnew = norm(Y-Yhat(pi_hat,:),'fro')
     end
 end
