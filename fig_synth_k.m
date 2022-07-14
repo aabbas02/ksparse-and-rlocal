@@ -67,7 +67,7 @@ for j = 1 : length(k_)
         t_levsort = toc
         d_H_levsort(j)     = d_H_levsort(j) + sum(pi_ ~= pi_lev)/n;
         %---Slawaski URL?
-%         tic
+        tic
         [pi_sls,~]         = slawski(B,Y_permuted_noisy,noise_var,r_arr);
         t_sls = toc
         d_H_sls(j)         = d_H_sls(j) + sum(pi_ ~= pi_sls)/n;
