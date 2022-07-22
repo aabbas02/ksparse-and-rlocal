@@ -1,4 +1,4 @@
-function [pi_hat] =  lp_ls_alt_min_prox(B,Y,r_,max_iter,r_local)
+function [piHat] =  lplsAltmin(B,Y,r_,max_iter,r_local)
     d        = size(B,2);
     n        = size(B,1);
     if r_local 
@@ -13,22 +13,23 @@ function [pi_hat] =  lp_ls_alt_min_prox(B,Y,r_,max_iter,r_local)
         Xhat = pinv(B_tilde)*Y_tilde;
         Yhat = B*Xhat;
     else
-        pi_hat  = eye(n);
         Yhat    = Y;
         r_      = n;
     end
-    fnew = 1e9;
+    fnew_ = 1e9;
     fold = 1e10;
-    %for i = 1 : 50
     i = 0;
-	while (fnew/fold < 99e-2 && i < max_iter)
+    piHatOld = (1:n)';
+    while (fnew_/fold < 99e-2 && i < max_iter)
             tic
-            pi_hat = lp_r_prox(Yhat,Y,r_);
+            piHat = lp_r_prox(Yhat(piHatOld,:),Y,r_);
             toc
-            Xhat = B(pi_hat,:)\Y;
+            piHat(piHatOld) = piHat;
+            Xhat = B(piHat,:)\Y;
             Yhat = B*Xhat;
-            fold = fnew;
-            fnew = norm(Y-Yhat(pi_hat,:),'fro')
+            fold = fnew_;
+            fnew_ = norm(Y-Yhat(piHat,:),'fro')
             i = i + 1;
+            piHatOld = piHat;
     end
 end

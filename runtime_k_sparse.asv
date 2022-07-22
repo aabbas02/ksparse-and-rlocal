@@ -7,10 +7,10 @@ addpath(genpath('.\misc'),...
         genpath('.\benchmarks')); 
 MC              = 1;
 SNR             = 100;
-d               = 100;
+d               = 50;
 m               = 50;
-k_              = [1000];
-n               = 1000;
+k_              = [10];
+n               = 100;
 times           = zeros(1,length(k_));
 d_H_alt_min     = zeros(1,length(k_));
 options         = optimoptions('linprog','Display','none');
@@ -30,7 +30,7 @@ for j = 1 : length(k_)
                 t1 = tic;
                 [pi_alt_min]       = lplsAltmin(B,Y_permuted_noisy,0,maxIter,rLocal);
                 t2 = toc(t1);
-                [pi_alt_min]       = lp_ls_alt_min_prox(B,Y_permuted_noisy,0,maxIter,rLocal);
+                [pi_alt_min]       = lp_ls_alt_min_prox(B,Y,r_,maxIter,r_local)
                 times(1,j)         = times(1,j) + t2 - t1;
                 d_H                = sum(pi_ ~= pi_alt_min)/n;
                 d_H_alt_min(j)     = d_H + d_H_alt_min(j); 
