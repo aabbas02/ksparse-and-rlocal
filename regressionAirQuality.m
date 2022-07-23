@@ -6,18 +6,24 @@ addpath(genpath('.\misc'),...
         genpath('.\alt_min'),...
         genpath('.\benchmarks')); 
 A = readmatrix('air_quality_data.csv');
-idx1 = min(find(A(:,2) == 2014));
+idx1 = min(find(A(:,2) == 2016));
 idx2 = max(find(A(:,2) == 2017));
 A = A(idx1:idx2,:);
 idx = 1:size(A,2);
+% delete columsns 16, 18 two columns comprising NANs
 idx = setdiff(idx,[size(A,2),size(A,2)-2]);
 A = A(:,idx);
 [row, col] = find(isnan(A));
 A = A(setdiff(1:size(A,1),row),:);
-Y = A(:,[6,8,9]);
+% preprocess - remove Outliers
+[A] = rmoutliers(A,'movmedian',64);
+size(A,1)
+%
+Y = A(:,[6,7,8,9,11]);
 Y = sqrt(Y);
 X = zeros(size(A,1),27);
-X(:,1:6) = A(:,[10,12,13,14,15,16]); % change WPSM column 17 to column 16 due to ---
+% change WPSM column 17 to column 16 due to 
+X(:,1:6) = A(:,[10,12,13,14,15,16]); 
 X(:,7:12) = X(:,1:6).^2;
 t=13;
 for i = 1 : 6
@@ -30,7 +36,7 @@ X = X - mean(X,1);
 Y = Y - mean(Y,1);
 % remove index(1), day(4) and hour(5)
 A = A(:,setdiff(1:size(A,2),[1,4,5]));
-% round temperature col. no (9), air pressure col. no (10) to nearest integers
+% round temperature (col 9), air pressure (col 10) to nearest integers
 A(:,9) = round(A(:,9));
 A(:,10) = round(A(:,10));
 %---------------------------------
@@ -50,16 +56,22 @@ temp = unique(A(:,10)); % air pressure
 for i = 1 : length(temp)
 	A(A(:,10)==temp(i),10) = i*1e7;
 end
-blk_label = A(:,1) + A(:,2) + A(:,9) + A(:,10);
-blk_label = A(:,1) + A(:,2) + A(:,9) ;
-blk_label = A(:,1) + A(:,9);
-%blk_label = A(:,1) + A(:,10);              % large r, proposed better
-%blk_label = A(:,9) + A(:,10);
-%blk_label = A(:,2);
-%blk_label = A(:,10);
-%blk_label = A(:,9);
-%blk_label = A(:,2);
-blk_label  = A(:,1) + A(:,2);
+% 2014 - 2017
+%blk_label = A(:,1) + A(:,2) + A(:,9) + A(:,10); % (0.68,0.69)
+%blk_label = A(:,1) + A(:,2) + A(:,9) ;          % (0.65, 0.64)  
+%blk_label = A(:,1) + A(:,9);                    % (0.58, 0.55)
+%blk_label = A(:,1) + A(:,10);                   % 
+%blk_label = A(:,9) + A(:,10);                   % (0.66, 0.64)
+%blk_label  = A(:,1) + A(:,2);                   % (0.45, 0.53) lsInit = 1 is better than proposed, overfitting
+% 2015 - 2017
+%blk_label = A(:,1) + A(:,2) + A(:,9) + A(:,10); % 
+%blk_label = A(:,1) + A(:,2) + A(:,9) ;          %   
+%blk_label = A(:,1) + A(:,9);                    % 
+%blk_label = A(:,1) + A(:,10);                   % 
+%blk_label = A(:,9) + A(:,10);                   % 
+%blk_label  = A(:,1) + A(:,2);                   % (0.45, 0.43) 
+% 2016 - 2017
+blk_label  = A(:,1) + A(:,2);                    % (0.49 , 0.38) 
 [blk_label_s,idx] = sort(blk_label);
 %length(unique(blk_label)) number of labels
 % order blockwise
@@ -81,9 +93,6 @@ d = size(X,2);
 maxIter = 30;
 rLocal = 1;
 lsInit = 0;
-%[U,S,V] = svd(X,'econ');
-%X = U;
-%X = X + 1e-4*randn(size(X,1),size(X,2));
 %---------------- oracle -----------------------------------
 beta_star = X \ Y;
 R_2_true  = 1 - norm(Y-X*beta_star,'fro')^2/norm(Y - mean(Y,1),'fro')^2

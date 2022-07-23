@@ -6,7 +6,7 @@ addpath(genpath('.\misc'),...
         genpath('.\alt_min'),...
         genpath('.\benchmarks')); 
 A = readmatrix('air_quality_data.csv');
-idx1 = min(find(A(:,2) == 2016));
+idx1 = min(find(A(:,2) == 2015));
 idx2 = max(find(A(:,2) == 2017));
 A = A(idx1:idx2,:);
 idx = 1:size(A,2);
@@ -18,8 +18,9 @@ A = A(setdiff(1:size(A,1),row),:);
 %
 Y = A(:,[6,7,8,9,11]);
 % preprocess - remove Outliers
-[Y,TF] = rmoutliers(Y,'movmedian',128);
+[Y,TF] = rmoutliers(Y,'movmedian',64);
 size(Y,1)
+A = A(~TF,:);
 Y = sqrt(Y);
 X = zeros(size(A,1),27);
 % change WPSM column 17 to column 16 due to 
@@ -32,8 +33,6 @@ for i = 1 : 6
         t=t+1;
     end
 end
-X = X(~TF,:);
-A = A(~TF,:)
 X = X - mean(X,1);
 Y = Y - mean(Y,1);
 % remove index(1), day(4) and hour(5)
@@ -74,12 +73,13 @@ end
 %blk_label  = A(:,1) + A(:,2);                   % (0.45, 0.43) 
 % 2016 - 2017
 blk_label  = A(:,1) + A(:,2);                    % (0.49 , 0.38) 
+blk_label  = A(:,1) + A(:,2);                    % (0.44 , 0.59) lsInit = 1 is better than proposed, overfitting
 [blk_label_s,idx] = sort(blk_label);
 %length(unique(blk_label)) number of labels
 % order blockwise
 Y = Y(idx,:);
 X = X(idx,:);
-X = X + 1e0*eye(size(X,1),size(X,2));
+X = X + 0*1e-3*eye(size(X,1),size(X,2));
 % get lengths of blocks
 temp = unique(blk_label_s);
 r_ = zeros(1,length(temp));
@@ -95,7 +95,7 @@ Y_permuted = Y(pi_,:);
 d = size(X,2);
 maxIter = 30;
 rLocal = 1;
-lsInit = 0;
+lsInit = 1;
 %---------------- oracle -----------------------------------
 beta_star = X \ Y;
 R_2_true  = 1 - norm(Y-X*beta_star,'fro')^2/norm(Y - mean(Y,1),'fro')^2
