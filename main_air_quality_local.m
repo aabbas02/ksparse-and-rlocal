@@ -14,7 +14,7 @@ idx = setdiff(idx,[size(A,2),size(A,2)-2]);
 A = A(:,idx);
 [row, col] = find(isnan(A));
 A = A(setdiff(1:size(A,1),row),:);
-Y = A(:,[6]);
+Y = A(:,[6,8,9]);
 Y = sqrt(Y);
 X = zeros(size(A,1),27);
 X(:,1:6) = A(:,[10,12,13,14,15,16]); % change WPSM column 17 to column 16 due to ---
@@ -50,16 +50,16 @@ temp = unique(A(:,10)); % air pressure
 for i = 1 : length(temp)
 	A(A(:,10)==temp(i),10) = i*1e7;
 end
-%blk_label = A(:,1) + A(:,2) + A(:,9) + A(:,10);
-blk_label = A(:,1) + A(:,2) + A(:,9);
-%blk_label = A(:,1) + A(:,9);
+blk_label = A(:,1) + A(:,2) + A(:,9) + A(:,10);
+blk_label = A(:,1) + A(:,2) + A(:,9) ;
+blk_label = A(:,1) + A(:,9);
 %blk_label = A(:,1) + A(:,10);              % large r, proposed better
 %blk_label = A(:,9) + A(:,10);
 %blk_label = A(:,2);
 %blk_label = A(:,10);
 %blk_label = A(:,9);
 %blk_label = A(:,2);
-%blk_label  = A(:,1) + A(:,2);
+blk_label  = A(:,1) + A(:,2);
 [blk_label_s,idx] = sort(blk_label);
 %length(unique(blk_label)) number of labels
 % order blockwise
@@ -81,7 +81,7 @@ d = size(X,2);
 maxIter = 30;
 rLocal = 1;
 lsInit = 0;
-[U,S,V] = svd(X,'econ');
+%[U,S,V] = svd(X,'econ');
 %X = U;
 %X = X + 1e-4*randn(size(X,1),size(X,2));
 %---------------- oracle -----------------------------------
