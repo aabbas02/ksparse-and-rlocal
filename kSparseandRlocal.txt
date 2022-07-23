@@ -5,7 +5,6 @@
     for t = 1 : length(r_) 
         start  = sum(r_(1:t)) - r_(t) +1;
         stop   = sum(r_(1:t));
-        sizeBlk = stop - start + 1;
         if m == 1
             [~,idx1] = sort(Yhat(start:stop,:));
             [~,idx2] = sort(Y(start:stop,:));
@@ -14,12 +13,7 @@
             assignment(idx2) = idx1; 
         else
             c = Y(start:stop,:)*Yhat(start:stop,:)';
-%            temp = munkres(-c);
-            M = matchpairs(-c,1e10);
-            M(M(:,1)) = M(:,2);
-%            idx(M(:,1)) = M(:,2);
-%            temp = idx;
-            temp = M(:,1);
+            temp = munkres(-c);
             temp = start - 1 + temp;
             assignment(start:stop) = temp;   
         end
