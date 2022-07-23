@@ -3,5 +3,5 @@ function [pi_map] = get_permutation_k(n,k)
     idx1 = randperm(n,k);
     %pi_map(idx1(randperm(length(idx1)))) = idx1;
     pi_map(idx1(randperm(k))) = idx1;
-    pi_map = pi_map'; % want transpose for column vector
+    pi_map = pi_map'; % transpose for column vector
 end

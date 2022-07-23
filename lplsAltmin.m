@@ -16,20 +16,21 @@ function [piHat] =  lplsAltmin(B,Y,r_,max_iter,r_local)
         Yhat    = Y;
         r_      = n;
     end
-    fnew_ = 1e9;
+    fVal = 1e9;
     fold = 1e10;
     i = 0;
     piHatOld = (1:n)';
-    while (fnew_/fold < 99e-2 && i < max_iter)
+    while (fVal/fold < 99e-2 && i < max_iter)
             tic
             piHat = lp_r_prox(Yhat(piHatOld,:),Y,r_);
             toc
-            piHat(piHatOld) = piHat;
+            %piHat(piHatOld) = piHat;
+            piHat = piHat(piHatOld);
             Xhat = B(piHat,:)\Y;
             Yhat = B*Xhat;
-            fold = fnew_;
-            fnew_ = norm(Y-Yhat(piHat,:),'fro')
-            i = i + 1;
+            fold = fVal;
+            fVal = norm(Y-Yhat(piHat,:),'fro')
             piHatOld = piHat;
+            i = i + 1;
     end
 end

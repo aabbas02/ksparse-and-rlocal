@@ -17,6 +17,8 @@ function [pi_hat] =  lp_ls_alt_min_prox(B,Y,r_,max_iter,r_local)
         Yhat    = Y;
         r_      = n;
     end
+    Xhat = pinv(B)*Y;
+    Yhat = B*Xhat;    
     fnew = 1e9;
     fold = 1e10;
     %for i = 1 : 50
