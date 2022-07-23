@@ -1,4 +1,4 @@
-function [pi_hat] =  lp_ls_alt_min_prox(B,Y,r_,r_local)
+function [pi_hat] =  lp_ls_alt_min_prox(B,Y,r_,r_local,cnvgnce)
     d        = size(B,2);
     n        = size(B,1);
     if r_local 
@@ -20,7 +20,8 @@ function [pi_hat] =  lp_ls_alt_min_prox(B,Y,r_,r_local)
     fnew = 1e9;
     fold = 1e10;
     %for i = 1 : 50
-	while fnew/fold < 99e-2 
+    if cnvgnce
+	    while fnew/fold < 99e-2 
             tic
             pi_hat = lp_r_prox(Yhat,Y,r_);
             toc
@@ -28,5 +29,16 @@ function [pi_hat] =  lp_ls_alt_min_prox(B,Y,r_,r_local)
             Yhat = B*Xhat;
             fold = fnew;
             fnew = norm(Y-Yhat(pi_hat,:),'fro')
+        end
+    else
+        for i = 1 : 10
+            %tic
+            pi_hat = lp_r_prox(Yhat,Y,r_);
+            %toc
+            Xhat = B(pi_hat,:)\Y;
+            Yhat = B*Xhat;
+            fold = fnew;
+            fnew = norm(Y-Yhat(pi_hat,:),'fro')    
+        end
     end
 end

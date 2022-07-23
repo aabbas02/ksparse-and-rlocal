@@ -17,7 +17,7 @@ function [pi_lp] =  stage_A_rlus(B,Y,r_,r_local)
             B_tilde(i,:) = sum(B(start : stop,: ) );
             Y_tilde(i,:) = sum(Y(start : stop,: ) );
         end
-        while(num_iter < max_iter)
+        while num_iter < max_iter
             min_err = 1e15;
             Y_hat = B*...
                 pinv(B_tilde(1 : s + num_iter,:))*...

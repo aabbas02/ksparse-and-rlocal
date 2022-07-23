@@ -54,6 +54,7 @@ blk_label = A(:,1) + A(:,2) + A(:,9) + A(:,10);
 blk_label = A(:,1) + A(:,2) + A(:,9);
 blk_label = A(:,1) + A(:,9);
 %blk_label = A(:,1) + A(:,10);              % large r, proposed better
+blk_label = A(:,9) + A(:,10);
 [blk_label_s,idx] = sort(blk_label);
 %length(unique(blk_label)) number of labels
 % order blockwise
@@ -86,6 +87,7 @@ toc
 beta_pro     = X(pi_hat,:) \ Y_permuted;
 beta_pro_err = norm(beta_pro - beta_star,2)/norm(beta_star,2);
 R2_pro       = 1 - norm(Y-X*beta_pro,'fro')^2/norm(Y,'fro')^2;
+%-------------------------
 %------------------ slawski ---------------------------------
 noise_var    = norm(Y_permuted-X*beta_naive,'fro')^2/(size(Y,1)*size(Y,2));
 tic
