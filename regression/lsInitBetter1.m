@@ -59,7 +59,8 @@ temp = unique(A(:,12)); % air pressure
 for i = 1 : length(temp)
 	A(A(:,12)==temp(i),12) = i*1e9;
 end
-blk_label = A(:,2) + A(:,3);
+% 2014 - 2017
+blk_label = A(:,4);
 [blk_label_s,idx] = sort(blk_label);
 %length(unique(blk_label)) number of labels
 % order blockwise
