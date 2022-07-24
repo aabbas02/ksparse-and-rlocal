@@ -6,9 +6,11 @@ addpath(genpath('.\misc'),...
         genpath('.\benchmarks'),...
         genpath('.\altMinProposed')); 
 A = readmatrix('air_quality_data.csv');
-idx1 = min(find(A(:,2) == 2016));
+idx1 = min(find(A(:,2) == 2013));
 idx2 = max(find(A(:,2) == 2017));
 A = A(idx1:idx2,:);
+% downsample
+%A = downsample(A,6);
 idx = 1:size(A,2);
 % delete columsns 16, 18 two columns comprising NANs
 idx = setdiff(idx,[size(A,2),size(A,2)-2]);
@@ -61,7 +63,6 @@ for i = 1 : length(temp)
 end
 blk_label = A(:,2) + A(:,3);
 [blk_label_s,idx] = sort(blk_label);
-%length(unique(blk_label)) number of labels
 % order blockwise
 Y = Y(idx,:);
 X = X(idx,:);
@@ -81,7 +82,7 @@ rLocal = 1;
 lsInit = 1;
 %---------------- oracle -----------------------------------
 beta_star = X \ Y;
-R2_true  = 1 - norm(Y-X*beta_star,'fro')^2/norm(Y - mean(Y,1),'fro')^2;
+R2_true  = 1 - norm(Y-X*beta_star,'fro')^2/norm(Y - mean(Y,1),'fro')^2
 %---------------- naive ------------------------------------
 beta_naive = X\Y_permuted;
 R2_naive  = 1 - norm(Y-X*beta_naive,'fro')^2/norm(Y,'fro')^2
