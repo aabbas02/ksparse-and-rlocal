@@ -58,6 +58,9 @@ for i = 1 : length(temp)
 	A(A(:,10)==temp(i),10) = i*1e7;
 end
 % 2014 - 2017
+blk_label = A(:,9) + A(:,10);
+blk_label = A(:,10);
+blk_label = A(:,2);
 %blk_label = A(:,1) + A(:,2) + A(:,9) + A(:,10); % (0.68,0.69)
 %blk_label = A(:,1) + A(:,2) + A(:,9) ;          % (0.65, 0.64)  
 %blk_label = A(:,1) + A(:,9);                    % (0.58, 0.55)
@@ -72,8 +75,9 @@ end
 %blk_label = A(:,9) + A(:,10);                   % 
 %blk_label  = A(:,1) + A(:,2);                   % (0.45, 0.43) 
 % 2016 - 2017
-blk_label  = A(:,1) + A(:,2);                    % (0.49 , 0.38) 
-blk_label  = A(:,1) + A(:,2);                    % (0.44 , 0.59) lsInit = 1 is better than proposed, overfitting
+%blk_label  = A(:,1) + A(:,2);                    % (0.49 , 0.38) 
+%blk_label  = A(:,1) + A(:,2);                    % (0.44 , 0.59) lsInit = 1 is better than proposed, overfitting
+%blk_label = A(:,9);
 [blk_label_s,idx] = sort(blk_label);
 %length(unique(blk_label)) number of labels
 % order blockwise
@@ -95,7 +99,7 @@ Y_permuted = Y(pi_,:);
 d = size(X,2);
 maxIter = 30;
 rLocal = 1;
-lsInit = 1;
+lsInit = 0;
 %---------------- oracle -----------------------------------
 beta_star = X \ Y;
 R_2_true  = 1 - norm(Y-X*beta_star,'fro')^2/norm(Y - mean(Y,1),'fro')^2
