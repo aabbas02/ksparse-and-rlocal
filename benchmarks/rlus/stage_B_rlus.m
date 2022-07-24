@@ -26,7 +26,9 @@ function [assignment] = stage_B_rlus(r_,Y_hat,Y_perm,pi_init)
         end 
         % Project doubly stochastic P_hat_l onto set of permutations
         c = P_hat_l;
-        temp = munkres(-c);
+        M = matchpairs(-c,1e10);
+        M(M(:,1)) = M(:,2);
+        temp = M(:,1);
         temp = start - 1 + temp;
         assignment(start:stop) = temp;           
     end

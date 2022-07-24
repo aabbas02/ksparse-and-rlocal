@@ -43,15 +43,15 @@ A(:,10) = round(A(:,10));
 %---------------------------------
 temp = unique(A(:,2));  % year
 for i = 1 : length(temp)
-	A(A(:,2)==temp(i),2) = i; %1,2,3,4
+	A(A(:,2)==temp(i),2) = i;     %1,2,3,4
 end
 temp = unique(A(:,3));  % month
 for i = 1 : length(temp)
-	A(A(:,3)==temp(i),3) = i*1e2; %1,2,3,4
+	A(A(:,3)==temp(i),3) = i*1e2; %100,200,300,400,500,...,1200
 end
 temp = unique(A(:,4));  % day
 for i = 1 : length(temp)
-	A(A(:,4)==temp(i),4) = i*1e4; %100,200,300,...,1200.
+	A(A(:,4)==temp(i),4) = i*1e4; %10000,20000,30000,...,310000.
 end
 temp = unique(A(:,11));  % temperature
 for i = 1 : length(temp) 
@@ -62,30 +62,7 @@ for i = 1 : length(temp)
 	A(A(:,12)==temp(i),12) = i*1e9;
 end
 % 2014 - 2017
-blk_label = A(:,2) + A(:,4);
-%blk_label = A(:,3) + A(:,4);
-%blk_label = A(:,2) + A(:,3) + A(:,4);
-%blk_label = A(:,9) + A(:,10);
-%blk_label = A(:,12);
-%blk_label = A(:,3)+A(:,4);
-%blk_label = A(:,3) + A(:,4);
-%blk_label = A(:,1) + A(:,2) + A(:,9) + A(:,10); % (0.68,0.69)
-%blk_label = A(:,1) + A(:,2) + A(:,9) ;          % (0.65, 0.64)  
-%blk_label = A(:,1) + A(:,9);                    % (0.58, 0.55)
-%blk_label = A(:,1) + A(:,10);                   % 
-%blk_label = A(:,9) + A(:,10);                   % (0.66, 0.64)
-%blk_label  = A(:,1) + A(:,2);                   % (0.45, 0.53) lsInit = 1 is better than proposed, overfitting
-% 2015 - 2017
-%blk_label = A(:,1) + A(:,2) + A(:,9) + A(:,10); % 
-%blk_label = A(:,1) + A(:,2) + A(:,9) ;          %   
-%blk_label = A(:,1) + A(:,9);                    % 
-%blk_label = A(:,1) + A(:,10);                   % 
-%blk_label = A(:,9) + A(:,10);                   % 
-%blk_label  = A(:,1) + A(:,2);                   % (0.45, 0.43) 
-% 2016 - 2017
-%blk_label  = A(:,1) + A(:,2);                    % (0.49 , 0.38) 
-%blk_label  = A(:,1) + A(:,2);                    % (0.44 , 0.59) lsInit = 1 is better than proposed, overfitting
-%blk_label = A(:,9);
+blk_label = 1*A(:,2) + 1*A(:,3) + 0*A(:,4);
 [blk_label_s,idx] = sort(blk_label);
 %length(unique(blk_label)) number of labels
 % order blockwise
@@ -105,20 +82,20 @@ pi_ = get_permutation_r(n,r_);
 Y_permuted = Y(pi_,:);
 maxIter = 35;
 rLocal = 1;
-lsInit = 1;
+lsInit = 0;
 %---------------- oracle -----------------------------------
 beta_star = X \ Y;
-R_2_true  = 1 - norm(Y-X*beta_star,'fro')^2/norm(Y - mean(Y,1),'fro')^2
+R2_true  = 1 - norm(Y-X*beta_star,'fro')^2/norm(Y - mean(Y,1),'fro')^2;
 %---------------- naive ------------------------------------
-%beta_naive = X\Y_permuted;
-%R_2_naive  = 1 - norm(Y-X*beta_naive,'fro')^2/norm(Y,'fro')^2
+beta_naive = X\Y_permuted;
+R2_naive  = 1 - norm(Y-X*beta_naive,'fro')^2/norm(Y,'fro')^2
 %---------------- proposed ----------------------------------
 tic 
 [pi_hat]     = lp_ls_alt_min_prox(X,Y_permuted,r_,maxIter,rLocal,lsInit);
 tProposed    = toc;
 beta_pro     = X(pi_hat,:) \ Y_permuted;
 beta_pro_err = norm(beta_pro - beta_star,2)/norm(beta_star,2);
-R2_pro       = 1 - norm(Y-X*beta_pro,'fro')^2/norm(Y,'fro')^2
+R2_pro       = 1 - norm(Y-X*beta_pro,'fro')^2/norm(Y,'fro')^2;
 %------------------ slawski ---------------------------------
 % noise_var    = norm(Y_permuted-X*beta_naive,'fro')^2/(size(Y,1)*size(Y,2));
 % tic
@@ -135,14 +112,8 @@ R2_pro       = 1 - norm(Y-X*beta_pro,'fro')^2/norm(Y,'fro')^2
 % tRlus = toc;
 %----------------------------------------------------------------
 num_blocks = length(r_)
-%r_min = min(r_)
-%r_max = max(r_)
-%n
-R_2_true 
-%R_2_naive
-% R2_pro
-% tProposed
-% R2_sls
-% tSLS
-% R2_RLUS
-% tRlus
+R2_naive
+lsInit
+R2_pro
+R2_true 
+

@@ -1,4 +1,4 @@
-%clc 
+clc 
 close all 
 clear all
 rng('default')
@@ -6,8 +6,8 @@ addpath(genpath('.\misc'),...
         genpath('.\benchmarks'),...
         genpath('.\altMinProposed')); 
 A = readmatrix('air_quality_data.csv');
-idx1 = min(find(A(:,2) == 2016));
-idx2 = max(find(A(:,2) == 2016));
+idx1 = min(find(A(:,2) == 2013));
+idx2 = max(find(A(:,2) == 2017));
 A = A(idx1:idx2,:);
 idx = 1:size(A,2);
 % delete columsns 16, 18 two columns comprising NANs
@@ -36,48 +36,33 @@ end
 X = X - mean(X,1);
 Y = Y - mean(Y,1);
 % remove index(1), day(4) and hour(5)
-A = A(:,setdiff(1:size(A,2),[1,4,5]));
+%A = A(:,setdiff(1:size(A,2),[1,4,5]));
 % round temperature (col 9), air pressure (col 10) to nearest integers
 A(:,9) = round(A(:,9));
 A(:,10) = round(A(:,10));
 %---------------------------------
-temp = unique(A(:,1));  % year
+temp = unique(A(:,2));  % year
 for i = 1 : length(temp)
-	A(A(:,1)==temp(i),1) = i; %1,2,3,4
+	A(A(:,2)==temp(i),2) = i;     %1,2,3,4
 end
-temp = unique(A(:,2));  % month
+temp = unique(A(:,3));  % month
 for i = 1 : length(temp)
-	A(A(:,2)==temp(i),2) = i*1e2; %100,200,300,...,1200.
+	A(A(:,3)==temp(i),3) = i*1e2; %100,200,300,400,500,...,1200
 end
-temp = unique(A(:,9));  % temperature
+temp = unique(A(:,4));  % day
+for i = 1 : length(temp)
+	A(A(:,4)==temp(i),4) = i*1e4; %10000,20000,30000,...,310000.
+end
+temp = unique(A(:,11));  % temperature
 for i = 1 : length(temp) 
-	A(A(:,9)==temp(i),9) = i*1e4; 
+	A(A(:,11)==temp(i),11) = i*1e4; 
 end
-temp = unique(A(:,10)); % air pressure
+temp = unique(A(:,12)); % air pressure
 for i = 1 : length(temp)
-	A(A(:,10)==temp(i),10) = i*1e9;
+	A(A(:,12)==temp(i),12) = i*1e9;
 end
 % 2014 - 2017
-blk_label = A(:,9) + A(:,10);
-blk_label = A(:,10);
-blk_label = A(:,2);
-%blk_label = A(:,1) + A(:,2) + A(:,9) + A(:,10); % (0.68,0.69)
-%blk_label = A(:,1) + A(:,2) + A(:,9) ;          % (0.65, 0.64)  
-%blk_label = A(:,1) + A(:,9);                    % (0.58, 0.55)
-%blk_label = A(:,1) + A(:,10);                   % 
-%blk_label = A(:,9) + A(:,10);                   % (0.66, 0.64)
-%blk_label  = A(:,1) + A(:,2);                   % (0.45, 0.53) lsInit = 1 is better than proposed, overfitting
-% 2015 - 2017
-%blk_label = A(:,1) + A(:,2) + A(:,9) + A(:,10); % 
-%blk_label = A(:,1) + A(:,2) + A(:,9) ;          %   
-%blk_label = A(:,1) + A(:,9);                    % 
-%blk_label = A(:,1) + A(:,10);                   % 
-%blk_label = A(:,9) + A(:,10);                   % 
-%blk_label  = A(:,1) + A(:,2);                   % (0.45, 0.43) 
-% 2016 - 2017
-%blk_label  = A(:,1) + A(:,2);                    % (0.49 , 0.38) 
-%blk_label  = A(:,1) + A(:,2);                    % (0.44 , 0.59) lsInit = 1 is better than proposed, overfitting
-%blk_label = A(:,9);
+blk_label = A(:,2) + A(:,4);
 [blk_label_s,idx] = sort(blk_label);
 %length(unique(blk_label)) number of labels
 % order blockwise
@@ -93,26 +78,24 @@ for i = 1:length(temp)
     r_(i) = t2-t1+1;
 end
 n = size(Y,1);
-m = size(Y,2);
 pi_ = get_permutation_r(n,r_); 
 Y_permuted = Y(pi_,:);
-d = size(X,2);
 maxIter = 35;
 rLocal = 1;
 lsInit = 0;
 %---------------- oracle -----------------------------------
 beta_star = X \ Y;
-R_2_true  = 1 - norm(Y-X*beta_star,'fro')^2/norm(Y - mean(Y,1),'fro')^2
+R2_true  = 1 - norm(Y-X*beta_star,'fro')^2/norm(Y - mean(Y,1),'fro')^2;
 %---------------- naive ------------------------------------
 %beta_naive = X\Y_permuted;
-%R_2_naive  = 1 - norm(Y-X*beta_naive,'fro')^2/norm(Y,'fro')^2
+%R2_naive  = 1 - norm(Y-X*beta_naive,'fro')^2/norm(Y,'fro')^2
 %---------------- proposed ----------------------------------
 tic 
 [pi_hat]     = lp_ls_alt_min_prox(X,Y_permuted,r_,maxIter,rLocal,lsInit);
 tProposed    = toc;
 beta_pro     = X(pi_hat,:) \ Y_permuted;
 beta_pro_err = norm(beta_pro - beta_star,2)/norm(beta_star,2);
-R2_pro       = 1 - norm(Y-X*beta_pro,'fro')^2/norm(Y,'fro')^2
+R2_pro       = 1 - norm(Y-X*beta_pro,'fro')^2/norm(Y,'fro')^2;
 %------------------ slawski ---------------------------------
 % noise_var    = norm(Y_permuted-X*beta_naive,'fro')^2/(size(Y,1)*size(Y,2));
 % tic
@@ -129,17 +112,6 @@ R2_pro       = 1 - norm(Y-X*beta_pro,'fro')^2/norm(Y,'fro')^2
 % tRlus = toc;
 %----------------------------------------------------------------
 num_blocks = length(r_)
-%r_min = min(r_)
-%r_max = max(r_)
-%n
-R_2_true 
-%R_2_naive
-% R2_pro
-% tProposed
-% R2_sls
-% tSLS
-% R2_RLUS
-% tRlus
-
-
-
+lsInit
+R2_pro
+R2_true 
