@@ -43,19 +43,19 @@ A(:,10) = round(A(:,10));
 %---------------------------------
 temp = unique(A(:,1));  % year
 for i = 1 : length(temp)
-	A(A(:,1)==temp(i),1) = i;
+	A(A(:,1)==temp(i),1) = i; %1,2,3,4
 end
 temp = unique(A(:,2));  % month
 for i = 1 : length(temp)
-	A(A(:,2)==temp(i),2) = i*1e1; 
+	A(A(:,2)==temp(i),2) = i*1e2; %100,200,300,...,1200.
 end
 temp = unique(A(:,9));  % temperature
 for i = 1 : length(temp) 
-	A(A(:,9)==temp(i),9) = i*1e4;
+	A(A(:,9)==temp(i),9) = i*1e4; 
 end
 temp = unique(A(:,10)); % air pressure
 for i = 1 : length(temp)
-	A(A(:,10)==temp(i),10) = i*1e7;
+	A(A(:,10)==temp(i),10) = i*1e9;
 end
 % 2014 - 2017
 blk_label = A(:,9) + A(:,10);
@@ -97,7 +97,7 @@ m = size(Y,2);
 pi_ = get_permutation_r(n,r_); 
 Y_permuted = Y(pi_,:);
 d = size(X,2);
-maxIter = 30;
+maxIter = 35;
 rLocal = 1;
 lsInit = 0;
 %---------------- oracle -----------------------------------
