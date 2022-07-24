@@ -63,7 +63,10 @@ function [pi_lp] =  stage_A_rlus(B,Y,r_,r_local)
             stop   = sum(r_(1:i));
             c = (Y(start : stop,:)*...
                 Y_hat(start : stop,:)');
-            temp = munkres(-c);
+            %temp = munkres(-c);
+            M = matchpairs(-c,1e10);
+            M(M(:,1)) = M(:,2);
+            temp = M(:,1);
             temp = start - 1 + temp;
             assignment(start : stop) = temp;
         end
