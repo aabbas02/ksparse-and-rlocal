@@ -3,10 +3,11 @@ close all
 clear all
 rng('default')
 addpath(genpath('.\misc'),...
+        genpath('.\alt_min'),...
         genpath('.\benchmarks'),...
         genpath('.\altMinProposed')); 
 A = readmatrix('air_quality_data.csv');
-idx1 = min(find(A(:,2) == 2016));
+idx1 = min(find(A(:,2) == 2015));
 idx2 = max(find(A(:,2) == 2017));
 A = A(idx1:idx2,:);
 idx = 1:size(A,2);
@@ -83,7 +84,7 @@ blk_label = A(:,2);
 % order blockwise
 Y = Y(idx,:);
 X = X(idx,:);
-X = X + 0*eye(size(X,1),size(X,2));
+X = X + 0*1e-3*eye(size(X,1),size(X,2));
 % get lengths of blocks
 temp = unique(blk_label_s);
 r_ = zeros(1,length(temp));
