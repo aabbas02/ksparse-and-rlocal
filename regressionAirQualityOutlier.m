@@ -17,13 +17,13 @@ A = A(:,idx);
 A = A(setdiff(1:size(A,1),row),:);
 %
 Y = A(:,[6,7,8,9,11]);
-% preprocess - remove Outliers
+% preprocess - remove outliers
 [Y,TF] = rmoutliers(Y,'movmedian',64);
 size(Y,1)
 A = A(~TF,:);
 Y = sqrt(Y);
 X = zeros(size(A,1),27);
-% change WPSM column 17 to column 16 due to 
+% WPSM is column 16, insetead of column 17; column 16 delted above
 X(:,1:6) = A(:,[10,12,13,14,15,16]); 
 X(:,7:12) = X(:,1:6).^2;
 t=13;
