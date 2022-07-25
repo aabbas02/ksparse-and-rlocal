@@ -61,7 +61,7 @@ temp = unique(A(:,12)); % air pressure
 for i = 1 : length(temp)
 	A(A(:,12)==temp(i),12) = i*1e9;
 end
-blk_label = A(:,2) + A(:,3);
+blk_label = A(:,11);
 [blk_label_s,idx] = sort(blk_label);
 % order blockwise
 Y = Y(idx,:);
@@ -79,12 +79,12 @@ pi_ = get_permutation_r(n,r_);
 Y_permuted = Y(pi_,:);
 maxIter = 35;
 rLocal = 1;
-lsInit = 1;
+lsInit = 0;
 %---------------- oracle -----------------------------------
 beta_star = X \ Y;
 R2_true  = 1 - norm(Y-X*beta_star,'fro')^2/norm(Y - mean(Y,1),'fro')^2
 %---------------- naive ------------------------------------
-beta_naive = X\Y_permuted;
+beta_naive = X \ Y_permuted;
 R2_naive  = 1 - norm(Y-X*beta_naive,'fro')^2/norm(Y,'fro')^2
 %---------------- proposed ----------------------------------
 tic 
@@ -93,6 +93,7 @@ tProposed    = toc;
 beta_pro     = X(pi_hat,:) \ Y_permuted;
 beta_pro_err = norm(beta_pro - beta_star,2)/norm(beta_star,2);
 R2_pro       = 1 - norm(Y-X*beta_pro,'fro')^2/norm(Y,'fro')^2;
+%{
 %------------------ slawski ---------------------------------
 % noise_var    = norm(Y_permuted-X*beta_naive,'fro')^2/(size(Y,1)*size(Y,2));
 % tic
@@ -108,6 +109,7 @@ R2_pro       = 1 - norm(Y-X*beta_pro,'fro')^2/norm(Y,'fro')^2;
 % R2_rlus  = 1 - norm(Y-X*beta_RLUS,'fro')^2/norm(Y,'fro')^2;
 % tRlus = toc;
 %----------------------------------------------------------------
+%}
 num_blocks = length(r_)
 R2_naive
 lsInit
