@@ -38,8 +38,8 @@ end
 X = X - mean(X,1);
 Y = Y - mean(Y,1);
 % round temperature (col 12), air pressure (col 13) to nearest integers
-A(:,12) = round(A(:,12));
-A(:,13) = round(A(:,13),-3);
+A(:,9) = round(A(:,12));
+A(:,10) = round(A(:,13),-1);
 %---------------------------------
 temp = unique(A(:,2));  % year
 for i = 1 : length(temp)
