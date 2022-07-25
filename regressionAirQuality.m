@@ -37,9 +37,9 @@ for i = 1 : 6
 end
 X = X - mean(X,1);
 Y = Y - mean(Y,1);
-% round temperature (col 9), air pressure (col 10) to nearest integers
-A(:,9) = round(A(:,9));
-A(:,10) = round(A(:,10));
+% round temperature (col 12), air pressure (col 13) to nearest integers
+A(:,9) = round(A(:,12));
+A(:,10) = round(A(:,13));
 %---------------------------------
 temp = unique(A(:,2));  % year
 for i = 1 : length(temp)
@@ -53,15 +53,15 @@ temp = unique(A(:,4));  % day
 for i = 1 : length(temp)
 	A(A(:,4)==temp(i),4) = i*1e4; %10000,20000,30000,...,310000.
 end
-temp = unique(A(:,11));  % temperature
+temp = unique(A(:,12));  % temperature
 for i = 1 : length(temp) 
-	A(A(:,11)==temp(i),11) = i*1e4; 
+	A(A(:,11)==temp(i),12) = i*1e4; 
 end
-temp = unique(A(:,12)); % air pressure
+temp = unique(A(:,13)); % air pressure
 for i = 1 : length(temp)
-	A(A(:,12)==temp(i),12) = i*1e9;
+	A(A(:,12)==temp(i),13) = i*1e9;
 end
-blk_label = A(:,11);
+blk_label = A(:,12);
 [blk_label_s,idx] = sort(blk_label);
 % order blockwise
 Y = Y(idx,:);
@@ -79,7 +79,7 @@ pi_ = get_permutation_r(n,r_);
 Y_permuted = Y(pi_,:);
 maxIter = 35;
 rLocal = 1;
-lsInit = 0;
+lsInit = 1;
 %---------------- oracle -----------------------------------
 beta_star = X \ Y;
 R2_true  = 1 - norm(Y-X*beta_star,'fro')^2/norm(Y - mean(Y,1),'fro')^2
