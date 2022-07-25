@@ -20,7 +20,7 @@ A = A(setdiff(1:size(A,1),row),:);
 %
 Y = A(:,[6,7,8,9,11]);
 % preprocess - remove outliers
-[Y,TF] = rmoutliers(Y,'movmedian',32);
+[Y,TF] = rmoutliers(Y,'movmedian',64);
 size(Y,1)
 A = A(~TF,:);
 Y = sqrt(Y);
@@ -39,7 +39,7 @@ X = X - mean(X,1);
 Y = Y - mean(Y,1);
 % round temperature (col 12), air pressure (col 13) to nearest integers
 A(:,12) = round(A(:,12));
-A(:,13) = round(A(:,13),-3);
+A(:,13) = round(A(:,13));
 %---------------------------------
 temp = unique(A(:,2));  % year
 for i = 1 : length(temp)
@@ -61,7 +61,8 @@ temp = unique(A(:,13)); % air pressure
 for i = 1 : length(temp)
 	A(A(:,12)==temp(i),13) = i*1e9;
 end
-blk_label = A(:,13);
+blk_label = 1*A(:,13) + 1*A(:,12);
+blk_label = A(:,3) + A(:,4);
 [blk_label_s,idx] = sort(blk_label);
 % order blockwise
 Y = Y(idx,:);
@@ -79,7 +80,7 @@ pi_ = get_permutation_r(n,r_);
 Y_permuted = Y(pi_,:);
 maxIter = 35;
 rLocal = 1;
-lsInit = 1;
+lsInit = 0;
 %---------------- oracle -----------------------------------
 beta_star = X \ Y;
 R2_true  = 1 - norm(Y-X*beta_star,'fro')^2/norm(Y - mean(Y,1),'fro')^2
