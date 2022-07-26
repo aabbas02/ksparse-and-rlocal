@@ -1,4 +1,4 @@
-clc
+rrclc
 close all
 clear all
 rng('default')
@@ -13,10 +13,12 @@ Y = sarcos_inv(:,22:28);
 %size(Y,1)
 %X = X(~TF,:);
 % make one of the features the block label
+%length(unique(round(X(:,6),2))) %~= 2800 blocks
+%X(:,6) = round(X(:,6),2);
+%blkLabel = X(:,6);
 length(unique(round(X(:,7),2))) %~= 2800 blocks
 X(:,7) = round(X(:,7),2);
 blkLabel = X(:,7);
-sf = 3;
 length(unique(blkLabel))
 %length(unique(X(:,7))) %~= 2800 blocks
 X = X - mean(X,1);
@@ -65,5 +67,5 @@ tProposed    = toc;
 Bproposed     = X(pi_hat,:) \ Y_permuted;
 R2_proLS     = 1 - norm(Y-X*Bproposed,'fro')^2/norm(Y,'fro')^2
 R2_true
-num_blocks = length(r_)
+num_blocks = len
 

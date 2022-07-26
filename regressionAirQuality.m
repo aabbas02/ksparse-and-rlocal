@@ -75,9 +75,10 @@ temp = unique(A(:,9)); %
 for i = 1 : length(temp)
     A(A(:,9)==temp(i),9) = i*1e9;
 end
-%blk_label = A(:,2) + A(:,4);
+blk_label = A(:,3) + A(:,4);
+%blk_label = A(:,2) + A(:,3);
 %blk_label = A(:,12);
-blk_label = A(:,6);
+%blk_label = A(:,6);
 %blk_label = A(:,7);
 %blk_label = A(:,8); % long-running
 %blk_label = A(:,9);
@@ -98,7 +99,6 @@ pi_ = get_permutation_r(n,r_);
 Y_permuted = Y(pi_,:);
 maxIter = 35;
 rLocal = 1;
-lsInit = 0;
 %---------------- oracle -----------------------------------
 beta_star = X \ Y;
 R2_true  = 1 - norm(Y-X*beta_star,'fro')^2/norm(Y - mean(Y,1),'fro')^2

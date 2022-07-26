@@ -13,10 +13,13 @@ Y = sarcos_inv(:,22:28);
 %size(Y,1)
 %X = X(~TF,:);
 % make one of the features the block label
-length(unique(round(X(:,7),2))) %~= 2800 blocks
-X(:,7) = round(X(:,7),2);
-blkLabel = X(:,7);
+%length(unique(round(X(:,6),2))) %~= 2800 blocks
+%X(:,6) = round(X(:,6),2);
+%blkLabel = X(:,6);
 sf = 3;
+length(unique(round(X(:,7),3))) %~= 2800 blocks
+X(:,7) = round(X(:,7),3);
+blkLabel = X(:,7);
 length(unique(blkLabel))
 %length(unique(X(:,7))) %~= 2800 blocks
 X = X - mean(X,1);

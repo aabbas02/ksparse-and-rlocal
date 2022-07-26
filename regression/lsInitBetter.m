@@ -80,9 +80,9 @@ end
 n = size(Y,1);
 pi_ = get_permutation_r(n,r_); 
 Y_permuted = Y(pi_,:);
-maxIter = 35;
+maxIter = 15;
 rLocal = 1;
-lsInit = 0;
+lsInit = 1;
 %---------------- oracle -----------------------------------
 beta_star = X \ Y;
 R2_true  = 1 - norm(Y-X*beta_star,'fro')^2/norm(Y - mean(Y,1),'fro')^2;

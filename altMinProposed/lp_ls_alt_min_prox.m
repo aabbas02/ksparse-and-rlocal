@@ -26,7 +26,7 @@ function [pi_hat] =  lp_ls_alt_min_prox(B,Y,r_,max_iter,r_local,lsInit)
     fold = 1e10;
     %for i = 1 : 50
     i = 0;
-	while (fnew/fold < 99e-2 && i < max_iter)
+	while (fnew/fold < 1 && i < max_iter)
             %tic
             pi_hat = lp_r_prox(Yhat,Y,r_);
             %toc
