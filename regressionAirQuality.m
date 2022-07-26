@@ -9,8 +9,6 @@ A = readmatrix('air_quality_data.csv');
 idx1 = min(find(A(:,2) == 2013));
 idx2 = max(find(A(:,2) == 2017));
 A = A(idx1:idx2,:);
-% downsample
-%A = downsample(A,6);
 idx = 1:size(A,2);
 % delete columsns 16, 18 two columns comprising NANs
 idx = setdiff(idx,[size(A,2),size(A,2)-2]);
