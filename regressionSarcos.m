@@ -1,4 +1,6 @@
 clc
+close all
+clear all
 load('sarcos_inv.mat')
 X = sarcos_inv(:,1:21);
 Y = sarcos_inv(:,22:28);
@@ -7,9 +9,9 @@ Y = sarcos_inv(:,22:28);
 %size(Y,1)
 %X = X(~TF,:);
 % make one of the features the block label
-length(unique(round(X(:,6),2))) %~= 2800 blocks
-X(:,6) = round(X(:,6),2);
-blkLabel = X(:,6);
+%length(unique(round(X(:,6),2))) %~= 2800 blocks
+%X(:,6) = round(X(:,6),2);
+%blkLabel = X(:,6);
 length(unique(round(X(:,7),2))) %~= 2800 blocks
 X(:,7) = round(X(:,7),2);
 blkLabel = X(:,7);
@@ -40,15 +42,16 @@ Y_permuted = Y(pi_,:);
 %length(r_)
 %------------ oracle ---------------------------------------------------
 BTrue = X\Y;
-YHat = X*BHat;
+YHat = X*BTrue;
 R2_true =  1 - norm(Y-YHat,'fro')^2/norm(Y,'fro')^2
 %----------- naive -----------------------------------------------------
 BNaive = X\Y_permuted;
-YHat = X*BHat;
+YHat = X*BNaive;
 R2_naive =  1 - norm(Y-YHat,'fro')^2/norm(Y,'fro')^2
 %----------- proposed --------------------------------------------------
 rLocal = 1;
 lsInit = 0;
+maxIter = 35;
 tic 
 [pi_hat]     = lp_ls_alt_min_prox(X,Y_permuted,r_,maxIter,rLocal,lsInit);
 tProposed    = toc;
