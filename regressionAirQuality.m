@@ -9,8 +9,6 @@ A = readmatrix('air_quality_data.csv');
 idx1 = min(find(A(:,2) == 2013));
 idx2 = max(find(A(:,2) == 2017));
 A = A(idx1:idx2,:);
-% downsample
-%A = downsample(A,6);
 idx = 1:size(A,2);
 % delete columsns 16, 18 two columns comprising NANs
 idx = setdiff(idx,[size(A,2),size(A,2)-2]);
@@ -20,7 +18,7 @@ A = A(setdiff(1:size(A,1),row),:);
 %
 Y = A(:,[6,7,8,9,11]);
 % preprocess - remove outliers
-[Y,TF] = rmoutliers(Y,'movmedian',32);
+[Y,TF] = rmoutliers(Y,'movmedian',64);
 size(Y,1)
 A = A(~TF,:);
 Y = sqrt(Y);
@@ -39,7 +37,7 @@ X = X - mean(X,1);
 Y = Y - mean(Y,1);
 % round temperature (col 12), air pressure (col 13) to nearest integers
 A(:,12) = round(A(:,12));
-A(:,13) = round(A(:,13),-3);
+A(:,13) = round(A(:,13));
 %---------------------------------
 temp = unique(A(:,2));  % year
 for i = 1 : length(temp)
@@ -61,7 +59,28 @@ temp = unique(A(:,13)); % air pressure
 for i = 1 : length(temp)
 	A(A(:,12)==temp(i),13) = i*1e9;
 end
-blk_label = A(:,13);
+temp = unique(A(:,6));
+for i = 1 : length(temp)
+    A(A(:,6)==temp(i),6) = i*1e9;
+end
+temp = unique(A(:,7));
+for i = 1 : length(temp)
+    A(A(:,7)==temp(i),7) = i*1e9;
+end
+temp = unique(A(:,8)); % long-running
+for i = 1 : length(temp)
+    A(A(:,8)==temp(i),8) = i*1e9;
+end
+temp = unique(A(:,9)); % 
+for i = 1 : length(temp)
+    A(A(:,9)==temp(i),9) = i*1e9;
+end
+%blk_label = A(:,2) + A(:,4);
+%blk_label = A(:,12);
+blk_label = A(:,6);
+%blk_label = A(:,7);
+%blk_label = A(:,8); % long-running
+%blk_label = A(:,9);
 [blk_label_s,idx] = sort(blk_label);
 % order blockwise
 Y = Y(idx,:);
@@ -79,7 +98,7 @@ pi_ = get_permutation_r(n,r_);
 Y_permuted = Y(pi_,:);
 maxIter = 35;
 rLocal = 1;
-lsInit = 1;
+lsInit = 0;
 %---------------- oracle -----------------------------------
 beta_star = X \ Y;
 R2_true  = 1 - norm(Y-X*beta_star,'fro')^2/norm(Y - mean(Y,1),'fro')^2
@@ -87,12 +106,18 @@ R2_true  = 1 - norm(Y-X*beta_star,'fro')^2/norm(Y - mean(Y,1),'fro')^2
 beta_naive = X \ Y_permuted;
 R2_naive  = 1 - norm(Y-X*beta_naive,'fro')^2/norm(Y,'fro')^2
 %---------------- proposed ----------------------------------
+lsInit = 0;
 tic 
 [pi_hat]     = lp_ls_alt_min_prox(X,Y_permuted,r_,maxIter,rLocal,lsInit);
 tProposed    = toc;
 beta_pro     = X(pi_hat,:) \ Y_permuted;
 beta_pro_err = norm(beta_pro - beta_star,2)/norm(beta_star,2);
 R2_pro       = 1 - norm(Y-X*beta_pro,'fro')^2/norm(Y,'fro')^2;
+lsInit       = 1;
+[pi_hat]     = lp_ls_alt_min_prox(X,Y_permuted,r_,maxIter,rLocal,lsInit);
+tProposed    = toc;
+beta_pro     = X(pi_hat,:) \ Y_permuted;
+R2_proLS     = 1 - norm(Y-X*beta_pro,'fro')^2/norm(Y,'fro')^2;
 %{
 %------------------ slawski ---------------------------------
 % noise_var    = norm(Y_permuted-X*beta_naive,'fro')^2/(size(Y,1)*size(Y,2));
@@ -102,16 +127,19 @@ R2_pro       = 1 - norm(Y-X*beta_pro,'fro')^2/norm(Y,'fro')^2;
 % beta_sls     = X(pi_hat,:) \ Y_permuted;
 % beta_sls_err = norm(beta_sls - beta_star,2)/norm(beta_star,2); 
 % R2_sls       = 1 - norm(Y-X*beta_sls,'fro')^2/norm(Y,'fro')^2;
-%----------------- RLUS ---------------------------------------
-% tic
-% [pi_hat] = rlus(X,Y_permuted,r_,r_local);
-% beta_RLUS = X(pi_hat,:) \ Y_permuted;
-% R2_rlus  = 1 - norm(Y-X*beta_RLUS,'fro')^2/norm(Y,'fro')^2;
-% tRlus = toc;
-%----------------------------------------------------------------
 %}
+%----------------- RLUS ---------------------------------------
+tic
+[pi_hat] = rlus(X,Y_permuted,r_,rLocal);
+beta_RLUS = X(pi_hat,:) \ Y_permuted;
+R2_rlus  = 1 - norm(Y-X*beta_RLUS,'fro')^2/norm(Y,'fro')^2;
+tRlus = toc;
+%----------------------------------------------------------------
+
+
 num_blocks = length(r_)
-R2_naive
-lsInit
-R2_pro
 R2_true 
+R2_naive
+R2_rlus
+R2_pro
+R2_proLS
