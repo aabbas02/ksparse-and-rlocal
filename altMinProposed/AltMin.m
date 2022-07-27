@@ -1,4 +1,4 @@
-function [pi_hat] =  AltMin(B,Y,r_,maxIter,rLocal,lsInit)
+function [pi_hat,fnew] =  AltMin(B,Y,r_,maxIter,rLocal,lsInit)
     d        = size(B,2);
     n        = size(B,1);
     if rLocal 

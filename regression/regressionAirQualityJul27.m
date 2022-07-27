@@ -6,9 +6,8 @@ addpath(genpath('.\misc'),...
         genpath('.\benchmarks'),...
         genpath('.\altMinProposed')); 
 A = readmatrix('air_quality_data.csv');
-% retain rows of data from years 
-idx1 = find(A(:,2) == 2016, 1 );
-idx2 = find(A(:,2) == 2017, 1, 'last' );
+idx1 = min(find(A(:,2) == 2014));
+idx2 = max(find(A(:,2) == 2017));
 A = A(idx1:idx2,:);
 idx = 1:size(A,2);
 % delete columsns 16, 18 two columns comprising NANs
@@ -33,41 +32,79 @@ for i = 1 : 6
         t=t+1;
     end
 end
-X(:,13:18) = X(:,1:6).^3;
 X = X - mean(X,1);
 Y = Y - mean(Y,1);
-%X = X(:,1:12);
-X = X(:,1:18);
-
-[U,S,V] = svd(X,'econ');
-% improve conditioning
-X = U;
 % round temperature (col 12), air pressure (col 13) to nearest integers
 A(:,12) = round(A(:,12));
 A(:,13) = round(A(:,13));
-% get block label
-% A(:,2,3,4,5) - year,month,day,hour
-% 
-blkLabel = A(:,2) + 1e5*A(:,4);
-blkLabel = A(:,4) + 1e5*A(:,5);
-blkLabel = A(:,2) + 1e5*A(:,5); % collapsed init better
-blkLabel = A(:,3) + 1e5*A(:,5); % LS init better '16 - '17, across years same
-blkLabel = A(:,3) + 1e5*A(:,4); % same
-blkLabel = A(:,2) + 1e5*A(:,3); % LS init much better
-blkLabel = A(:,4);
-[blkLabelSorted,idx] = sort(blkLabel);
+%---------------------------------
+temp = unique(A(:,2));  % year
+for i = 1 : length(temp)
+	A(A(:,2)==temp(i),2) = i;     %1,2,3,4
+end
+temp = unique(A(:,3));  % month
+for i = 1 : length(temp)
+	A(A(:,3)==temp(i),3) = i*1e2; %100,200,300,400,500,...,1200
+end
+temp = unique(A(:,4));  % day
+for i = 1 : length(temp)
+	A(A(:,4)==temp(i),4) = i*1e4; %10000,20000,30000,...,310000.
+end
+temp = unique(A(:,12));  % temperature
+for i = 1 : length(temp) 
+	A(A(:,11)==temp(i),12) = i*1e4; 
+end
+temp = unique(A(:,13)); % air pressure
+for i = 1 : length(temp)
+	A(A(:,12)==temp(i),13) = i*1e9;
+end
+temp = unique(A(:,6));
+for i = 1 : length(temp)
+    A(A(:,6)==temp(i),6) = i*1e9;
+end
+temp = unique(A(:,7));
+for i = 1 : length(temp)
+    A(A(:,7)==temp(i),7) = i*1e9;
+end
+temp = unique(A(:,8)); % long-running
+for i = 1 : length(temp)
+    A(A(:,8)==temp(i),8) = i*1e9;
+end
+temp = unique(A(:,9)); % 
+for i = 1 : length(temp)
+    A(A(:,9)==temp(i),9) = i*1e9;
+end                                      %RLOCAL LSINIT
+%blk_label = A(:,2) + A(:,4); % '13 - '17 (.61,.61). 
+                              % '14 - '17 (.65,.64)
+                              % '15 - '17 (.65,.65) 
+                              % '16 - '17 (.67,.65)  
+%blk_label = A(:,3) + A(:,4);  % '13 - '17 (.65,.65). 
+                              % '14 - '17 (.69,.69)
+                              % '15 - '17 (.70,.70) 
+                              % '16 - '17 (.74,.74)  
+% blk_label = A(:,2) + A(:,3) + A(:,4);
+% blk_label = A(:,2) + A(:,4);
+% blk_label = A(:,2) + A(:,4);
+% blk_label = A(:,2) + A(:,4);
+% blk_label = A(:,2) + A(:,4);
+% blk_label = A(:,2) + A(:,4);
+% blk_label = A(:,2) + A(:,4);
+% blk_label = A(:,2) + A(:,4);
+blk_label = A(:,12); 
+blk_label = A(:,13); %0.65,0.48
+[blk_label_s,idx] = sort(blk_label);
 % order blockwise
 Y = Y(idx,:);
 X = X(idx,:);
 % get lengths of blocks
-temp = unique(blkLabelSorted);
+temp = unique(blk_label_s);
 r_ = zeros(1,length(temp));
 for i = 1:length(temp)
-    t1 = find(blkLabelSorted == temp(i),1,'first');
-    t2 = find(blkLabelSorted == temp(i),1,'last');
+    t1 = find(blk_label_s == temp(i),1,'first');
+    t2 = find(blk_label_s == temp(i),1,'last');
     r_(i) = t2-t1+1;
 end
-n   = size(Y,1);
+n = size(Y,1);
 pi_ = get_permutation_r(n,r_); 
 Y_permuted = Y(pi_,:);
 %---------------- oracle -----------------------------------
@@ -77,17 +114,18 @@ R2_true  = 1 - norm(Y-X*beta_star,'fro')^2/norm(Y - mean(Y,1),'fro')^2
 beta_naive = X \ Y_permuted;
 R2_naive  = 1 - norm(Y-X*beta_naive,'fro')^2/norm(Y,'fro')^2
 %---------------- proposed ----------------------------------
-maxIter = 25;
-rLocal = 1;
 lsInit = 0;
-%---------------- w collapsed init --------------------------
-[pi_hat,fVal] = AltMin(X,Y_permuted,r_,maxIter,rLocal,lsInit);
+maxIter = 35;
+rLocal = 1;
+%tic 
+[pi_hat]     = AltMin(X,Y_permuted,r_,maxIter,rLocal,lsInit);
+%tProposed    = toc;
 beta_pro     = X(pi_hat,:) \ Y_permuted;
 beta_pro_err = norm(beta_pro - beta_star,2)/norm(beta_star,2);
 R2_pro       = 1 - norm(Y-X*beta_pro,'fro')^2/norm(Y,'fro')^2;
-%--------------- w least-squares init -----------------------
 lsInit       = 1;
-[pi_hat,fValLS]   = AltMin(X,Y_permuted,r_,maxIter,rLocal,lsInit);
+[pi_hat]     = AltMin(X,Y_permuted,r_,maxIter,rLocal,lsInit);
+%tProposed    = toc;
 beta_pro     = X(pi_hat,:) \ Y_permuted;
 R2_proLS     = 1 - norm(Y-X*beta_pro,'fro')^2/norm(Y,'fro')^2;
 %{
@@ -100,22 +138,18 @@ R2_proLS     = 1 - norm(Y-X*beta_pro,'fro')^2/norm(Y,'fro')^2;
 % beta_sls_err = norm(beta_sls - beta_star,2)/norm(beta_star,2); 
 % R2_sls       = 1 - norm(Y-X*beta_sls,'fro')^2/norm(Y,'fro')^2;
 %}
-%{
 %----------------- RLUS ---------------------------------------
-% tic
-% [pi_hat] = rlus(X,Y_permuted,r_,rLocal);
-% beta_RLUS = X(pi_hat,:) \ Y_permuted;
-% R2_rlus  = 1 - norm(Y-X*beta_RLUS,'fro')^2/norm(Y,'fro')^2;
-% tRlus = toc;
+tic
+[pi_hat] = rlus(X,Y_permuted,r_,rLocal);
+beta_RLUS = X(pi_hat,:) \ Y_permuted;
+R2_rlus  = 1 - norm(Y-X*beta_RLUS,'fro')^2/norm(Y,'fro')^2;
+tRlus = toc;
 %----------------------------------------------------------------
-%}
+
 
 num_blocks = length(r_)
 R2_true 
 R2_naive
+R2_rlus
 R2_pro
-fVal
 R2_proLS
-fValLS
-%R2_rlus
-

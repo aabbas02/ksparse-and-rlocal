@@ -15,11 +15,6 @@ X = U(:,1:10);
 % drop one of the response variables (first column of Y) to improve fit
 idx = setdiff(1:size(Y,2),1);
 Y = Y(:,idx);
-% make one of the features the block label
-sf = 3;
-numBlocks = length(unique(round(X(:,6),sf))) %~= 2800 blocks
-blkLabel = round(X(:,6),sf);
-%length(unique(X(:,7))) %~= 2800 blocks
 % sort blockwise
 [blkLabelSorted,idx]  = sort(blkLabel);
 X = X(idx,:);
@@ -32,7 +27,7 @@ for i = 1:length(temp)
     t2 = find(blkLabelSorted == temp(i),1,'last');
     r_(i) = t2-t1+1;
 end
-n   = size(Y,1);
+n = size(Y,1);
 pi_ = get_permutation_r(n,r_); 
 Y_permuted = Y(pi_,:);
 %length(r_)
@@ -45,7 +40,7 @@ Bnaive = X\Y_permuted;
 Yhat = X*Bnaive;
 R2_naive =  1 - norm(Y-Yhat,'fro')^2/norm(Y,'fro')^2
 %---------------- proposed ----------------------------------
-maxIter = 15;
+maxIter = 25;
 rLocal = 1;
 lsInit = 0;
 %---------------- w collapsed init --------------------------
