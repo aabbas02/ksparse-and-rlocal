@@ -1,4 +1,4 @@
- function [assignment] = lp_r_prox(Yhat,Y,r_)
+ function [assignment] = solveLAP(Yhat,Y,r_)
     n = size(Yhat,1);
     m = size(Yhat,2);
     assignment = zeros(n,1);

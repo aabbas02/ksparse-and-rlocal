@@ -6,7 +6,7 @@ addpath(genpath('.\misc'),...
         genpath('.\benchmarks'),...
         genpath('.\altMinProposed')); 
 A = readmatrix('air_quality_data.csv');
-idx1 = min(find(A(:,2) == 2014));
+idx1 = min(find(A(:,2) == 2016));
 idx2 = max(find(A(:,2) == 2017));
 A = A(idx1:idx2,:);
 idx = 1:size(A,2);
@@ -15,8 +15,9 @@ idx = setdiff(idx,[size(A,2),size(A,2)-2]);
 A = A(:,idx);
 [row, col] = find(isnan(A));
 A = A(setdiff(1:size(A,1),row),:);
-% preprocess - remove outliers
+%
 Y = A(:,[6,7,8,9,11]);
+% preprocess - remove outliers
 [Y,TF] = rmoutliers(Y,'movmedian',64);
 size(Y,1)
 A = A(~TF,:);
@@ -73,25 +74,17 @@ end
 temp = unique(A(:,9)); % 
 for i = 1 : length(temp)
     A(A(:,9)==temp(i),9) = i*1e9;
-end                                      %RLOCAL LSINIT
-%blk_label = A(:,2) + A(:,4); % '13 - '17 (.61,.61). 
-                              % '14 - '17 (.65,.64)
-                              % '15 - '17 (.65,.65) 
-                              % '16 - '17 (.67,.65)  
-%blk_label = A(:,3) + A(:,4);  % '13 - '17 (.65,.65). 
-                              % '14 - '17 (.69,.69)
-                              % '15 - '17 (.70,.70) 
-                              % '16 - '17 (.74,.74)  
-% blk_label = A(:,2) + A(:,3) + A(:,4);
-% blk_label = A(:,2) + A(:,4);
-% blk_label = A(:,2) + A(:,4);
-% blk_label = A(:,2) + A(:,4);
-% blk_label = A(:,2) + A(:,4);
-% blk_label = A(:,2) + A(:,4);
-% blk_label = A(:,2) + A(:,4);
-% blk_label = A(:,2) + A(:,4);
-blk_label = A(:,12); 
-blk_label = A(:,13); %0.65,0.48
+end
+%blk_label = A(:,2) + A(:,4);
+%blk_label = A(:,2) + A(:,3);
+%blk_label = A(:,12);
+%blk_label = A(:,6);
+%blk_label = A(:,7);
+%blk_label = A(:,8); % long-running
+%blk_label = A(:,9);
+%blk_label = 1*A(:,2) + 1*A(:,3) + 0*A(:,4); %lsInit better
+%blk_label = A(:,3) + A(:,4); %same
+blk_label = A(:,4);
 [blk_label_s,idx] = sort(blk_label);
 % order blockwise
 Y = Y(idx,:);
@@ -107,6 +100,7 @@ end
 n = size(Y,1);
 pi_ = get_permutation_r(n,r_); 
 Y_permuted = Y(pi_,:);
+
 %---------------- oracle -----------------------------------
 beta_star = X \ Y;
 R2_true  = 1 - norm(Y-X*beta_star,'fro')^2/norm(Y - mean(Y,1),'fro')^2
@@ -115,7 +109,7 @@ beta_naive = X \ Y_permuted;
 R2_naive  = 1 - norm(Y-X*beta_naive,'fro')^2/norm(Y,'fro')^2
 %---------------- proposed ----------------------------------
 lsInit = 0;
-maxIter = 35;
+maxIter = 20;
 rLocal = 1;
 %tic 
 [pi_hat]     = AltMin(X,Y_permuted,r_,maxIter,rLocal,lsInit);

@@ -19,7 +19,8 @@ d_H_biconvex    = zeros(1,length(r_));
 d_H_alt_min     = zeros(1,length(r_));
 rho_            = -3:1:1;
 rho_            = 10.^rho_;
-r_local         = 1;
+rLocal          = 1;
+lsInit          = 0;
 for j = 1 : length(r_)
 	r = r_(j);
     r_arr = ones(1,n/r)*r;
@@ -35,36 +36,36 @@ for j = 1 : length(r_)
                 Y_permuted_noisy = Y_permuted + W;
                 %---rlus  https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=9440727 
                 %t1_start = tic;
-                tic
-                pi_rlus          = rlus(B,Y_permuted_noisy,r_arr,r_local);
-                toc
+%                 tic
+%                 pi_rlus          = rlus(B,Y_permuted_noisy,r_arr,rLocal);
+%                 toc
                 %toc(t1_start)
-                d_H              = sum(pi_ ~= pi_rlus)/n;
-                d_H_rlus(j)      = d_H + d_H_rlus(1,j);
+%                 d_H              = sum(pi_ ~= pi_rlus)/n;
+%                 d_H_rlus(j)      = d_H + d_H_rlus(1,j);
                 %---biconvex https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8849447
- 				d_H_min = 1;
-                tic
-                for i = 1 : length(rho_) % cross validate across rho paramter
-                   rho              = rho_(i);
-                   pi_admm          = admm(B,Y_permuted_noisy,r_arr,rho);
-                   d_H_             = sum(pi_ ~= pi_admm)/n;
-                   if d_H_ < d_H_min
-                      d_H_min = d_H_;
-                   end
-                end
-                toc
-                d_H_biconvex(j) = d_H_biconvex(j) + d_H_min;
+%  				d_H_min = 1;
+%                 tic
+%                 for i = 1 : length(rho_) % cross validate across rho paramter
+%                    rho              = rho_(i);
+%                    pi_admm          = admm(B,Y_permuted_noisy,r_arr,rho);
+%                    d_H_             = sum(pi_ ~= pi_admm)/n;
+%                    if d_H_ < d_H_min
+%                       d_H_min = d_H_;
+%                    end
+%                 end
+%                 toc
+%                 d_H_biconvex(j) = d_H_biconvex(j) + d_H_min;
                 %---icml https://proceedings.mlr.press/v119/zhang20n.html
-                pi_icml            = icml_20(B,Y_permuted_noisy,r_arr);
-                d_H_one_step(j)    = d_H_one_step(j) + sum(pi_ ~= pi_icml)/n;   
+%                 pi_icml            = icml_20(B,Y_permuted_noisy,r_arr);
+%                 d_H_one_step(j)    = d_H_one_step(j) + sum(pi_ ~= pi_icml)/n;   
                 %---slawski 
-                pi_sls             = slawski(B,Y_permuted_noisy,noise_var,r_arr);
-                d_H_sls(j)         = d_H_sls(j) + sum(pi_ ~= pi_sls)/n;                   
+%                 pi_sls             = slawski(B,Y_permuted_noisy,noise_var,r_arr);
+%                 d_H_sls(j)         = d_H_sls(j) + sum(pi_ ~= pi_sls)/n;                   
 %               %---levsort  https://people.eecs.berkeley.edu/~courtade/pdfs/DenoisingLinearModels_ISIT2017.pdf
-                pi_lev             = levsort(B,Y_permuted_noisy,r_arr);
-                d_H_levsort(j)     = d_H_levsort(j) + sum(pi_ ~= pi_lev)/n;                   
+%                 pi_lev             = levsort(B,Y_permuted_noisy,r_arr);
+%                 d_H_levsort(j)     = d_H_levsort(j) + sum(pi_ ~= pi_lev)/n;                   
                 %---alt-min/proposed
-                [pi_alt_min]       = lp_ls_alt_min_prox(B,Y_permuted_noisy,r_arr,r_local);
+                [pi_alt_min]       = AltMin(B,Y_permuted_noisy,r_arr,25,rLocal,lsInit);
                 d_H                = sum(pi_ ~= pi_alt_min)/n;
                 d_H_alt_min(j)     = d_H + d_H_alt_min(j); 
     end

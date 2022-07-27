@@ -1,7 +1,7 @@
-function [pi_hat] =  lp_ls_alt_min_prox(B,Y,r_,max_iter,r_local,lsInit)
+function [pi_hat] =  AltMin(B,Y,r_,maxIter,rLocal,lsInit)
     d        = size(B,2);
     n        = size(B,1);
-    if r_local 
+    if rLocal 
         B_tilde = zeros(length(r_),d);
         Y_tilde = zeros(length(r_),size(Y,2));
         for i = 1 : length(r_)
@@ -24,11 +24,10 @@ function [pi_hat] =  lp_ls_alt_min_prox(B,Y,r_,max_iter,r_local,lsInit)
     end
     fnew = 1e9;
     fold = 1e10;
-    %for i = 1 : 50
     i = 0;
-	while (fnew/fold < 1 && i < max_iter)
+	while (fnew/fold < 1 && i < maxIter)
             %tic
-            pi_hat = lp_r_prox(Yhat,Y,r_);
+            pi_hat = solveLAP(Yhat,Y,r_);
             %toc
             Xhat = B(pi_hat,:)\Y;
             Yhat = B*Xhat;
