@@ -1,4 +1,4 @@
-function [pi_hat,fnew] =  AltMin(B,Y,r_,maxIter,rLocal,lsInit)
+function [pi_hat,fval] =  AltMin(B,Y,r_,maxIter,rLocal,lsInit)
     d        = size(B,2);
     n        = size(B,1);
     if rLocal 
@@ -22,17 +22,18 @@ function [pi_hat,fnew] =  AltMin(B,Y,r_,maxIter,rLocal,lsInit)
         Xhat = pinv(B)*Y;
         Yhat = B*Xhat;
     end
-    fnew = 1e9;
+    %fInit = norm(Y - Yhat,'fro')
+    fval = 1e9;
     fold = 1e10;
     i = 0;
-	while (fnew/fold < 1 && i < maxIter)
+    while (fval/fold < 1 && i < maxIter)
             %tic
             pi_hat = solveLAP(Yhat,Y,r_);
             %toc
             Xhat = B(pi_hat,:)\Y;
             Yhat = B*Xhat;
-            fold = fnew;
-            fnew = norm(Y-Yhat(pi_hat,:),'fro')
+            fold = fval;
+            fval = norm(Y-Yhat(pi_hat,:),'fro')
             i = i + 1;
     end
 end

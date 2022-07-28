@@ -4,7 +4,8 @@ clear all
 rng('default')
 addpath(genpath('.\misc'),...
         genpath('.\benchmarks'),...
-        genpath('.\altMinProposed')); 
+        genpath('.\altMinProposed'),...
+        genpath('.\dataSets'))
 A = readmatrix('air_quality_data.csv');
 % retain rows of data from years 
 idx1 = find(A(:,2) == 2016, 1 );
@@ -33,11 +34,8 @@ for i = 1 : 6
         t=t+1;
     end
 end
-X(:,13:18) = X(:,1:6).^3;
 X = X - mean(X,1);
 Y = Y - mean(Y,1);
-%X = X(:,1:12);
-X = X(:,1:18);
 
 [U,S,V] = svd(X,'econ');
 % improve conditioning
@@ -47,14 +45,13 @@ A(:,12) = round(A(:,12));
 A(:,13) = round(A(:,13));
 % get block label
 % A(:,2,3,4,5) - year,month,day,hour
-% 
 blkLabel = A(:,2) + 1e5*A(:,4);
 blkLabel = A(:,4) + 1e5*A(:,5);
 blkLabel = A(:,2) + 1e5*A(:,5); % collapsed init better
-blkLabel = A(:,3) + 1e5*A(:,5); % LS init better '16 - '17, across years same
-blkLabel = A(:,3) + 1e5*A(:,4); % same
-blkLabel = A(:,2) + 1e5*A(:,3); % LS init much better
-blkLabel = A(:,4);
+%blkLabel = A(:,3) + 1e5*A(:,5); % LS init better '16 - '17, across years same
+%blkLabel = A(:,3) + 1e5*A(:,4); % same
+%blkLabel = A(:,2) + 1e5*A(:,3); % LS init much better
+%blkLabel = A(:,4);
 [blkLabelSorted,idx] = sort(blkLabel);
 % order blockwise
 Y = Y(idx,:);
@@ -77,7 +74,7 @@ R2_true  = 1 - norm(Y-X*beta_star,'fro')^2/norm(Y - mean(Y,1),'fro')^2
 beta_naive = X \ Y_permuted;
 R2_naive  = 1 - norm(Y-X*beta_naive,'fro')^2/norm(Y,'fro')^2
 %---------------- proposed ----------------------------------
-maxIter = 25;
+maxIter = 1;
 rLocal = 1;
 lsInit = 0;
 %---------------- w collapsed init --------------------------
