@@ -1,0 +1,19 @@
+clc
+close all
+clear all
+A = readmatrix('scm.csv');
+X = A(:,2:62);
+Y = A(:,63:end);
+% remove outliers
+[Y,TF] = rmoutliers(Y,'mean');
+size(Y,1)
+X = X(~TF,:);
+% 
+X = X - mean(X,1);
+Y = Y - mean(Y,1);
+[U,S,V] = svd(X,'econ');
+X = U(:,1:35);
+%
+%Bhat = X\Y;
+%Yhat = X*Bhat;
+%R2 = 1 - norm(Y - Yhat,'fro')^2/norm(Y,'fro')^2

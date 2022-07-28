@@ -24,7 +24,7 @@ size(Y,1)
 A = A(~TF,:);
 Y = sqrt(Y);
 X = zeros(size(A,1),27);
-% WPSM is column 16, insetead of column 17; column 16 delted above
+% WPSM is column 16, instead of column 17; column 16 delted above
 X(:,1:6) = A(:,[10,12,13,14,15,16]); 
 X(:,7:12) = X(:,1:6).^2;
 t=13;
