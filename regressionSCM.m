@@ -4,11 +4,6 @@ clear all
 A = readmatrix('scm.csv');
 X = A(:,2:62);
 Y = A(:,63:end);
-% remove outliers
-%[Y,TF] = rmoutliers(Y,'mean');
-%size(Y,1)
-%X = X(~TF,:);
-% 
 X = X - mean(X,1);
 Y = Y - mean(Y,1);
 [U,S,V] = svd(X,'econ');
