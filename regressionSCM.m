@@ -46,3 +46,6 @@ lsInit       = 1;
 [pi_hat,fValLS]   = AltMin(X,Y_permuted,r_,maxIter,rLocal,lsInit);
 Bpro     = X(pi_hat,:) \ Y_permuted;
 R2_proLS     = 1 - norm(Y-X*Bpro,'fro')^2/norm(Y,'fro')^2;
+
+R2_pro
+R2_proLS
