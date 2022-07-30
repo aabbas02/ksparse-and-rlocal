@@ -47,7 +47,10 @@ A(:,13) = round(A(:,13));
 % A(:,2,3,4,5) - year,month,day,hour
 %--------------------------------------
 blkLabel = A(:,3) + 1e4*A(:,4);
-% blkLabel = A(:,2) + 1e4*A(:,5);
+blkLabel = A(:,2) + 1e4*A(:,4);
+%blkLabel = A(:,2) + 1e4*A(:,5);
+%blkLabel = A(:,2) + 1e3*A(:,4) + 1e5*A(:,5);
+
 %--------------------------------------
 %blkLabel = A(:,2) + 1e5*A(:,5); % collapsed init better
 %blkLabel = A(:,3) + 1e5*A(:,5); % LS init better '16 - '17, across years same
