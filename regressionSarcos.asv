@@ -16,11 +16,9 @@ X = U(:,1:10);
 idx = setdiff(1:size(Y,2),1);
 Y = Y(:,idx);
 % make one of the features the block label
-sf = 4;
-%numBlocks = length(unique(round(X(:,6),sf))) 
-%blkLabel = round(X(:,6),sf);
-numBlocks = length(unique(round(X(:,7),sf))) 
-blkLabel = round(X(:,7),sf);
+sf = 3;
+numBlocks = length(unique(round(X(:,6),sf))) %~= 2800 blocks
+blkLabel = round(X(:,6),sf);
 %length(unique(X(:,7))) %~= 2800 blocks
 % sort blockwise
 [blkLabelSorted,idx]  = sort(blkLabel);
@@ -46,7 +44,7 @@ Bnaive = X\Y_permuted;
 Yhat = X*Bnaive;
 R2_naive =  1 - norm(Y-Yhat,'fro')^2/norm(Y,'fro')^2
 %----------- proposed ----------------------------------
-maxIter = 20;
+maxIter = 15;
 rLocal = 1;
 lsInit = 0;
 %---------- w collapsed init --------------------------

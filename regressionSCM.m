@@ -8,9 +8,9 @@ X = X - mean(X,1);
 Y = Y - mean(Y,1);
 [U,S,V] = svd(X,'econ');
 X = U(:,1:35);
-sf = 3;
-numBlocks = length(unique(round(X(:,6),sf))); %~= 2800 blocks
-blkLabel = round(X(:,6),sf);
+sf = 4;
+numBlocks = length(unique(round(X(:,7),sf))); %~= 2800 blocks
+blkLabel = round(X(:,7),sf);
 [blkLabelSorted,idx] = sort(blkLabel);
 % order blockwise
 Y = Y(idx,:);

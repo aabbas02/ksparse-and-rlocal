@@ -8,7 +8,7 @@ addpath(genpath('.\misc'),...
         genpath('.\dataSets'))
 A = readmatrix('air_quality_data.csv');
 % retain rows of data from years 
-idx1 = find(A(:,2) == 2016, 1 );
+idx1 = find(A(:,2) == 2013, 1 );
 idx2 = find(A(:,2) == 2017, 1, 'last' );
 A = A(idx1:idx2,:);
 idx = 1:size(A,2);
@@ -45,13 +45,14 @@ A(:,12) = round(A(:,12));
 A(:,13) = round(A(:,13));
 % get block label
 % A(:,2,3,4,5) - year,month,day,hour
-blkLabel = A(:,2) + 1e5*A(:,4);
-blkLabel = A(:,4) + 1e5*A(:,5);
-blkLabel = A(:,2) + 1e5*A(:,5); % collapsed init better
+%--------------------------------------
+blkLabel = A(:,3) + 1e4*A(:,4);
+% blkLabel = A(:,2) + 1e4*A(:,5);
+%--------------------------------------
+%blkLabel = A(:,2) + 1e5*A(:,5); % collapsed init better
 %blkLabel = A(:,3) + 1e5*A(:,5); % LS init better '16 - '17, across years same
 %blkLabel = A(:,3) + 1e5*A(:,4); % same
 %blkLabel = A(:,2) + 1e5*A(:,3); % LS init much better
-%blkLabel = A(:,4);
 [blkLabelSorted,idx] = sort(blkLabel);
 % order blockwise
 Y = Y(idx,:);
@@ -74,7 +75,7 @@ R2_true  = 1 - norm(Y-X*beta_star,'fro')^2/norm(Y - mean(Y,1),'fro')^2
 beta_naive = X \ Y_permuted;
 R2_naive  = 1 - norm(Y-X*beta_naive,'fro')^2/norm(Y,'fro')^2
 %---------------- proposed ----------------------------------
-maxIter = 1;
+maxIter = 20;
 rLocal = 1;
 lsInit = 0;
 %---------------- w collapsed init --------------------------
@@ -83,10 +84,10 @@ Bpro     = X(pi_hat,:) \ Y_permuted;
 BproErr  = norm(Bpro - beta_star,2)/norm(beta_star,2);
 R2_pro   = 1 - norm(Y-X*Bpro,'fro')^2/norm(Y,'fro')^2;
 %--------------- w least-squares init -----------------------
-lsInit       = 1;
+lsInit = 1;
 [pi_hat,fValLS]   = AltMin(X,Y_permuted,r_,maxIter,rLocal,lsInit);
-Bpro     = X(pi_hat,:) \ Y_permuted;
-R2_proLS     = 1 - norm(Y-X*Bpro,'fro')^2/norm(Y,'fro')^2;
+Bpro = X(pi_hat,:) \ Y_permuted;
+R2_proLS  = 1 - norm(Y-X*Bpro,'fro')^2/norm(Y,'fro')^2;
 %{
 %------------------ slawski ---------------------------------
 % noise_var    = norm(Y_permuted-X*beta_naive,'fro')^2/(size(Y,1)*size(Y,2));
