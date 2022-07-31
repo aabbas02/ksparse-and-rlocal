@@ -1,0 +1,78 @@
+clc
+close all
+clear all
+%------------r - local-------------------------
+n = 1000;
+r = 100;
+m = 50;
+d = 100;
+SNR              = 100;
+B                = randn(n,d);
+X                = randn(d,m);
+Y                = B*X;  
+noise_var   	 = norm(X,'fro')^2  / (SNR*m);
+W                = sqrt(noise_var)*randn(n,m);
+pi_              = make_r_local_perm(n,r);
+Y_permuted       = Y(pi_,:);
+Ynoisy = Y_permuted + W;
+Y1  = Y(1:r,:);
+Y2  = Y(r+1:2*r,:);
+Y3  = zeros(r,m);
+Y4  = zeros(r,m);
+Y5  = zeros(r,m);
+Y6  = zeros(r,m);
+Y7  = zeros(r,m);
+Y8  = zeros(r,m);
+%for i = 1 : n/r
+    
+%end
+cvx_begin 
+cvx_solver Sedumi
+cvx_precision high
+          variable X(d,m)
+          variable P1(r,r)
+          variable P2(r,r)
+          variable P3(r,r)
+          variable P4(r,r)
+          variable P5(r,r)
+          variable P6(r,r)
+          variable P7(r,r)
+          variable P8(r,r)
+              P1(:) >= 0; P1*ones(r,1)  == ones(r,1); P1'*ones(r,1) == ones(r,1);
+              P2(:) >= 0; P2*ones(r,1)  == ones(r,1); P2'*ones(r,1) == ones(r,1);
+              P3(:) >= 0; P3*ones(r,1)  == ones(r,1); P3'*ones(r,1) == ones(r,1);
+              P4(:) >= 0; P4*ones(r,1)  == ones(r,1); P4'*ones(r,1) == ones(r,1);
+              P5(:) >= 0; P5*ones(r,1)  == ones(r,1); P5'*ones(r,1) == ones(r,1);
+              P6(:) >= 0; P6*ones(r,1)  == ones(r,1); P6'*ones(r,1) == ones(r,1);
+              P7(:) >= 0; P7*ones(r,1)  == ones(r,1); P7'*ones(r,1) == ones(r,1);
+              P8(:) >= 0; P8*ones(r,1)  == ones(r,1); P8'*ones(r,1) == ones(r,1);
+              minimize( norm(B1*X - P1*Y1,'fro')+ ...       
+                        norm(B2*X - P2*Y2,'fro')+ ...
+                        norm(B3*X - P3*Y3,'fro')+ ...
+                        norm(B4*X - P4*Y4,'fro')+ ...
+                        norm(B5*X - P5*Y5,'fro')+ ...
+                        norm(B6*X - P6*Y6,'fro')+ ...
+                        norm(B7*X - P7*Y7,'fro')+ ...
+                        norm(B8*X - P8*Y8,'fro') ...
+                        )
+       cvx_end    
+options = optimoptions('linprog','Display','none');
+A_eq = zeros(r,r);
+for i = 1 : r
+    A_eq(i,(i-1)*r+1:i*r) = 1;
+end
+for i = 1 : r
+    A_eq(i+r,i:r:i+(r-1)*r) = 1;
+end
+pi_hat = zeros(n,n);
+for i = 1 : n/r
+        start = (i-1)*r+1;
+        stop  = i*r;
+        c      = reshape(P(start:stop,start:stop),...
+                         [1,r^2]);
+        pi_hat_   = linprog(-c,[],[],A_eq,ones(2*r,1),zeros(r*r,1),[],options);
+        pi_hat_   = reshape(pi_hat_,[r,r]);
+        pi_hat(start:stop,start:stop) = pi_hat_;
+end
+d_H                = sum(sum(pi_hat' ~= pi_))/(2*n);
+

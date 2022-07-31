@@ -1,7 +1,6 @@
 clc
 close all;
 clear all
-str = pwd;
 addpath(genpath('.\misc'),...
         genpath('.\alt_min'),...
         genpath('.\benchmarks')); 

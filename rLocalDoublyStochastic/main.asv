@@ -1,0 +1,93 @@
+clc
+close all
+clear all
+addpath(genpath('.\misc'),...
+        genpath('.\alt_min'),...
+        genpath('.\benchmarks')); 
+%------------r - local-------------------------
+n = 200;
+r = 25;
+m = 10;
+d = 20;
+SNR              = 100;
+B                = randn(n,d);
+X                = randn(d,m);
+Y                = B*X;  
+noise_var   	 = norm(X,'fro')^2  / (SNR*m);
+W                = sqrt(noise_var)*randn(n,m);
+r_arr            = ones(1,n/r)*r;
+pi_              = get_permutation_r(n,r_arr);
+Y_permuted       = Y(pi_,:);
+Ynoisy = Y_permuted + W;
+Y1  = Ynoisy(1:r,:);
+Y2  = Ynoisy(r+1:2*r,:);
+Y3  = Ynoisy(2*r+1:3*r,:);
+Y4  = Ynoisy(3*r+1:4*r,:);
+Y5  = Ynoisy(4*r+1:5*r,:);
+Y6  = Ynoisy(5*r+1:6*r,:);
+Y7  = Ynoisy(6*r+1:7*r,:);
+Y8  = Ynoisy(7*r+1:8*r,:);
+B1  = B(1:r,:);
+B2  = B(r+1:2*r,:);
+B3  = B(2*r+1:3*r,:);
+B4  = B(3*r+1:4*r,:);
+B5  = B(4*r+1:5*r,:);
+B6  = B(5*r+1:6*r,:);
+B7  = B(6*r+1:7*r,:);
+B8  = B(7*r+1:8*r,:);
+
+cvx_begin
+cvx_solver Sedumi
+cvx_precision low
+variable X(d,m)
+variable P1(r,r)
+variable P2(r,r)
+variable P3(r,r)
+variable P4(r,r)
+variable P5(r,r)
+variable P6(r,r)
+variable P7(r,r)
+variable P8(r,r)
+P1(:) >= 0; P1*ones(r,1)  == ones(r,1); P1'*ones(r,1) == ones(r,1);
+P2(:) >= 0; P2*ones(r,1)  == ones(r,1); P2'*ones(r,1) == ones(r,1);
+P3(:) >= 0; P3*ones(r,1)  == ones(r,1); P3'*ones(r,1) == ones(r,1);
+P4(:) >= 0; P4*ones(r,1)  == ones(r,1); P4'*ones(r,1) == ones(r,1);
+P5(:) >= 0; P5*ones(r,1)  == ones(r,1); P5'*ones(r,1) == ones(r,1);
+P6(:) >= 0; P6*ones(r,1)  == ones(r,1); P6'*ones(r,1) == ones(r,1);
+P7(:) >= 0; P7*ones(r,1)  == ones(r,1); P7'*ones(r,1) == ones(r,1);
+P8(:) >= 0; P8*ones(r,1)  == ones(r,1); P8'*ones(r,1) == ones(r,1);
+minimize( norm(B1*X - P1*Y1,'fro')+ ...
+          norm(B2*X - P2*Y2,'fro')+ ...
+          norm(B3*X - P3*Y3,'fro')+ ...
+          norm(B4*X - P4*Y4,'fro')+ ...
+          norm(B5*X - P5*Y5,'fro')+ ...
+          norm(B6*X - P6*Y6,'fro')+ ...
+          norm(B7*X - P7*Y7,'fro')+ ...
+          norm(B8*X - P8*Y8,'fro') ...
+    )
+cvx_end
+P1 = munkres(-P1);
+P2 = munkres(-P2);
+P3 = munkres(-P3);
+P4 = munkres(-P4);
+P5 = munkres(-P5);
+P6 = munkres(-P6);
+P7 = munkres
+%options = optimoptions('linprog','Display','none');
+%A_eq = zeros(r,r);
+%for i = 1 : r
+%    A_eq(i,(i-1)*r+1:i*r) = 1;
+%end
+%for i = 1 : r
+%    A_eq(i+r,i:r:i+(r-1)*r) = 1;
+%end
+%pi_hat = zeros(n,n);
+%for i = 1 : 8
+%        start = (i-1)*r+1;
+%        stop  = i*r;
+%        pi_hat_   = linprog(-P,[],[],A_eq,ones(2*r,1),zeros(r*r,1),[],options);
+%        pi_hat_   = reshape(pi_hat_,[r,r]);
+%        pi_hat(start:stop,start:stop) = pi_hat_;
+%end
+%d_H                = sum(sum(pi_hat' ~= pi_))/(2*n);
+%d_H
