@@ -5,10 +5,10 @@ addpath(genpath('.\misc'),...
         genpath('.\alt_min'),...
         genpath('.\benchmarks')); 
 %------------r - local-------------------------
-n = 800;
+n = 1000;
 r = 100;
-m = 40;
-d = 80;
+m = 50;
+d = 100;
 SNR              = 100;
 B                = randn(n,d);
 X                = randn(d,m);
@@ -35,7 +35,7 @@ B5  = B(4*r+1:5*r,:);
 B6  = B(5*r+1:6*r,:);
 B7  = B(6*r+1:7*r,:);
 B8  = B(7*r+1:8*r,:);
-
+tic
 cvx_begin
 cvx_solver Sedumi
 cvx_precision low
@@ -66,6 +66,7 @@ minimize( norm(B1*X - P1*Y1,'fro')+ ...
           norm(B8*X - P8*Y8,'fro') ...
     )
 cvx_end
+toc
 P1 = munkres(-P1);
 P2 = munkres(-P2);
 P2 = 1*r + P2;
