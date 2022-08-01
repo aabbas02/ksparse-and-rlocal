@@ -1,13 +1,10 @@
 clear all;
 clc;
 close all;
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% min_P ||Bx - Py ||_2 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-n            = 100;
-d            = 10;
-m            = 5;
-numAssigned  = 40;
+n            = 200;
+d            = 20;
+m            = 10;
+numAssigned  = 100;
 MC           = 5;
 d_H          = 0;
 Aeq          = zeros(2*n,n*n);
