@@ -1,20 +1,20 @@
 clc
 close all;
 clear all
-str = pwd;
 addpath(genpath('.\misc'),...
         genpath('.\alt_min'),...
+        genpath('.\altMinProposed'),...
         genpath('.\benchmarks')); 
 tic
 MC              = 1;
 SNR             = 100;
-d               = 100;
-m               = 50;
+d               = 25;
+m               = 10;
 %k_              = 2*[300 325 350 375 400 450];
 %k_              = 850;
-k_              = [600 650 700 750 800 825 850 875 900];
+k_              = 50;
 %k_              = [100 200]
-n               = 1000;
+n               = 100;
 d_H_levsort     = zeros(1,length(k_));
 d_H_one_step    = zeros(1,length(k_));
 d_H_biconvex    = zeros(1,length(k_));
@@ -23,22 +23,23 @@ d_H_alt_min     = zeros(1,length(k_));
 d_H_rlus        = zeros(1,length(k_));
 rho_            = -3:1;
 rho_            = 10.^rho_;
-r_local         = 0;
+rLocal          = 0;
 r_arr           = n;
+maxIter         = 50;
 for j = 1 : length(k_)
 	k = k_(j);
     for t = 1 : MC
         B                = rand(n,d);
         X                = randn(d,m);
         Y                = B*X;
-        noise_var   	 = 1*norm(X,'fro')^2  / (SNR*m);
+        noise_var   	 = 0*norm(X,'fro')^2  / (SNR*m);
         W                = sqrt(noise_var)*randn(n,m);
         pi_              = get_permutation_k(n,k);
         Y_permuted       = Y(pi_,:);
         Y_permuted_noisy = Y_permuted + W;
         %---rlus  https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=9440727
         tic
-        pi_rlus          = rlus(B,Y_permuted_noisy,r_arr,r_local);
+        pi_rlus          = rlus(B,Y_permuted_noisy,r_arr,rLocal);
         t_rlus = toc
         d_H              = sum(pi_ ~= pi_rlus)/n;
         d_H_rlus(j)      = d_H + d_H_rlus(1,j);
@@ -73,7 +74,7 @@ for j = 1 : length(k_)
         d_H_sls(j)         = d_H_sls(j) + sum(pi_ ~= pi_sls)/n;
         %---alt-min/proposed
         tic
-        [pi_alt_min]       = lp_ls_alt_min_prox(B,Y_permuted_noisy,r_arr,r_local);
+        [pi_alt_min]       = AltMin(B,Y_permuted_noisy,r_arr,maxIter,rLocal,0);
         t_proposed = toc 
         d_H                = sum(pi_ ~= pi_alt_min)/n;
         d_H_alt_min(j)     = d_H + d_H_alt_min(j);
