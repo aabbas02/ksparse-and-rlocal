@@ -8,13 +8,13 @@ addpath(genpath('.\misc'),...
 tic
 MC              = 1;
 SNR             = 100;
-d               = 5;
+d               = 20;
 m               = 10;
 %k_              = 2*[300 325 350 375 400 450];
 %k_              = 850;
-k_              = 60;
+k_              = 120;
 %k_              = [100 200]
-n               = 100;
+n               = 200;
 d_H_levsort     = zeros(1,length(k_));
 d_H_one_step    = zeros(1,length(k_));
 d_H_biconvex    = zeros(1,length(k_));

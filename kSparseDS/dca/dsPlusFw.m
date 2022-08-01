@@ -4,7 +4,7 @@ close all;
 n            = 200;
 d            = 20;
 m            = 10;
-numAssigned  = 100;
+numAssigned  = 80;
 MC           = 5;
 d_H          = 0;
 Aeq          = zeros(2*n,n*n);
@@ -27,7 +27,7 @@ for t = 1 : MC
     FOld = 1e5;
     F = 0;
     P = eye(n);
-    %P = ones(n,n)/n;
+    P = ones(n,n)/n;
     while norm(FOld - F) > tol
         FOld  = F;
         [D,G] = getDir(orthB,P,Y,Aeq,diagIneq,numAssigned);
