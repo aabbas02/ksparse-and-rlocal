@@ -4,14 +4,12 @@ close all;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % min_P ||Bx - Py ||_2 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-n            = 500;
-d            = 100;
-m            = 50;
-numAssigned  = 250;
-MC           = 1;
-B            = randn(n,d);
-orthB        = B*pinv(B);
-orthB        = eye(n) - orthB;
+n            = 100;
+d            = 10;
+m            = 5;
+numAssigned  = 40;
+MC           = 5;
+d_H          = 0;
 Aeq          = zeros(2*n,n*n);
 for i = 1 : n
     Aeq(i,(i-1)*n+1:i*n) = 1;
@@ -21,30 +19,35 @@ for i = 1 : n
 end
 diagIneq  = reshape(eye(n),[1,n^2]);
 options   = optimoptions('linprog','Display','none'); %pass to linprog
-P_star    = get_permutation(n,numAssigned);
-X_true    = randn(d,m);
-Y         = P_star*B*X_true;
 tol = 5e-4;
-FOld = 1e5;
-F = 0;
-P = eye(n);
-%P = ones(n,n)/n;
-while(norm(FOld - F) > tol)        
-       FOld  = F;
-       [S,G] = getDir(orthB,P,Y,Aeq,diagIneq,numAssigned);
-       StepS = - trace(orthB*S*(Y*Y')*P')/...
-                 trace(orthB*S*(Y*Y')*S');
-       if( StepS > 1 || StepS < 0)
-       StepS  = stepSearch(orthB,P,Y,S,G);
-       end
-       P = (1-StepS)*P + StepS*S;
-       F = norm(orthB*P*Y,'fro')^2
+for t = 1 : MC
+    B  = randn(n,d);
+    orthB = B*pinv(B);
+    orthB = eye(n) - orthB;
+    P_star = get_permutation(n,numAssigned);
+    X_true = randn(d,m);
+    Y = P_star*B*X_true;
+    FOld = 1e5;
+    F = 0;
+    P = eye(n);
+    %P = ones(n,n)/n;
+    while norm(FOld - F) > tol
+        FOld  = F;
+        [D,G] = getDir(orthB,P,Y,Aeq,diagIneq,numAssigned);
+        StepS = - trace(orthB*D*(Y*Y')*P')/...
+            trace(orthB*D*(Y*Y')*D');
+        if( StepS > 1 || StepS < 0)
+            StepS  = stepSearch(orthB,P,Y,D,G);
+        end
+        P = (1-StepS)*P + StepS*D;
+        F = norm(orthB*P*Y,'fro')^2;
+    end
+    F
+    c    = reshape(P,[n^2,1]);
+    PHat = linprog(-c,[],[],Aeq,ones(2*n,1),zeros(n*n,1),[],options);
+    PHat = reshape(PHat,[n,n]);
+    d_H  = d_H + sum(sum(PHat' ~= P_star))/2/n
 end
-F
-c      = reshape(P,[n^2,1]);
-PHat = linprog(-c,[],[],Aeq,ones(2*n,1),zeros(n*n,1),[],options);
-PHat  = reshape(PHat,[n,n]);
-d_H     = sum(sum(PHat' ~= P_star))/2/n
 trace(PHat)
 function [pi_map] = get_permutation(n,num_assigned)
     idx_p   = randsample(n,n);
@@ -67,18 +70,19 @@ function [D,G] = getDir(orthB,P,Y,Aeq,diagIneq,numAssigned)
      D = linprog(reshape(G,[n^2,1]),...
                  -diagIneq,-numAssigned,...  % trace inequality constraints
                  Aeq,ones(2*n,1),...         % equality row, column
-                 zeros(n*n,1),[],options);   % > 0 constraints
+                 zeros(n^2,1),[],options);   % > 0 constraints
      %toc
      D = reshape(D,[n,n]);
 end
-function [gamma] = stepSearch(orthB,P,Y,D,gradient)
+function [gamma] = stepSearch(orthB,P,Y,D,G)
+    disp('not found')
     gamma         = 0.01;
     objFunc       = @(P)  norm(orthB*P*Y,'fro')^2;
     objFuncValue  = objFunc(P);
     dir           = D - P;
-    while (objFunc( P + gamma*dir ) > objFuncValue + 1e-1*gamma*trace(dir'*gradient))
+    while (objFunc( P + gamma*dir ) > objFuncValue + 1e-1*gamma*trace(dir'*G))
         gamma = 0.75*gamma;
-        if (gamma < 1e-5 )
+        if gamma < 1e-5 
             error('Error in Line search - gamma close to working precision');
         end
     end
