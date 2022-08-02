@@ -11,16 +11,14 @@ SNR             = 100;
 n               = 100;
 d               = 20;
 m               = 10;
-%k_              = 2*[300 325 350 375 400 450];
-%k_              = 850;
 k_              = 60;
-%k_              = [100 200]
 d_H_levsort     = zeros(1,length(k_));
 d_H_one_step    = zeros(1,length(k_));
 d_H_biconvex    = zeros(1,length(k_));
 d_H_sls         = zeros(1,length(k_));
 d_H_alt_min     = zeros(1,length(k_));
 d_H_rlus        = zeros(1,length(k_));
+d_H_
 rho_            = -3:1;
 rho_            = 10.^rho_;
 rLocal          = 0;
@@ -38,11 +36,10 @@ for j = 1 : length(k_)
         Y_permuted       = Y(pi_,:);
         Y_permuted_noisy = Y_permuted + W;
         %---rlus  https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=9440727
-        tic
         pi_rlus          = rlus(B,Y_permuted_noisy,r_arr,rLocal);
-        t_rlus = toc
         d_H              = sum(pi_ ~= pi_rlus)/n;
         d_H_rlus(j)      = d_H + d_H_rlus(1,j);
+%{
         %---biconvex https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8849447
 %         d_H_min = 1;
 %         tic
@@ -57,21 +54,20 @@ for j = 1 : length(k_)
 %         end
 %         toc
 %         d_H_biconvex(j) = d_H_biconvex(j) + d_H_min;
+%}
         %---icml https://proceedings.mlr.press/v119/zhang20n.html
-        tic
         pi_icml            = icml_20(B,Y_permuted_noisy,r_arr);
         d_H_one_step(j)    = d_H_one_step(j) + sum(pi_ ~= pi_icml)/n;
-        t_one_step = toc
         %               %---levsort  https://people.eecs.berkeley.edu/~courtade/pdfs/DenoisingLinearModels_ISIT2017.pdf
-        tic
         pi_lev             = levsort(B,Y_permuted_noisy,r_arr);
-        t_levsort = toc
         d_H_levsort(j)     = d_H_levsort(j) + sum(pi_ ~= pi_lev)/n;
         %---Slawaski URL?
-        tic
         [pi_sls,~]         = slawski(B,Y_permuted_noisy,noise_var,r_arr);
-        t_sls = toc
         d_H_sls(j)         = d_H_sls(j) + sum(pi_ ~= pi_sls)/n;
+		%---DS+
+		[PhatFW] = dsPlus(B,Y_permuted_noisy,k);
+		[~,PhatFWLin] = find(PhatFW');
+		d_H_FW(j)  = d_H_FW(j) + sum(pi_ ~= PhatFWLin)/n;
         %---alt-min/proposed
         tic
         [pi_alt_min]       = AltMin(B,Y_permuted_noisy,r_arr,maxIter,rLocal,0);
@@ -87,19 +83,12 @@ d_H_levsort      = d_H_levsort/MC;
 d_H_biconvex     = d_H_biconvex/MC;
 d_H_sls          = d_H_sls/MC;
 d_H_alt_min      = d_H_alt_min/MC;
-%styles =["r-x","g-x","b-x","m-x","y-x","k-x"];
+
 hold on;
 plot(1:length(k_),d_H_one_step,'-x','Color','#0072BD',...
     'DisplayName','Spectral',...
     'MarkerSize',11,'Linewidth',1.65);
 
-%plot(1:length(k_),d_H_levsort,styles(3),...
-%    'DisplayName','Levsort',...
-%    'MarkerSize',11,'Linewidth',1.65);
-
-% plot(1:length(k_),d_H_biconvex,styles(2),...
-%      'DisplayName','Biconvex',...
-%      'MarkerSize',11,'Linewidth',1.65);
 
 plot(1:length(k_),d_H_rlus,'-x','Color','#D95319',...
     'DisplayName','RLUS',...

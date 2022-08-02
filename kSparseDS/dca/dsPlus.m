@@ -1,25 +1,8 @@
-clear all;
-clc;
-close all;
-n            = 1000;
-d            = 100;
-m            = 50;
-numAssigned  = 350;
-MC           = 5;
-d_H          = 0;
-Aeq          = zeros(2*n,n*n);
-for i = 1 : n
-    Aeq(i,(i-1)*n+1:i*n) = 1;
-end
-for i = 1 : n
-    Aeq(i+n,i:n:i+(n-1)*n) = 1;
-end
-diagIneq  = reshape(eye(n),[1,n^2]);
-options   = optimoptions('linprog','Display','none'); %pass to linprog
-tol = 5e-4;
-for t = 1 : MC
-    B  = randn(n,d);
-    orthB = B*pinv(B);
+function [Phat] = dsPlus(B,Y,k)
+	n = size(B,1);
+	numAssigned = n - k;
+	[Aeq,diagIneq] = getConstraints(n);
+	orthB = B*pinv(B);
     orthB = eye(n) - orthB;
     P_star = get_permutation(n,numAssigned);
     X_true = randn(d,m);
@@ -27,7 +10,8 @@ for t = 1 : MC
     FOld = 1e5;
     F = 0;
     P = eye(n);
-    %P = ones(n,n)/n;
+    P = ones(n,n)/n;
+    i = 0;
     while norm(FOld - F) > tol
         FOld  = F;
         [D,G] = getDir(orthB,P,Y,Aeq,diagIneq,numAssigned);
@@ -38,26 +22,17 @@ for t = 1 : MC
         end
         P = (1-StepS)*P + StepS*D;
         F = norm(orthB*P*Y,'fro')^2;
+        if mod(i,50) == 0
+            F
+        end
+        i = i + 1;
     end
     F
     c    = reshape(P,[n^2,1]);
-    PHat = linprog(-c,[],[],Aeq,ones(2*n,1),zeros(n*n,1),[],options);
+    PHat = linprog(-c,[],[],Aeq,ones(2*n,1),zeros(n*n,1),[]);
     PHat = reshape(PHat,[n,n]);
-    d_H  = d_H + sum(sum(PHat' ~= P_star))/2/n
 end
-trace(PHat)
-function [pi_map] = get_permutation(n,num_assigned)
-    idx_p   = randsample(n,n);
-    lin_idx = randsample(n,num_assigned);
-    for k = 1 : num_assigned
-        idx_p(idx_p == lin_idx(k)) = idx_p(lin_idx(k));
-        idx_p(lin_idx(k))    = lin_idx(k);
-    end
-    pi_map = zeros(n,n);
-    for t = 1:n
-        pi_map(t,idx_p(t)) = 1;
-    end
-end
+
 function [D,G] = getDir(orthB,P,Y,Aeq,diagIneq,numAssigned)
      n = size(P,1);
      m = size(P,2);
@@ -65,12 +40,13 @@ function [D,G] = getDir(orthB,P,Y,Aeq,diagIneq,numAssigned)
      options = optimoptions('linprog','Display','none');
      %tic
      D = linprog(reshape(G,[n^2,1]),...
-                 -diagIneq,-numAssigned,...  % trace inequality constraints
-                 Aeq,ones(2*n,1),...         % equality row, column
-                 zeros(n^2,1),[],options);   % > 0 constraints
+                -diagIneq,-numAssigned,...  % trace inequality constraints
+                Aeq,ones(2*n,1),...         % equality row, column
+                zeros(n^2,1),[],options);   % > 0 constraints
      %toc
-     D = reshape(D,[n,n]);
+     D = reshape(D,[n,n]);        
 end
+
 function [gamma] = stepSearch(orthB,P,Y,D,G)
     disp('not found')
     gamma         = 0.01;
@@ -83,4 +59,15 @@ function [gamma] = stepSearch(orthB,P,Y,D,G)
             error('Error in Line search - gamma close to working precision');
         end
     end
+end
+
+function [Aeq,diagIneq] = getConstraints(n)
+	Aeq          = zeros(2*n,n*n);
+	for i = 1 : n
+		Aeq(i,(i-1)*n+1:i*n) = 1;
+	end
+	for i = 1 : n
+		Aeq(i+n,i:n:i+(n-1)*n) = 1;
+	end
+	diagIneq  = reshape(eye(n),[1,n^2]);
 end
