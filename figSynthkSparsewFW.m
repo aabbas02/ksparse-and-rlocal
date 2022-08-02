@@ -8,9 +8,9 @@ addpath(genpath('.\misc'),...
 tic
 MC              = 5;
 SNR             = 100;
-n               = 50;
-d               = 5;
-m               = 5;
+n               = 200;
+d               = 20;
+m               = 10;
 k_              = 10;
 d_H_levsort     = zeros(1,length(k_));
 d_H_one_step    = zeros(1,length(k_));
@@ -30,7 +30,7 @@ for j = 1 : length(k_)
         B = rand(n,d);
         X = randn(d,m);
         Y = B*X;
-        noise_var = 0*norm(X,'fro')^2  / (SNR*m);
+        noise_var = 1*norm(X,'fro')^2  / (SNR*m);
         W = sqrt(noise_var)*randn(n,m);
         pi_ = get_permutation_k(n,k);
         Y_permuted = Y(pi_,:);
