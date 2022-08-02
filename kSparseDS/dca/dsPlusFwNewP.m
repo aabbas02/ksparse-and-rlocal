@@ -4,11 +4,11 @@ close all;
 n            = 200;
 d            = 20;
 m            = 10;
-numAssigned  = 100;
+numAssigned  = 80;
 k            = n - numAssigned;
 MC           = 15;
 d_H          = 0;
-tol = 5e-4;
+tol = 1e-3;
 [Aeq,diagIneq] = getConstraints(n);
 for t = 1 : MC
     B  = randn(n,d);
