@@ -27,18 +27,18 @@ maxIter         = 50;
 for j = 1 : length(k_)
 	k = k_(j);
     for t = 1 : MC
-        B                = rand(n,d);
-        X                = randn(d,m);
-        Y                = B*X;
-        noise_var   	 = 0*norm(X,'fro')^2  / (SNR*m);
-        W                = sqrt(noise_var)*randn(n,m);
-        pi_              = get_permutation_k(n,k);
-        Y_permuted       = Y(pi_,:);
+        B = rand(n,d);
+        X = randn(d,m);
+        Y = B*X;
+        noise_var = 0*norm(X,'fro')^2  / (SNR*m);
+        W = sqrt(noise_var)*randn(n,m);
+        pi_ = get_permutation_k(n,k);
+        Y_permuted = Y(pi_,:);
         Y_permuted_noisy = Y_permuted + W;
         %---rlus  https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=9440727
-        pi_rlus          = rlus(B,Y_permuted_noisy,r_arr,rLocal);
-        d_H              = sum(pi_ ~= pi_rlus)/n;
-        d_H_rlus(j)      = d_H + d_H_rlus(1,j);
+        pi_rlus = rlus(B,Y_permuted_noisy,r_arr,rLocal);
+        d_H = sum(pi_ ~= pi_rlus)/n;
+        d_H_rlus(j) = d_H + d_H_rlus(1,j);
 %{
         %---biconvex https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8849447
 %         d_H_min = 1;
