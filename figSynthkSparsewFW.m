@@ -6,12 +6,12 @@ addpath(genpath('.\misc'),...
         genpath('.\altMinProposed'),...
         genpath('.\benchmarks')); 
 tic
-MC              = 5;
+MC              = 15;
 SNR             = 100;
-n               = 200;
-d               = 20;
-m               = 10;
-k_              = 10;
+n               = 20;
+d               = 5;
+m               = 5;
+k_              = 5;
 d_H_levsort     = zeros(1,length(k_));
 d_H_one_step    = zeros(1,length(k_));
 d_H_biconvex    = zeros(1,length(k_));
@@ -27,7 +27,7 @@ maxIter         = 50;
 for j = 1 : length(k_)
 	k = k_(j);
     for t = 1 : MC
-        B = rand(n,d);
+        B = randn(n,d);
         X = randn(d,m);
         Y = B*X;
         noise_var = 0*norm(X,'fro')^2  / (SNR*m);
@@ -66,7 +66,7 @@ for j = 1 : length(k_)
         d_H_sls(j) = d_H_sls(j) + sum(pi_ ~= pi_sls)/n;
 		%---DS+
 		[PhatFW] = dsPlus(B,Y_permuted_noisy,k);
-		[~,PhatFWLin] = find(PhatFW');
+		[~,PhatFWLin] = find(PhatFW);
 		d_H_FW(j)  = d_H_FW(j) + sum(pi_ ~= PhatFWLin)/n;
         %---alt-min/proposed
         [pi_alt_min]  = AltMin(B,Y_permuted_noisy,r_arr,maxIter,rLocal,0);

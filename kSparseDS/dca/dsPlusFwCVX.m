@@ -1,11 +1,11 @@
 clear all;
 clc;
 close all;
-n            = 100;
-d            = 20;
-m            = 10;
-numAssigned  = 40;
-MC           = 5;
+n            = 20;
+d            = 5;
+m            = 5;
+numAssigned  = 15;
+MC           = 55;
 d_H          = 0;
 Aeq          = zeros(2*n,n*n);
 for i = 1 : n
