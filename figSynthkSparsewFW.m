@@ -8,10 +8,10 @@ addpath(genpath('.\misc'),...
 tic
 MC              = 15;
 SNR             = 100;
-n               = 20;
-d               = 5;
-m               = 5;
-k_              = 5;
+n               = 200;
+d               = 20;
+m               = 10;
+k_              = 120;
 d_H_levsort     = zeros(1,length(k_));
 d_H_one_step    = zeros(1,length(k_));
 d_H_biconvex    = zeros(1,length(k_));
@@ -44,12 +44,11 @@ for j = 1 : length(k_)
 %         d_H_min = 1;
 %         tic
 %         for i = 1 : length(rho_) % cross validate across rho paramter
-%             %for i = 1 : 1
 %             rho              = rho_(i);
 %             pi_admm          = admm(B,Y_permuted_noisy,r_arr,rho);
 %             d_H_             = sum(pi_ ~= pi_admm)/n;
 %             if d_H_ < d_H_min
-%                 d_H_min = d_H_;
+%                d_H_min = d_H_;
 %             end
 %         end
 %         toc
@@ -58,16 +57,16 @@ for j = 1 : length(k_)
         %---icml https://proceedings.mlr.press/v119/zhang20n.html
         pi_icml = icml_20(B,Y_permuted_noisy,r_arr);
         d_H_one_step(j) = d_H_one_step(j) + sum(pi_ ~= pi_icml)/n;
-        %               %---levsort  https://people.eecs.berkeley.edu/~courtade/pdfs/DenoisingLinearModels_ISIT2017.pdf
+        %---levsort  https://people.eecs.berkeley.edu/~courtade/pdfs/DenoisingLinearModels_ISIT2017.pdf
         pi_lev  = levsort(B,Y_permuted_noisy,r_arr);
         d_H_levsort(j) = d_H_levsort(j) + sum(pi_ ~= pi_lev)/n;
         %---Slawaski URL?
         [pi_sls,~] = slawski(B,Y_permuted_noisy,noise_var,r_arr);
         d_H_sls(j) = d_H_sls(j) + sum(pi_ ~= pi_sls)/n;
 		%---DS+
-		[PhatFW] = dsPlus(B,Y_permuted_noisy,k);
-		[~,PhatFWLin] = find(PhatFW);
-		d_H_FW(j)  = d_H_FW(j) + sum(pi_ ~= PhatFWLin)/n;
+% 		[PhatFW] = dsPlus(B,Y_permuted_noisy,k);
+% 		[~,PhatFWLin] = find(PhatFW);
+% 		d_H_FW(j)  = d_H_FW(j) + sum(pi_ ~= PhatFWLin)/n;
         %---alt-min/proposed
         [pi_alt_min]  = AltMin(B,Y_permuted_noisy,r_arr,maxIter,rLocal,0);
         d_H = sum(pi_ ~= pi_alt_min)/n;
@@ -107,7 +106,7 @@ xlabel('number of shuffles $k$','interpreter','Latex','Fontsize',14);
 ylabel('$d_H/n$','interpreter','Latex','Fontsize',14)
 Lgnd =  legend('show');
 set(Lgnd, 'Interpreter','Latex','Fontsize',12,'Location','Northwest')
-title(['$ \mathbf P^*_k. \, n = $ ',num2str(n), ' $ m = $ ', num2str(m), ' $ d = $ ', num2str(d),...
+title(['$ \mathbf P^*_k \, n = $ ',num2str(n), ' $ m = $ ', num2str(m), ' $ d = $ ', num2str(d),...
         '$\mathbf{B} \sim N(0,1)$'],...
         'interpreter','Latex','Fontsize',16)
 set(gca,'FontSize',16)
