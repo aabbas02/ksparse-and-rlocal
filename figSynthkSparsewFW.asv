@@ -8,8 +8,8 @@ addpath(genpath('.\misc'),...
 tic
 n               = 2*100;
 d               = 20;
-m               = 10;
-k_              = 2*[40 45 50 55 60 65 70];
+m               = ;
+k_              = 2*[50 55 60 65 70];
 SNR             = 100;
 MC              = 15;
 d_H_levsort     = zeros(1,length(k_));
