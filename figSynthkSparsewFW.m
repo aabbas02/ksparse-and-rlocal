@@ -6,7 +6,7 @@ addpath(genpath('.\misc'),...
         genpath('.\altMinProposed'),...
         genpath('.\benchmarks')); 
 tic
-n               = 100;
+n               = 125;
 d               = 20;
 m               = 10;
 k_              = round(1*[35 40 45 50 55 60 65 70]);
@@ -115,5 +115,5 @@ title(['$ \mathbf P^*_k \, n = $ ',num2str(n), ' $ m = $ ', num2str(m), ' $ d = 
         'interpreter','Latex','Fontsize',16)
 set(gca,'FontSize',16)
 ax = gca;
-exportgraphics(ax,'kSparserandnrandn100Highd10.pdf','Resolution',300) 
-saveas(gcf,'kSparserandnrandn100Highd10.fig')
+exportgraphics(ax,'kSparserandnrandn115Highd20.pdf','Resolution',300) 
+saveas(gcf,'kSparserandnrandn115Highd20.fig')

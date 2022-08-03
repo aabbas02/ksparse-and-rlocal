@@ -5,7 +5,7 @@ function [pi_map] = dsPlus(orthB,Y,seeds)
            n = size(orthB,1);
            cvx_begin 
            cvx_solver sedumi
-           cvx_precision high
+           cvx_precision medium
                  variable P(n,n)
                  P(:) >= 0;
                  P*ones(n,1)     == ones(n,1);
