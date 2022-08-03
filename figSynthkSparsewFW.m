@@ -6,26 +6,26 @@ addpath(genpath('.\misc'),...
         genpath('.\altMinProposed'),...
         genpath('.\benchmarks')); 
 tic
-MC              = 15;
+n               = 100;
+d               = 10;
+m               = 5;
+k_              = [50 55 60 65 70];
 SNR             = 100;
-n               = 200;
-d               = 20;
-m               = 10;
-k_              = 120;
+MC              = 15;
 d_H_levsort     = zeros(1,length(k_));
 d_H_one_step    = zeros(1,length(k_));
 d_H_biconvex    = zeros(1,length(k_));
 d_H_sls         = zeros(1,length(k_));
 d_H_alt_min     = zeros(1,length(k_));
 d_H_rlus        = zeros(1,length(k_));
-d_H_FW          = zeros(1,length(k_));
-rho_            = -3:1;
-rho_            = 10.^rho_;
+d_H_DS          = zeros(1,length(k_));
+rho_            = 10.^(-3:1);
 rLocal          = 0;
 r_arr           = n;
 maxIter         = 50;
 for j = 1 : length(k_)
 	k = k_(j);
+    numAssigned = n - k;
     for t = 1 : MC
         B = randn(n,d);
         X = randn(d,m);
@@ -64,9 +64,13 @@ for j = 1 : length(k_)
         [pi_sls,~] = slawski(B,Y_permuted_noisy,noise_var,r_arr);
         d_H_sls(j) = d_H_sls(j) + sum(pi_ ~= pi_sls)/n;
 		%---DS+
-% 		[PhatFW] = dsPlus(B,Y_permuted_noisy,k);
-% 		[~,PhatFWLin] = find(PhatFW);
-% 		d_H_FW(j)  = d_H_FW(j) + sum(pi_ ~= PhatFWLin)/n;
+        orthB = B*pinv(B);
+        orthB = eye(n) - orthB;
+ 		[PhatDS] = dsPlus(orthB,Y_permuted_noisy,numAssigned);
+ 		temp = eye(n);
+        piMat = temp(pi_,:);
+        d_H_DS(j)  = d_H_DS(j) + sum(sum(PhatDS ~= piMat))/(2*n);
+ 		%d_H_DS(j)  = d_H_DS(j) + sum(pi_ ~= c)/n;
         %---alt-min/proposed
         [pi_alt_min]  = AltMin(B,Y_permuted_noisy,r_arr,maxIter,rLocal,0);
         d_H = sum(pi_ ~= pi_alt_min)/n;
@@ -79,7 +83,7 @@ d_H_rlus         = d_H_rlus/MC;
 d_H_levsort      = d_H_levsort/MC;
 d_H_biconvex     = d_H_biconvex/MC;
 d_H_sls          = d_H_sls/MC;
-d_H_FW           = d_H_FW/MC;
+d_H_DS           = d_H_DS/MC;
 d_H_alt_min      = d_H_alt_min/MC;
 
 hold on;
@@ -92,7 +96,7 @@ plot(1:length(k_),d_H_rlus,'-x','Color','#D95319',...
 plot(1:length(k_),d_H_sls,'-x','Color','#EDB120',...
     'DisplayName','$\ell_2$-regularized',...
     'MarkerSize',11,'Linewidth',1.65);
-plot(1:length(k_),d_H_FW,'-x','Color','#0B0',...
+plot(1:length(k_),d_H_DS,'-x','Color','#0B0',...
     'DisplayName','ds+',...
     'MarkerSize',11,'Linewidth',1.65);
 plot(1:length(k_),d_H_alt_min,'-x','Color','#7E2F8E',...
@@ -111,5 +115,5 @@ title(['$ \mathbf P^*_k \, n = $ ',num2str(n), ' $ m = $ ', num2str(m), ' $ d = 
         'interpreter','Latex','Fontsize',16)
 set(gca,'FontSize',16)
 ax = gca;
-exportgraphics(ax,'kSparserandnrandn.pdf','Resolution',300) 
-saveas(gcf,'kSparserandnrandn.fig')
+exportgraphics(ax,'kSparserandnrandn100_.pdf','Resolution',300) 
+saveas(gcf,'kSparserandnrandn100_.fig')
