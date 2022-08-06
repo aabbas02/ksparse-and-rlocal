@@ -30,7 +30,7 @@ for j = 1 : length(k_)
         B = randn(n,d);
         X = randn(d,m);
         Y = B*X;
-        noise_var = 0*norm(X,'fro')^2  / (SNR*m);
+        noise_var = 1*norm(X,'fro')^2  / (SNR*m);
         W = sqrt(noise_var)*randn(n,m);
         pi_ = get_permutation_k(n,k);
         Y_permuted = Y(pi_,:);
@@ -107,7 +107,7 @@ xticks = 1:length(k_);
 set(gca, 'XTick', xticks, 'XTickLabel', k_,'Fontsize',14);
 grid('on');
 xlabel('number of shuffles $k$','interpreter','Latex','Fontsize',14);
-ylabel('$d_H/n$','interpreter','Latex','Fontsize',14)
+%ylabel('$d_H/n$','interpreter','Latex','Fontsize',14)
 Lgnd =  legend('show');
 set(Lgnd, 'Interpreter','Latex','Fontsize',12,'Location','Northwest')
 title(['$ \mathbf P^*_k \, n = $ ',num2str(n), ' $ m = $ ', num2str(m), ' $ d = $ ', num2str(d),...
@@ -115,5 +115,5 @@ title(['$ \mathbf P^*_k \, n = $ ',num2str(n), ' $ m = $ ', num2str(m), ' $ d = 
         'interpreter','Latex','Fontsize',16)
 set(gca,'FontSize',16)
 ax = gca;
-exportgraphics(ax,'kSparserandnrandn125Medd20moreK.pdf','Resolution',300) 
-saveas(gcf,'kSparserandnrandn125Medd20moreK.fig')
+exportgraphics(ax,'DSPlus.pdf','Resolution',300) 
+saveas(gcf,'DSPlus.fig')

@@ -6,7 +6,7 @@ addpath(genpath('.\misc'),...
         genpath('.\alt_min'),...
         genpath('.\benchmarks')); 
 tic
-MC              = 1;
+MC              = 3;
 SNR             = 100;
 d               = 100;
 m               = 50;
@@ -23,8 +23,10 @@ d_H_alt_min     = zeros(1,length(k_));
 d_H_rlus        = zeros(1,length(k_));
 rho_            = -3:1;
 rho_            = 10.^rho_;
-r_local         = 0;
 r_arr           = n;
+maxIter         = 20;
+rLocal          = 0;
+lsInit          = 0;
 for j = 1 : length(k_)
 	k = k_(j);
     for t = 1 : MC
@@ -38,7 +40,7 @@ for j = 1 : length(k_)
         Y_permuted_noisy = Y_permuted + W;
         %---rlus  https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=9440727
         tic
-        pi_rlus          = rlus(B,Y_permuted_noisy,r_arr,r_local);
+        pi_rlus          = rlus(B,Y_permuted_noisy,r_arr,rLocal);
         t_rlus = toc
         d_H              = sum(pi_ ~= pi_rlus)/n;
         d_H_rlus(j)      = d_H + d_H_rlus(1,j);
@@ -73,7 +75,7 @@ for j = 1 : length(k_)
         d_H_sls(j)         = d_H_sls(j) + sum(pi_ ~= pi_sls)/n;
         %---alt-min/proposed
         tic
-        [pi_alt_min]       = lp_ls_alt_min_prox(B,Y_permuted_noisy,r_arr,r_local);
+        [pi_alt_min]       = AltMin(B,Y_permuted_noisy,r_arr,maxIter,rLocal,lsInit);
         t_proposed = toc 
         d_H                = sum(pi_ ~= pi_alt_min)/n;
         d_H_alt_min(j)     = d_H + d_H_alt_min(j);
@@ -86,44 +88,31 @@ d_H_levsort      = d_H_levsort/MC;
 d_H_biconvex     = d_H_biconvex/MC;
 d_H_sls          = d_H_sls/MC;
 d_H_alt_min      = d_H_alt_min/MC;
-%styles =["r-x","g-x","b-x","m-x","y-x","k-x"];
 hold on;
 plot(1:length(k_),d_H_one_step,'-x','Color','#0072BD',...
     'DisplayName','Spectral',...
     'MarkerSize',11,'Linewidth',1.65);
-
-%plot(1:length(k_),d_H_levsort,styles(3),...
-%    'DisplayName','Levsort',...
-%    'MarkerSize',11,'Linewidth',1.65);
-
-% plot(1:length(k_),d_H_biconvex,styles(2),...
-%      'DisplayName','Biconvex',...
-%      'MarkerSize',11,'Linewidth',1.65);
-
 plot(1:length(k_),d_H_rlus,'-x','Color','#D95319',...
     'DisplayName','RLUS',...
     'MarkerSize',11,'Linewidth',1.65);
-
 plot(1:length(k_),d_H_sls,'-x','Color','#EDB120',...
     'DisplayName','$\ell_2$-regularized',...
     'MarkerSize',11,'Linewidth',1.65);
 plot(1:length(k_),d_H_alt_min,'-x','Color','#7E2F8E',...
     'DisplayName','Proposed',...
     'MarkerSize',11,'Linewidth',1.65);
-%xticks = r_;
 xticks = 1:length(k_);
 set(gca, 'XTick', xticks, 'XTickLabel', k_,'Fontsize',14);
 grid('on');
 xlabel('number of shuffles $k$','interpreter','Latex','Fontsize',14);
-ylabel('$d_H/n$','interpreter','Latex','Fontsize',14)
+%ylabel('$d_H/n$','interpreter','Latex','Fontsize',14)
 Lgnd =  legend('show');
-%set(Lgnd, 'Interpreter','Latex','Fontsize',12,'Location','Northwest')
 set(Lgnd, 'Interpreter','Latex','Fontsize',12,'Location','Southwest')
-title(['$ \mathbf P^*_k. \, n = $ ',num2str(n), ' $ m = $ ', num2str(m), ' $ d = $ ', num2str(d),...
+title(['$ \mathbf P^*_k \, n = $ ',num2str(n), ' $ m = $ ', num2str(m), ' $ d = $ ', num2str(d),...
         ' $\mathbf{B} \sim Unif$'],...
         'interpreter','Latex','Fontsize',16)
 set(gca,'FontSize',16)
 ax = gca;
-exportgraphics(ax,'kSparserandrandn.pdf','Resolution',300) 
-saveas(gcf,'kSparserandrandn.fig')
+exportgraphics(ax,'kSparseRandRandn.pdf','Resolution',300) 
+saveas(gcf,'kSparseRandRandn.fig')
 toc

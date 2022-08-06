@@ -6,14 +6,15 @@ addpath(genpath('.\misc'),...
         genpath('.\altMinProposed'),...
         genpath('.\benchmarks')); 
 tic
-MC              = 25;
+MC              = 15;
 SNR             = 100;
-n               = 100;
-d               = 20;
-m               = 10;
+n               = 1000;
+d               = 100;
+m               = 50;
+k_              = [600 650 700 750 800 850 900];
 %k_              = 2*[300 325 350 375 400 450];
 %k_              = 850;
-k_              = 30;
+%k_              = 30;
 %k_              = [100 200]
 d_H_levsort     = zeros(1,length(k_));
 d_H_one_step    = zeros(1,length(k_));
@@ -116,15 +117,15 @@ xticks = 1:length(k_);
 set(gca, 'XTick', xticks, 'XTickLabel', k_,'Fontsize',14);
 grid('on');
 xlabel('number of shuffles $k$','interpreter','Latex','Fontsize',14);
-ylabel('$d_H/n$','interpreter','Latex','Fontsize',14)
+%ylabel('$d_H/n$','interpreter','Latex','Fontsize',14)
 Lgnd =  legend('show');
 set(Lgnd, 'Interpreter','Latex','Fontsize',12,'Location','Northwest')
 %set(Lgnd, 'Interpreter','Latex','Fontsize',12,'Location','Southwest')
-title(['$ \mathbf P^*_k. \, n = $ ',num2str(n), ' $ m = $ ', num2str(m), ' $ d = $ ', num2str(d),...
+title(['$ \mathbf P^*_k \, n = $ ',num2str(n), ' $ m = $ ', num2str(m), ' $ d = $ ', num2str(d),...
         '$\mathbf{B} \sim N(0,1)$'],...
         'interpreter','Latex','Fontsize',16)
 set(gca,'FontSize',16)
 ax = gca;
-exportgraphics(ax,'kSparserandnrandn.pdf','Resolution',300) 
-saveas(gcf,'kSparserandnrandn.fig')
+exportgraphics(ax,'kSparseRandnRandn.pdf','Resolution',300) 
+saveas(gcf,'kSparseRandnRandn.fig')
 toc
