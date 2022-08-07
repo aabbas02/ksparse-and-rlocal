@@ -1,6 +1,15 @@
-clc
-close all
+%clc 
+close all 
 clear all
+rng('default')
+dir = pwd;
+idcs   = strfind(dir,'\');
+newdir = dir(1:idcs(end)-1);
+cd (newdir)
+addpath(genpath('.\misc'),...
+        genpath('.\benchmarks'),...
+        genpath('.\altMinProposed'),...
+        genpath('.\dataSets'))
 load('sarcos_inv.mat')
 X = sarcos_inv(:,1:21);
 Y = sarcos_inv(:,22:28);
@@ -15,7 +24,7 @@ X = U(:,1:10);
 % drop one of the response variables (first column of Y) to improve fit
 idx = setdiff(1:size(Y,2),1);
 Y = Y(:,idx);
-% make one of the features the block label
+% make one of the features col 6 or col 7 the block label
 sf = 4;
 %numBlocks = length(unique(round(X(:,6),sf))) 
 %blkLabel = round(X(:,6),sf);

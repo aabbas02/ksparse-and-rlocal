@@ -26,7 +26,7 @@ function [pi_hat,fval] =  AltMin(B,Y,r_,maxIter,rLocal,lsInit)
     fval = 1e9;
     fold = 1e10;
     i = 0;
-    while (fval/fold < 0.99 && i < maxIter)
+    while (fval/fold < 0.999 && i < maxIter)
             %tic
             pi_hat = solveLAP(Yhat,Y,r_);
             %toc
