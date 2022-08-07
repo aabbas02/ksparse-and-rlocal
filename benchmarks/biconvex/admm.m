@@ -15,9 +15,12 @@ function [assignment] =  admm(B,Y,r_,rho)
         stop   = sum(r_(1:i));
         c = -(Y_bar(start:stop,:)*...
               B_bar(start:stop,:)');
-        temp = munkres(c);
-        temp = start - 1 + temp;
-        assignment(start : stop) = temp;   
+        %temp = munkres(c);
+        M = matchpairs(c,1e10);
+        M(M(:,1)) = M(:,2);
+        temp = M(:,1);
+        temp = start-1+temp;
+        assignment(start:stop)  = temp;         
     end
     Pi_1(1:n,:) = Pi_1(assignment,:);
     C           = -(Y_bar*B_bar');
@@ -29,9 +32,12 @@ function [assignment] =  admm(B,Y,r_,rho)
         stop   = sum(r_(1:i));
         c = -(Y_bar(start:stop,:)*...
               B_bar(start:stop,:)');
-        temp = munkres(-c);
-        temp = start - 1 + temp;
-        assignment(start : stop) = temp;   
+        %temp = munkres(-c);
+        M = matchpairs(-c,1e10);
+        M(M(:,1)) = M(:,2);
+        temp = M(:,1);
+        temp = start-1+temp;
+        assignment(start:stop)  = temp;         
     end
     Pi_2(1:n,:) = Pi_2(assignment,:);
     C           = -Y_bar*B_bar';
@@ -51,9 +57,12 @@ function [assignment] =  admm(B,Y,r_,rho)
             start  = sum(r_(1:i)) - r_(i) +1;
             stop   = sum(r_(1:i));
             c = C(start:stop,start:stop);
-            temp = munkres(c);
-            temp = start - 1 + temp;
-            assignment(start:stop) = temp;   
+            %temp = munkres(c);
+            M = matchpairs(c,1e10);
+            M(M(:,1)) = M(:,2);
+            temp = M(:,1);
+            temp = start-1+temp;
+            assignment(start:stop)  = temp;         
         end
         Pi_1(1:n,:) = Pi_1(assignment,:);
         assignment = zeros(n,1);
@@ -63,12 +72,15 @@ function [assignment] =  admm(B,Y,r_,rho)
             start  = sum(r_(1:i)) - r_(i) +1;
             stop   = sum(r_(1:i));
             c = C(start:stop,start:stop);
-            temp = munkres(c);
-            temp = start - 1 + temp;
-            assignment(start:stop) = temp;   
+            %temp = munkres(c);
+            M = matchpairs(c,1e10);
+            M(M(:,1)) = M(:,2);
+            temp = M(:,1);
+            temp = start-1+temp;
+            assignment(start:stop)  = temp;         
         end
         Pi_2(1:n,:) = Pi_2(assignment,:);
         mu  = mu + rho*(Pi_1 - Pi_2);
-        %fval = -trace(Pi_1*P_B*Pi_2'*(Y*Y'))
+        fval = -trace(Pi_1*P_B*Pi_2'*(Y*Y'))
     end
 end

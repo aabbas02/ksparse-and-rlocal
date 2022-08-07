@@ -12,10 +12,6 @@ n               = 1000;
 d               = 100;
 m               = 50;
 k_              = [600 650 700 750 800 850 900];
-%k_              = 2*[300 325 350 375 400 450];
-%k_              = 850;
-%k_              = 30;
-%k_              = [100 200]
 d_H_levsort     = zeros(1,length(k_));
 d_H_one_step    = zeros(1,length(k_));
 d_H_biconvex    = zeros(1,length(k_));
@@ -45,34 +41,33 @@ for j = 1 : length(k_)
         d_H              = sum(pi_ ~= pi_rlus)/n;
         d_H_rlus(j)      = d_H + d_H_rlus(1,j);
         %---biconvex https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8849447
-%         d_H_min = 1;
-%         tic
-%         for i = 1 : length(rho_) % cross validate across rho paramter
-%             %for i = 1 : 1
-%             rho              = rho_(i);
-%             pi_admm          = admm(B,Y_permuted_noisy,r_arr,rho);
-%             d_H_             = sum(pi_ ~= pi_admm)/n;
-%             if d_H_ < d_H_min
-%                 d_H_min = d_H_;
-%             end
-%         end
-%         toc
-%         d_H_biconvex(j) = d_H_biconvex(j) + d_H_min;
+        d_H_min = 1;
+        tic
+        for i = 1 : length(rho_) % cross validate across rho paramter
+            rho              = rho_(i);
+            pi_admm          = admm(B,Y_permuted_noisy,r_arr,rho);
+            d_H_             = sum(pi_ ~= pi_admm)/n;
+            if d_H_ < d_H_min
+                d_H_min = d_H_;
+            end
+        end
+        toc
+        d_H_biconvex(j) = d_H_biconvex(j) + d_H_min;
         %---icml https://proceedings.mlr.press/v119/zhang20n.html
         tic
         pi_icml            = icml_20(B,Y_permuted_noisy,r_arr);
         d_H_one_step(j)    = d_H_one_step(j) + sum(pi_ ~= pi_icml)/n;
         t_one_step = toc
-        %               %---levsort  https://people.eecs.berkeley.edu/~courtade/pdfs/DenoisingLinearModels_ISIT2017.pdf
+        %---levsort  https://people.eecs.berkeley.edu/~courtade/pdfs/DenoisingLinearModels_ISIT2017.pdf
         tic
         pi_lev             = levsort(B,Y_permuted_noisy,r_arr);
         t_levsort = toc
         d_H_levsort(j)     = d_H_levsort(j) + sum(pi_ ~= pi_lev)/n;
         %---Slawaski URL?
         tic
-        [pi_sls,~]         = slawski(B,Y_permuted_noisy,noise_var,r_arr);
-        t_sls = toc
-        d_H_sls(j)         = d_H_sls(j) + sum(pi_ ~= pi_sls)/n;
+       % [pi_sls,~]         = slawski(B,Y_permuted_noisy,noise_var,r_arr);
+       % t_sls = toc
+       % d_H_sls(j)         = d_H_sls(j) + sum(pi_ ~= pi_sls)/n;
         %---alt-min/proposed
         tic
         [pi_alt_min]       = AltMin(B,Y_permuted_noisy,r_arr,maxIter,rLocal,0);
