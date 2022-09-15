@@ -20,11 +20,11 @@ xlabels = k_;
 set(gca, 'XTick', xticks, 'XTickLabel', k_,'Fontsize',14);
 grid('on');
 xlabel('number of shuffles $k$','interpreter','Latex','Fontsize',14);
-ylabel('Estimation error $||\mathbf{x}^* - \hat \mathbf x||_2$','interpreter','Latex','Fontsize',14)
+ylabel('estimation error $||\mathbf{x}^* - \hat \mathbf x||_2$','interpreter','Latex','Fontsize',12)
 Lgnd =  legend('show');
 set(Lgnd, 'Interpreter','Latex','Fontsize',12,'Location','Southeast')
 %set(Lgnd, 'Interpreter','Latex','Fontsize',12)
-title(['$ \mathbf P^*_k, \, n = $ ',num2str(n), ' $ m = $ ', num2str(m), ' $ d = $ ', num2str(d),...
+title(['$ \mathbf P^*_k \, n = $ ',num2str(n), ' $ m = $ ', num2str(m), ' $ d = $ ', num2str(d),...
         '$\mathbf{B} \sim N(0,1)$'],...
         'interpreter','Latex','Fontsize',16)
 set(gca,'FontSize',16)
