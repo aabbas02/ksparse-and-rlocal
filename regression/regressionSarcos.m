@@ -1,4 +1,4 @@
-%clc 
+clc 
 close all 
 clear all
 rng('default')
@@ -14,9 +14,9 @@ load('sarcos_inv.mat')
 X = sarcos_inv(:,1:21);
 Y = sarcos_inv(:,22:28);
 % remove outliers
-%[Y,TF] = rmoutliers(Y,'mean');
-%size(Y,1)
-%X = X(~TF,:);
+[Y,TF] = rmoutliers(Y,'movmedian',64);
+size(Y,1)
+X = X(~TF,:);
 X = X - mean(X,1);
 Y = Y - mean(Y,1);
 [U,S,V] = svd(X,'econ');
@@ -55,7 +55,7 @@ Bnaive = X\Y_permuted;
 Yhat = X*Bnaive;
 R2_naive =  1 - norm(Y-Yhat,'fro')^2/norm(Y,'fro')^2
 %----------- proposed ----------------------------------
-maxIter = 20;
+maxIter = 30;
 rLocal = 1;
 lsInit = 0;
 %---------- w collapsed init --------------------------
@@ -64,34 +64,38 @@ Bpro    = X(pi_hat,:) \ Y_permuted;
 beta_pro_err = norm(Bpro - Btrue,2)/norm(Btrue,2);
 R2_pro       = 1 - norm(Y-X*Bpro,'fro')^2/norm(Y,'fro')^2;
 %---------- w least-squares init -----------------------
-lsInit       = 1;
-[pi_hat,fValLS]   = AltMin(X,Y_permuted,r_,maxIter,rLocal,lsInit);
-Bpro         = X(pi_hat,:) \ Y_permuted;
-R2_proLS     = 1 - norm(Y-X*Bpro,'fro')^2/norm(Y,'fro')^2;
-%{
+% lsInit       = 1;
+% [pi_hat,fValLS]   = AltMin(X,Y_permuted,r_,maxIter,rLocal,lsInit);
+% Bpro         = X(pi_hat,:) \ Y_permuted;
+% R2_proLS     = 1 - norm(Y-X*Bpro,'fro')^2/norm(Y,'fro')^2;
 %------------------ slawski ---------------------------------
-% noise_var    = norm(Y_permuted-X*beta_naive,'fro')^2/(size(Y,1)*size(Y,2));
-% tic
-% [pi_hat,~]   = slawski(X,Y_permuted,noise_var,r_);
-% tSLS         = toc;
-% beta_sls     = X(pi_hat,:) \ Y_permuted;
-% beta_sls_err = norm(beta_sls - beta_star,2)/norm(beta_star,2); 
-% R2_sls       = 1 - norm(Y-X*beta_sls,'fro')^2/norm(Y,'fro')^2;
+noise_var    = norm(Y_permuted-X*Bnaive,'fro')^2/(size(Y,1)*size(Y,2));
+tic
+[pi_hat,~]   = slawski(X,Y_permuted,noise_var,r_);
+tSLS         = toc;
+beta_sls     = X(pi_hat,:)\Y_permuted;
+beta_sls_err = norm(beta_sls - Btrue,2)/norm(Btrue,2); 
+R2_sls       = 1 - norm(Y-X*beta_sls,'fro')^2/norm(Y,'fro')^2;
 %----------------- RLUS ---------------------------------------
-% tic
-% [pi_hat] = rlus(X,Y_permuted,r_,rLocal);
-% beta_RLUS = X(pi_hat,:) \ Y_permuted;
-% R2_rlus  = 1 - norm(Y-X*beta_RLUS,'fro')^2/norm(Y,'fro')^2;
-% tRlus = toc;
+tic
+[pi_hat] = rlus(X,Y_permuted,r_,rLocal);
+beta_RLUS = X(pi_hat,:) \ Y_permuted;
+R2_rlus  = 1 - norm(Y-X*beta_RLUS,'fro')^2/norm(Y,'fro')^2;
+tRlus = toc;
+beta_rlus_err = norm(beta_RLUS - Btrue,2)/norm(Btrue,2);
 %----------------------------------------------------------------
-%}
 
 num_blocks = length(r_)
 R2_true 
 R2_naive
 R2_pro
-fVal
-R2_proLS
-fValLS
+R2_sls
+R2_rlus
+%fVal
+%R2_proLS
+%fValLS
 %R2_rlus
+beta_pro_err
+beta_sls_err
+beta_rlus_err
 

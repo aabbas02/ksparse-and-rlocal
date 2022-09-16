@@ -36,4 +36,5 @@ function [pi_hat,fval] =  AltMin(B,Y,r_,maxIter,rLocal,lsInit)
             fval = norm(Y-Yhat(pi_hat,:),'fro')
             i = i + 1;
     end
+    fval
 end

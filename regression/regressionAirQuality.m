@@ -1,7 +1,11 @@
-%clc 
+clc 
 close all 
 clear all
 rng('default')
+mydir  = pwd;
+idcs   = strfind(mydir,'\');
+newdir = mydir(1:idcs(end)-1);
+cd(newdir)
 addpath(genpath('.\misc'),...
         genpath('.\benchmarks'),...
         genpath('.\altMinProposed'),...
@@ -47,7 +51,9 @@ A(:,13) = round(A(:,13));
 % A(:,2,3,4,5) - year,month,day,hour
 %--------------------------------------
 blkLabel = A(:,3) + 1e4*A(:,4);
+blkLabel = A(:,2) + 1e4*A(:,3);
 blkLabel = A(:,2) + 1e4*A(:,4);
+%blkLabel = A(:,2) + 1e4*A(:,4);
 %blkLabel = A(:,2) + 1e4*A(:,5);
 %blkLabel = A(:,2) + 1e3*A(:,4) + 1e5*A(:,5);
 
@@ -72,11 +78,11 @@ n   = size(Y,1);
 pi_ = get_permutation_r(n,r_); 
 Y_permuted = Y(pi_,:);
 %---------------- oracle -----------------------------------
-beta_star = X \ Y;
-R2_true  = 1 - norm(Y-X*beta_star,'fro')^2/norm(Y - mean(Y,1),'fro')^2
+Btrue = X \ Y;
+R2_true  = 1 - norm(Y-X*Btrue,'fro')^2/norm(Y - mean(Y,1),'fro')^2
 %---------------- naive ------------------------------------
-beta_naive = X \ Y_permuted;
-R2_naive  = 1 - norm(Y-X*beta_naive,'fro')^2/norm(Y,'fro')^2
+Bnaive = X \ Y_permuted;
+R2_naive  = 1 - norm(Y-X*Bnaive,'fro')^2/norm(Y,'fro')^2
 %---------------- proposed ----------------------------------
 maxIter = 20;
 rLocal = 1;
@@ -84,39 +90,40 @@ lsInit = 0;
 %---------------- w collapsed init --------------------------
 [pi_hat,fVal] = AltMin(X,Y_permuted,r_,maxIter,rLocal,lsInit);
 Bpro     = X(pi_hat,:) \ Y_permuted;
-BproErr  = norm(Bpro - beta_star,2)/norm(beta_star,2);
+BproErr  = norm(Bpro - Btrue,2)/norm(Btrue,2);
 R2_pro   = 1 - norm(Y-X*Bpro,'fro')^2/norm(Y,'fro')^2;
 %--------------- w least-squares init -----------------------
-lsInit = 1;
-[pi_hat,fValLS]   = AltMin(X,Y_permuted,r_,maxIter,rLocal,lsInit);
-Bpro = X(pi_hat,:) \ Y_permuted;
-R2_proLS  = 1 - norm(Y-X*Bpro,'fro')^2/norm(Y,'fro')^2;
-%{
+% lsInit = 1;
+% [pi_hat,fValLS]   = AltMin(X,Y_permuted,r_,maxIter,rLocal,lsInit);
+% Bpro = X(pi_hat,:) \ Y_permuted;
+% R2_proLS  = 1 - norm(Y-X*Bpro,'fro')^2/norm(Y,'fro')^2;
 %------------------ slawski ---------------------------------
-% noise_var    = norm(Y_permuted-X*beta_naive,'fro')^2/(size(Y,1)*size(Y,2));
-% tic
-% [pi_hat,~]   = slawski(X,Y_permuted,noise_var,r_);
-% tSLS         = toc;
-% beta_sls     = X(pi_hat,:) \ Y_permuted;
-% beta_sls_err = norm(beta_sls - beta_star,2)/norm(beta_star,2); 
-% R2_sls       = 1 - norm(Y-X*beta_sls,'fro')^2/norm(Y,'fro')^2;
-%}
-%{
+noise_var    = norm(Y_permuted-X*Bnaive,'fro')^2/(size(Y,1)*size(Y,2));
+tic
+[pi_hat,~]   = slawski(X,Y_permuted,noise_var,r_);
+tSLS         = toc;
+beta_sls     = X(pi_hat,:) \ Y_permuted;
+beta_sls_err = norm(beta_sls - Btrue,2)/norm(Btrue,2); 
+R2_sls       = 1 - norm(Y-X*beta_sls,'fro')^2/norm(Y,'fro')^2;
 %----------------- RLUS ---------------------------------------
-% tic
-% [pi_hat] = rlus(X,Y_permuted,r_,rLocal);
-% beta_RLUS = X(pi_hat,:) \ Y_permuted;
-% R2_rlus  = 1 - norm(Y-X*beta_RLUS,'fro')^2/norm(Y,'fro')^2;
-% tRlus = toc;
+tic
+[pi_hat] = rlus(X,Y_permuted,r_,rLocal);
+beta_RLUS = X(pi_hat,:) \ Y_permuted;
+R2_rlus  = 1 - norm(Y-X*beta_RLUS,'fro')^2/norm(Y,'fro')^2;
+beta_rlus_err = norm(beta_RLUS - Btrue,2)/norm(Btrue,2);
+tRlus = toc;
 %----------------------------------------------------------------
-%}
 
 num_blocks = length(r_)
 R2_true 
 R2_naive
 R2_pro
-fVal
-R2_proLS
-fValLS
+R2_rlus
+R2_sls
+%fVal
+%R2_proLS
+%fValLS
 %R2_rlus
-
+BproErr
+beta_sls_err
+beta_rlus_err
