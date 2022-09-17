@@ -14,12 +14,12 @@ load('ftp_processed.mat')
 % remove mean
 X = X - mean(X,1);
 Y = Y - mean(Y,1);
-%[U,S,V] = svd(X,'econ');
-%X = U(:,1:30);
+[U,S,V] = svd(X,'econ');
+X = U(:,1:30);
 % make one of the features the block label
-sf = -2;
-numBlocks = length(unique(round(X(:,2),sf))) 
-blkLabel = round(X(:,2),sf);
+sf = 2;
+numBlocks = length(unique(round(X(:,7),sf))) 
+blkLabel = round(X(:,7),sf);
 % sort blockwise
 [blkLabelSorted,idx]  = sort(blkLabel);
 X = X(idx,:);
@@ -37,8 +37,6 @@ pi_ = get_permutation_r(n,r_);
 %pi_ = get_permutation_k(n,round(n/2));
 rLocal = 1;
 Y_permuted = Y(pi_,:);
-[U,S,V] = svd(X,'econ');
-X = U(:,1:30);
 %------------ oracle ---------------------------------------------------
 Btrue = X\Y;
 Yhat = X*Btrue;
