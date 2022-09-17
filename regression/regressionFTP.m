@@ -11,12 +11,12 @@ addpath(genpath('.\misc'),...
         genpath('.\altMinProposed'),...
         genpath('.\dataSets'))
 load('ftp_processed.mat')
-% remove outliers
-%X = X - mean(X,1);
-%Y = Y - mean(Y,1);
+% remove mean
+X = X - mean(X,1);
+Y = Y - mean(Y,1);
 [U,S,V] = svd(X,'econ');
 X = U(:,1:30);
-% make one of the features col 6 or col 7 the block label
+% make one of the features the block label
 sf = 2;
 %numBlocks = length(unique(round(X(:,6),sf))) 
 %blkLabel = round(X(:,6),sf);
