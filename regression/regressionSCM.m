@@ -32,7 +32,9 @@ for i = 1:length(temp)
     r_(i) = t2-t1+1;
 end
 n   = size(Y,1);
-pi_ = get_permutation_r(n,r_); 
+pi_ = get_permutation_r(n,r_);
+%pi_ = get_permutation_k(n,round(n/2));
+rLocal = 1;
 Y_permuted = Y(pi_,:);
 %---------------- oracle -----------------------------------
 Btrue = X \ Y;
@@ -42,7 +44,6 @@ Bnaive = X \ Y_permuted;
 R2_naive  = 1 - norm(Y-X*Bnaive,'fro')^2/norm(Y,'fro')^2
 %---------------- proposed ----------------------------------
 maxIter = 25;
-rLocal = 1;
 lsInit = 0;
 %---------------- w collapsed init --------------------------
 [pi_hat,fVal] = AltMin(X,Y_permuted,r_,maxIter,rLocal,lsInit);
@@ -50,10 +51,11 @@ Bpro     = X(pi_hat,:) \ Y_permuted;
 BproErr  = norm(Bpro - Btrue,2)/norm(Btrue,2);
 R2_pro   = 1 - norm(Y-X*Bpro,'fro')^2/norm(Y,'fro')^2;
 %--------------- w least-squares init -----------------------
-% lsInit       = 1;
-% [pi_hat,fValLS]   = AltMin(X,Y_permuted,r_,maxIter,rLocal,lsInit);
-% Bpro     = X(pi_hat,:) \ Y_permuted;
-% R2_proLS     = 1 - norm(Y-X*Bpro,'fro')^2/norm(Y,'fro')^2;
+lsInit       = 1;
+[pi_hat,fValLS]   = AltMin(X,Y_permuted,r_,maxIter,rLocal,lsInit);
+Bpro     = X(pi_hat,:) \ Y_permuted;
+R2_proLS     = 1 - norm(Y-X*Bpro,'fro')^2/norm(Y,'fro')^2;
+BproLSerr = norm(Bpro - Btrue,2)/norm(Btrue,2);
 %------------------ slawski ---------------------------------
 noise_var    = norm(Y_permuted-X*Bnaive,'fro')^2/(size(Y,1)*size(Y,2));
 tic
@@ -84,22 +86,24 @@ tRlus = toc;
 %     end
 %end
 %------------------------------------------------------------------
-pi_icml     = icml_20(X,Y_permuted,r_);
-beta_icml   = X(pi_icml,:) \ Y_permuted;
-R2_icml     = 1 - norm(Y-X*beta_icml,'fro')^2/norm(Y,'fro')^2;
-BicmlErr    = norm(beta_icml - Btrue,2)/norm(Btrue,2); 
+%pi_icml     = icml_20(X,Y_permuted,r_);
+%beta_icml   = X(pi_icml,:) \ Y_permuted;
+%R2_icml     = 1 - norm(Y-X*beta_icml,'fro')^2/norm(Y,'fro')^2;
+%BicmlErr    = norm(beta_icml - Btrue,2)/norm(Btrue,2); 
 %-----------------------------------------------------------------
 num_blocks = length(r_)
 R2_true 
 R2_naive
 R2_pro
+R2_proLS
 R2_sls
 R2_rlus
-R2_pro
-R2_icml
+%R2_icml
 %R2_admm_max
 BproErr
+BproLSerr
 BslsErr
-BicmlErr
+BrlusErr
+%BicmlErr
 %beta_admm_err
 %R2_proLS
