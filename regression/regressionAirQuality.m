@@ -1,3 +1,4 @@
+rng('default')
 clc 
 close all 
 clear all
@@ -12,7 +13,7 @@ addpath(genpath('.\misc'),...
         genpath('.\dataSets'))
 A = readmatrix('air_quality_data.csv');
 % retain rows of data from years 
-idx1 = find(A(:,2) == 2013, 1 );
+idx1 = find(A(:,2) == 2014, 1 );
 idx2 = find(A(:,2) == 2017, 1, 'last' );
 A = A(idx1:idx2,:);
 idx = 1:size(A,2);
@@ -50,11 +51,11 @@ A(:,13) = round(A(:,13));
 % get block label
 % A(:,2,3,4,5) - year,month,day,hour
 %--------------------------------------
-blkLabel = A(:,3) + 1e4*A(:,4);
-blkLabel = A(:,2) + 1e4*A(:,3);
-blkLabel = A(:,2) + 1e4*A(:,4);
+blkLabel = A(:,3) + 1e4*A(:,4);  %0.65,0.65,0.64,0.65
+%blkLabel = A(:,2) + 1e4*A(:,3); 0.48,0.46,0.40
+blkLabel = A(:,2) + 1e4*A(:,4); %0.62,0.60,0.44,0.60
 %blkLabel = A(:,2) + 1e4*A(:,4);
-%blkLabel = A(:,2) + 1e4*A(:,5);
+blkLabel = A(:,4) + 1e4*A(:,5); %0.62,0.59,0.17,0.59
 %blkLabel = A(:,2) + 1e3*A(:,4) + 1e5*A(:,5);
 
 %--------------------------------------
@@ -113,6 +114,10 @@ R2_rlus  = 1 - norm(Y-X*beta_RLUS,'fro')^2/norm(Y,'fro')^2;
 beta_rlus_err = norm(beta_RLUS - Btrue,2)/norm(Btrue,2);
 tRlus = toc;
 %----------------------------------------------------------------
+pi_icml     = icml_20(X,Y_permuted,r_);
+beta_icml   = X(pi_icml,:) \ Y_permuted;
+R2_icml     = 1 - norm(Y-X*beta_icml,'fro')^2/norm(Y,'fro')^2;
+BicmlErr    = norm(beta_icml - Btrue,2)/norm(Btrue,2); 
 
 num_blocks = length(r_)
 R2_true 
@@ -120,6 +125,7 @@ R2_naive
 R2_pro
 R2_rlus
 R2_sls
+R2_icml
 %fVal
 %R2_proLS
 %fValLS
@@ -127,3 +133,4 @@ R2_sls
 BproErr
 beta_sls_err
 beta_rlus_err
+BicmlErr

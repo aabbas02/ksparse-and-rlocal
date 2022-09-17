@@ -85,19 +85,24 @@ tRlus = toc;
 beta_rlus_err = norm(beta_RLUS - Btrue,2)/norm(Btrue,2);
 %----------------------------------------------------------------
 %----------------- Biconvex -------------------------------------
-rho_            = -3:1:1;
-rho_            = 10.^rho_;
+d_H_min = 1;
+tic
 R2_admm_max = -5;
+B_admm
 for i = 1 : length(rho_) % cross validate across rho paramter
-     rho           = rho_(i);
-     pi_admm       = admm(X,Y_permuted,r_,rho);
-     beta_admm     = X(pi_admm,:)\Y_permuted;
+     rho              = rho_(i);
+     pi_admm          = admm(X,Y_permuted,r_,rho);
+     tSLS          = toc;
+     beta_admm     = X(pi_hat,:)\Y_permuted;
      R2_admm       = 1 - norm(Y-X*beta_admm,'fro')^2/norm(Y,'fro')^2;
      if R2_admm > R2_admm_max
          R2_admm_max = R2_admm;
          beta_admm_err = norm(beta_admm - Btrue,2)/norm(Btrue,2); 
      end
 end
+toc
+d_H_biconvex(j) = d_H_biconvex(j) + d_H_min;
+
 num_blocks = length(r_)
 R2_true 
 R2_naive
@@ -112,4 +117,4 @@ R2_admm
 beta_pro_err
 beta_sls_err
 beta_rlus_err
-beta_admm_err
+beta_admm_e

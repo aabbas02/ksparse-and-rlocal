@@ -1,3 +1,4 @@
+rng("default")
 % Dataset download URL:
 % Description: http://proceedings.mlr.press/v115/slawski20a/slawski20a.pdf
 % - section 5
@@ -15,7 +16,7 @@ X = X - mean(X,1);
 Y = Y - mean(Y,1);
 [U,S,V] = svd(X,'econ');
 X = U(:,1:35);
-sf = 3;
+sf = 4;
 numBlocks = length(unique(round(X(:,5),sf))); %~= 2800 blocks
 blkLabel = round(X(:,5),sf);
 [blkLabelSorted,idx] = sort(blkLabel);
@@ -59,17 +60,35 @@ tic
 [pi_hat,~]   = slawski(X,Y_permuted,noise_var,r_);
 tSLS         = toc;
 beta_sls     = X(pi_hat,:)\Y_permuted;
-BslsErr       = norm(beta_sls - Btrue,2)/norm(Btrue,2); 
+BslsErr      = norm(beta_sls - Btrue,2)/norm(Btrue,2); 
 R2_sls       = 1 - norm(Y-X*beta_sls,'fro')^2/norm(Y,'fro')^2;
 %----------------- RLUS ---------------------------------------
 tic
-[pi_hat] = rlus(X,Y_permuted,r_,rLocal);
-beta_RLUS = X(pi_hat,:) \ Y_permuted;
-R2_rlus  = 1 - norm(Y-X*beta_RLUS,'fro')^2/norm(Y,'fro')^2;
-BrlusErr       = norm(beta_RLUS - Btrue,2)/norm(Btrue,2); 
+[pi_hat]    = rlus(X,Y_permuted,r_,rLocal);
+beta_RLUS   = X(pi_hat,:) \ Y_permuted;
+R2_rlus     = 1 - norm(Y-X*beta_RLUS,'fro')^2/norm(Y,'fro')^2;
+BrlusErr    = norm(beta_RLUS - Btrue,2)/norm(Btrue,2); 
 tRlus = toc;
 %----------------------------------------------------------------
-
+%rho_ = -3:1:1;
+%rho_ = 10.^rho_;
+%R2_admm_max = -5;
+%for i = 1 : length(rho_) % cross validate across rho paramter
+%     rho           = rho_(i);
+%     pi_admm       = admm(X,Y_permuted,r_,rho);
+%     beta_admm     = X(pi_admm,:)\Y_permuted;
+%     R2_admm       = 1 - norm(Y-X*beta_admm,'fro')^2/norm(Y,'fro')^2;
+%     if R2_admm > R2_admm_max
+%         R2_admm_max = R2_admm;
+%         beta_admm_err = norm(beta_admm - Btrue,2)/norm(Btrue,2); 
+%     end
+%end
+%------------------------------------------------------------------
+pi_icml     = icml_20(X,Y_permuted,r_);
+beta_icml   = X(pi_icml,:) \ Y_permuted;
+R2_icml     = 1 - norm(Y-X*beta_icml,'fro')^2/norm(Y,'fro')^2;
+BicmlErr    = norm(beta_icml - Btrue,2)/norm(Btrue,2); 
+%-----------------------------------------------------------------
 num_blocks = length(r_)
 R2_true 
 R2_naive
@@ -77,6 +96,10 @@ R2_pro
 R2_sls
 R2_rlus
 R2_pro
+R2_icml
+%R2_admm_max
 BproErr
 BslsErr
+BicmlErr
+%beta_admm_err
 %R2_proLS
