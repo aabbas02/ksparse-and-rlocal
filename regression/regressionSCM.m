@@ -14,9 +14,9 @@ A = A(~TF,:);
 X = A(:,2:62);
 X = X - mean(X,1);
 Y = Y - mean(Y,1);
-sf = 3;
-numBlocks = length(unique(round(X(:,5),sf))); %~= 2800 blocks
-blkLabel = round(X(:,5),sf);
+sf = 1;
+numBlocks = length(unique(round(X(:,7),sf))); %~= 2800 blocks
+blkLabel = round(X(:,7),sf);
 [blkLabelSorted,idx] = sort(blkLabel);
 % order blockwise
 Y = Y(idx,:);

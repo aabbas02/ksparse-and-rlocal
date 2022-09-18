@@ -12,7 +12,7 @@ addpath(genpath('.\misc'),...
         genpath('.\dataSets'))
 A = readmatrix('air_quality_data.csv');
 % retain rows of data from years 
-idx1 = find(A(:,2) == 2013, 1 );
+idx1 = find(A(:,2) == 2016, 1 );
 idx2 = find(A(:,2) == 2017, 1, 'last' );
 A = A(idx1:idx2,:);
 idx = 1:size(A,2);
@@ -23,9 +23,9 @@ A = A(:,idx);
 A = A(setdiff(1:size(A,1),row),:);
 % preprocess - remove outliers
 Y = A(:,[6,7,8,9,11]);
-[Y,TF] = rmoutliers(Y,'movmedian',128);
-size(Y,1)
-A = A(~TF,:);
+%[Y,TF] = rmoutliers(Y,'movmedian',128);
+%size(Y,1)
+%A = A(~TF,:);
 Y = sqrt(Y);
 X = zeros(size(A,1),27);
 % WPSM is column 16, instead of column 17; column 16 delted above
@@ -40,7 +40,6 @@ for i = 1 : 6
 end
 X = X - mean(X,1);
 Y = Y - mean(Y,1);
-
 [U,S,V] = svd(X,'econ');
 % improve conditioning
 X = U;
@@ -50,13 +49,12 @@ A(:,13) = round(A(:,13));
 % get block label
 % A(:,2,3,4,5) - year,month,day,hour
 %--------------------------------------
-blkLabel = A(:,3) + 1e4*A(:,4);  % 0.65,0.65,0.64,0.65 - all good
-%blkLabel = A(:,4) + 1e4*A(:,5); % good contrast, only alt-min-r works
-blkLabel = A(:,2) + 1e4*A(:,3);  % alt-min-k better
-
-%blkLabel = A(:,3) + 1e4*A(:,4) + 1e7*A(:,5); % all good
+blkLabel = A(:,2) + 1e3*A(:,3) + 1e7*A(:,12) + 1e11*A(:,13); 
+%blkLabel = A(:,3) + 1e4*A(:,4);  %0.65,0.65,0.64,0.65
 %blkLabel = A(:,2) + 1e4*A(:,3); 0.48,0.46,0.40
 %blkLabel = A(:,2) + 1e4*A(:,4); %0.62,0.60,0.44,0.60
+%blkLabel = A(:,4) + 1e4*A(:,5); % good contrast
+%blkLabel = A(:,3) + 1e4*A(:,4) + 1e7*A(:,5); % all good
 %blkLabel = A(:,2) + 1e4*A(:,4) + 1e7*A(:,5);
 %blkLabel = A(:,2) + 1e4*A(:,3) + 1e7*A(:,4);
 %blkLabel = A(:,3) + 1e4*A(:,4);
@@ -96,6 +94,7 @@ R2_naive  = 1 - norm(Y-X*Bnaive,'fro')^2/norm(Y,'fro')^2
 maxIter = 25;
 lsInit = 0;
 %---------------- w collapsed init --------------------------
+%{
 [pi_hat,fVal] = AltMin(X,Y_permuted,r_,maxIter,rLocal,lsInit);
 Bpro     = X(pi_hat,:) \ Y_permuted;
 BproErr  = norm(Bpro - Btrue,2)/norm(Btrue,2);
@@ -106,6 +105,7 @@ lsInit = 1;
 Bpro = X(pi_hat,:) \ Y_permuted;
 R2_proLS  = 1 - norm(Y-X*Bpro,'fro')^2/norm(Y,'fro')^2;
 BproLSerr = norm(Bpro - Btrue,2)/norm(Btrue,2);
+%}
 %------------------ slawski ---------------------------------
 noise_var    = norm(Y_permuted-X*Bnaive,'fro')^2/(size(Y,1)*size(Y,2));
 tic

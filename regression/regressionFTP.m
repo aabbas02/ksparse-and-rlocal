@@ -48,7 +48,7 @@ Bnaive = X\Y_permuted;
 Yhat = X*Bnaive;
 R2_naive =  1 - norm(Y-Yhat,'fro')^2/norm(Y,'fro')^2
 %----------- proposed ----------------------------------
-maxIter = 30;
+maxIter = 25;
 lsInit = 0;
 %---------- w collapsed init --------------------------
 [pi_hat,fVal] = AltMin(X,Y_permuted,r_,maxIter,rLocal,lsInit);
