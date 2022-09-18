@@ -19,18 +19,13 @@ size(Y,1)
 X = X(~TF,:);
 X = X - mean(X,1);
 Y = Y - mean(Y,1);
-[U,S,V] = svd(X,'econ');
-X = U(:,1:10);
 % drop one of the response variables (first column of Y) to improve fit
 idx = setdiff(1:size(Y,2),1);
 Y = Y(:,idx);
 % make one of the features col 6 or col 7 the block label
-sf = 4;
-%numBlocks = length(unique(round(X(:,6),sf))) 
-%blkLabel = round(X(:,6),sf);
-numBlocks = length(unique(round(X(:,7),sf))) 
-blkLabel = round(X(:,7),sf);
-%length(unique(X(:,7))) %~= 2800 blocks
+sf = 2;
+numBlocks = length(unique(round(X(:,9),sf))) 
+blkLabel = round(X(:,9),sf);
 % sort blockwise
 [blkLabelSorted,idx]  = sort(blkLabel);
 X = X(idx,:);
@@ -48,6 +43,8 @@ pi_ = get_permutation_r(n,r_);
 %pi_ = get_permutation_k(n,round(n/2));
 rLocal = 1;
 Y_permuted = Y(pi_,:);
+[U,S,V] = svd(X,'econ');
+X = U(:,1:10);
 %------------ oracle ---------------------------------------------------
 Btrue = X\Y;
 Yhat = X*Btrue;
@@ -112,8 +109,8 @@ R2_rlus
 %R2_proLS
 %fValLS
 %R2_rlus
-beta_pro_err
-BproLSerr
-beta_sls_err
-beta_rlus_err
+%beta_pro_err
+%BproLSerr
+%beta_sls_err
+%beta_rlus_err
 %beta_admm_err

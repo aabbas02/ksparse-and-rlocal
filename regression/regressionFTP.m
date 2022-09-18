@@ -18,7 +18,7 @@ Y = Y - mean(Y,1);
 %X = U(:,1:30);
 % make one of the features the block label
 sf = -2;
-numBlocks = length(unique(round(X(:,2),sf))) 
+numBlocks = length(unique(round(X(:,2),sf)));
 blkLabel = round(X(:,2),sf);
 % sort blockwise
 [blkLabelSorted,idx]  = sort(blkLabel);

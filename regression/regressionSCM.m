@@ -14,9 +14,7 @@ A = A(~TF,:);
 X = A(:,2:62);
 X = X - mean(X,1);
 Y = Y - mean(Y,1);
-[U,S,V] = svd(X,'econ');
-X = U(:,1:35);
-sf = 4;
+sf = 3;
 numBlocks = length(unique(round(X(:,5),sf))); %~= 2800 blocks
 blkLabel = round(X(:,5),sf);
 [blkLabelSorted,idx] = sort(blkLabel);
@@ -31,6 +29,8 @@ for i = 1:length(temp)
     t2 = find(blkLabelSorted == temp(i),1,'last');
     r_(i) = t2-t1+1;
 end
+[U,S,V] = svd(X,'econ');
+X = U(:,1:35);
 n   = size(Y,1);
 pi_ = get_permutation_r(n,r_);
 %pi_ = get_permutation_k(n,round(n/2));
@@ -100,10 +100,10 @@ R2_sls
 R2_rlus
 %R2_icml
 %R2_admm_max
-BproErr
-BproLSerr
-BslsErr
-BrlusErr
+%BproErr
+%BproLSerr
+%BslsErr
+%BrlusErr
 %BicmlErr
 %beta_admm_err
 %R2_proLS
