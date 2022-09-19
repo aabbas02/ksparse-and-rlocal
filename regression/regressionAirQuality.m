@@ -50,10 +50,14 @@ A(:,13) = round(A(:,13));
 % get block label
 % A(:,2,3,4,5) - year,month,day,hour
 %--------------------------------------
-blkLabel = A(:,3) + 1e4*A(:,4);  % 0.65,0.65,0.64,0.65 - all good
-%blkLabel = A(:,4) + 1e4*A(:,5); % good contrast, only alt-min-r works
-blkLabel = A(:,2) + 1e4*A(:,3);  % alt-min-k better
-
+blkLabel = A(:,3) + 1e4*A(:,4);  % 0.65,0.65,0.64,0.65 - all good LS init better
+blkLabel = A(:,4) + 1e5*A(:,5); % good contrast, only alt-min-r works (not sure?)
+%blkLabel = A(:,2) + 1e4*A(:,3);  % alt-min-k better
+%blkLabel = A(:,2) + 1e5*A(:,5); % collapsed init better, but all fail
+%blkLabel = A(:,4) + 1e5*A(:,5); % LS init better
+%blkLabel = A(:,3) + 1e5*A(:,5); % collapsed init slightly better
+%blkLabel = A(:,2) + 1e4*A(:,4); %collapsed init better
+%blkLabel = A(:,3) + 1e4*A(:,5);
 %blkLabel = A(:,3) + 1e4*A(:,4) + 1e7*A(:,5); % all good
 %blkLabel = A(:,2) + 1e4*A(:,3); 0.48,0.46,0.40
 %blkLabel = A(:,2) + 1e4*A(:,4); %0.62,0.60,0.44,0.60
@@ -65,7 +69,6 @@ blkLabel = A(:,2) + 1e4*A(:,3);  % alt-min-k better
 %blkLabel = A(:,2) + 1e3*A(:,4) + 1e5*A(:,5);
 
 %--------------------------------------
-%blkLabel = A(:,2) + 1e5*A(:,5); % collapsed init better
 %blkLabel = A(:,3) + 1e5*A(:,5); % LS init better '16 - '17, across years same
 %blkLabel = A(:,3) + 1e5*A(:,4); % same
 %blkLabel = A(:,2) + 1e5*A(:,3); % LS init much better
@@ -92,6 +95,7 @@ R2_true  = 1 - norm(Y-X*Btrue,'fro')^2/norm(Y - mean(Y,1),'fro')^2
 %---------------- naive ------------------------------------
 Bnaive = X \ Y_permuted;
 R2_naive  = 1 - norm(Y-X*Bnaive,'fro')^2/norm(Y,'fro')^2
+beta_naive_err = norm(Bnaive - Btrue,2)/norm(Btrue,2)
 %---------------- proposed ----------------------------------
 maxIter = 25;
 lsInit = 0;
@@ -126,14 +130,12 @@ tRlus = toc;
 %beta_icml   = X(pi_icml,:) \ Y_permuted;
 %R2_icml     = 1 - norm(Y-X*beta_icml,'fro')^2/norm(Y,'fro')^2;
 %BicmlErr    = norm(beta_icml - Btrue,2)/norm(Btrue,2); 
-
-num_blocks = length(r_)
 R2_true 
 R2_naive
-R2_pro
-R2_proLS
 R2_rlus
 R2_sls
+R2_proLS
+R2_pro
 %R2_icml
 %fVal
 %R2_proLS
@@ -143,4 +145,5 @@ BproLSerr
 BproErr
 beta_sls_err
 beta_rlus_err
+beta_naive_err
 %BicmlErr

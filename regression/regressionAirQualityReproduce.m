@@ -130,15 +130,16 @@ tRlus = toc;
 num_blocks = length(r_)
 R2_true 
 R2_naive
-R2_pro
-R2_proLS
 R2_rlus
 R2_sls
+R2_proLS
+R2_pro
 %R2_icml
 %fVal
 %R2_proLS
 %fValLS
 %R2_rlus
+beta_naive_err
 BproLSerr
 BproErr
 beta_sls_err

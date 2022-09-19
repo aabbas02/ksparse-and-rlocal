@@ -8,9 +8,9 @@ clear all
 A = readmatrix('scm.csv');
 Y = A(:,63:end);
 % remove outliers
-[Y,TF] = rmoutliers(Y,'mean');
-size(Y,1)
-A = A(~TF,:);
+%[Y,TF] = rmoutliers(Y,'mean');
+%size(Y,1)
+%A = A(~TF,:);
 X = A(:,2:62);
 X = X - mean(X,1);
 Y = Y - mean(Y,1);
@@ -38,10 +38,11 @@ rLocal = 1;
 Y_permuted = Y(pi_,:);
 %---------------- oracle -----------------------------------
 Btrue = X \ Y;
-R2_true  = 1 - norm(Y-X*Btrue,'fro')^2/norm(Y - mean(Y,1),'fro')^2
+R2_true  = 1 - norm(Y-X*Btrue,'fro')^2/norm(Y - mean(Y,1),'fro')^2;
 %---------------- naive ------------------------------------
 Bnaive = X \ Y_permuted;
-R2_naive  = 1 - norm(Y-X*Bnaive,'fro')^2/norm(Y,'fro')^2
+R2_naive  = 1 - norm(Y-X*Bnaive,'fro')^2/norm(Y,'fro')^2;
+beta_naive_err = norm(Bnaive - Btrue,2)/norm(Btrue,2);
 %---------------- proposed ----------------------------------
 maxIter = 25;
 lsInit = 0;
@@ -91,7 +92,6 @@ tRlus = toc;
 %R2_icml     = 1 - norm(Y-X*beta_icml,'fro')^2/norm(Y,'fro')^2;
 %BicmlErr    = norm(beta_icml - Btrue,2)/norm(Btrue,2); 
 %-----------------------------------------------------------------
-num_blocks = length(r_)
 R2_true 
 R2_naive
 R2_pro
@@ -107,3 +107,9 @@ R2_rlus
 %BicmlErr
 %beta_admm_err
 %R2_proLS
+beta_naive_err
+BproErr
+BproLSerr
+BslsErr
+BrlusErr
+save('dataSCM')

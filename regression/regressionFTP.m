@@ -42,11 +42,12 @@ X = U(:,1:30);
 %------------ oracle ---------------------------------------------------
 Btrue = X\Y;
 Yhat = X*Btrue;
-R2_true =  1 - norm(Y-Yhat,'fro')^2/norm(Y,'fro')^2
+R2_true =  1 - norm(Y-Yhat,'fro')^2/norm(Y,'fro')^2;
 %----------- naive -----------------------------------------------------
 Bnaive = X\Y_permuted;
 Yhat = X*Bnaive;
-R2_naive =  1 - norm(Y-Yhat,'fro')^2/norm(Y,'fro')^2
+R2_naive =  1 - norm(Y-Yhat,'fro')^2/norm(Y,'fro')^2;
+beta_naive_err = norm(Bnaive - Btrue,2)/norm(Btrue,2);
 %----------- proposed ----------------------------------
 maxIter = 25;
 lsInit = 0;
@@ -91,20 +92,21 @@ beta_rlus_err = norm(beta_RLUS - Btrue,2)/norm(Btrue,2);
 %          beta_admm_err = norm(beta_admm - Btrue,2)/norm(Btrue,2); 
 %      end
 % end
-num_blocks = length(r_)
+save('dataFTP')
 R2_true 
 R2_naive
-R2_pro
-R2_proLS
-R2_sls
 R2_rlus
+R2_sls
+R2_proLS
+R2_pro
 %R2_admm
 %fVal
 %R2_proLS
 %fValLS
 %R2_rlus
-beta_pro_err
-BproLSerr
-beta_sls_err
+beta_naive_err
 beta_rlus_err
+beta_sls_err
+BproLSerr
+beta_pro_err
 %beta_admm_err
