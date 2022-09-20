@@ -50,8 +50,8 @@ X = U;
 % get block label
 % A(:,2,3,4,5) - year,month,day,hour
 %--------------------------------------
-blkLabel = A(:,3) + 1e4*A(:,4);  % 0.65,0.65,0.64,0.65 - all good LS init better
-%blkLabel = A(:,4) + 1e5*A(:,5); % good contrast, only alt-min-r works (not sure?)
+blkLabel = A(:,3) + 1e9*A(:,4);  % 0.65,0.65,0.64,0.65 - all good LS init better
+%blkLabel = A(:,4) + 1e9*A(:,5); % good contrast, only alt-min-r works (not sure?)
 %blkLabel = A(:,2) + 1e4*A(:,3);  % alt-min-k better
 %blkLabel = A(:,2) + 1e5*A(:,5); % collapsed init better, but all fail
 %blkLabel = A(:,4) + 1e5*A(:,5); % LS init better
