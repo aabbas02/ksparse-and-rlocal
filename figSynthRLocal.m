@@ -4,11 +4,11 @@ clear all
 addpath(genpath('.\misc'),...
         genpath('.\alt_min'),...
         genpath('.\benchmarks')); 
-MC              = 3;
+MC              = 1000;
 SNR             = 100;
 d               = 100;
 m               = 50;
-r_              = [20 50 100 125 200 250];
+r_              = [125];
 n               = 1000;
 d_H_levsort     = zeros(1,length(r_));
 d_H_sls         = zeros(1,length(r_));
@@ -20,6 +20,8 @@ rho_            = -3:1:1;
 rho_            = 10.^rho_;
 rLocal          = 1;
 lsInit          = 0;
+T = 0;
+maxIter         = 25;
 for j = 1 : length(r_)
 	r = r_(j);
     r_arr = ones(1,n/r)*r;
@@ -64,12 +66,15 @@ for j = 1 : length(r_)
 %                 pi_lev             = levsort(B,Y_permuted_noisy,r_arr);
 %                 d_H_levsort(j)     = d_H_levsort(j) + sum(pi_ ~= pi_lev)/n;                   
                 %---alt-min/proposed
-                [pi_alt_min]       = AltMin(B,Y_permuted_noisy,r_arr,25,rLocal,lsInit);
+                tic
+                [pi_alt_min]       = AltMin(B,Y_permuted_noisy,r_arr,maxIter,rLocal,lsInit);
                 d_H                = sum(pi_ ~= pi_alt_min)/n;
                 d_H_alt_min(j)     = d_H + d_H_alt_min(j); 
+                T = toc + T;
     end
     j
 end
+T/MC
 d_H_alt_min      = d_H_alt_min/MC;
 d_H_one_step     = d_H_one_step/MC;
 d_H_rlus         = d_H_rlus/MC;

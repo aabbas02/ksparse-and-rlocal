@@ -16,15 +16,15 @@ idx1 = find(A(:,2) == 2013, 1 );
 idx2 = find(A(:,2) == 2017, 1, 'last' );
 A = A(idx1:idx2,:);
 idx = 1:size(A,2);
-% delete columsns 16, 18 two columns comprising NANs
+% delete columns 16, 18 two columns comprising NANs
 idx = setdiff(idx,[size(A,2),size(A,2)-2]);
 A = A(:,idx);
 [row, col] = find(isnan(A));
 A = A(setdiff(1:size(A,1),row),:);
 % preprocess - remove outliers
 Y = A(:,[6,7,8,9,11]);
-[Y,TF] = rmoutliers(Y,'movmedian',128);
-size(Y,1)
+[Y,TF] = rmoutliers(Y,'movmedian',32);
+%size(Y,1)
 A = A(~TF,:);
 Y = sqrt(Y);
 X = zeros(size(A,1),27);
@@ -45,13 +45,13 @@ Y = Y - mean(Y,1);
 % improve conditioning
 X = U;
 % round temperature (col 12), air pressure (col 13) to nearest integers
-A(:,12) = round(A(:,12));
-A(:,13) = round(A(:,13));
+%A(:,12) = round(A(:,12));
+%A(:,13) = round(A(:,13));
 % get block label
 % A(:,2,3,4,5) - year,month,day,hour
 %--------------------------------------
 blkLabel = A(:,3) + 1e4*A(:,4);  % 0.65,0.65,0.64,0.65 - all good LS init better
-blkLabel = A(:,4) + 1e5*A(:,5); % good contrast, only alt-min-r works (not sure?)
+%blkLabel = A(:,4) + 1e5*A(:,5); % good contrast, only alt-min-r works (not sure?)
 %blkLabel = A(:,2) + 1e4*A(:,3);  % alt-min-k better
 %blkLabel = A(:,2) + 1e5*A(:,5); % collapsed init better, but all fail
 %blkLabel = A(:,4) + 1e5*A(:,5); % LS init better
