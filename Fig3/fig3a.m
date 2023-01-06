@@ -1,14 +1,20 @@
 clc
 close all;
 clear all
+dir = pwd;
+% For linux, replace '\' with '/'
+idcs   = strfind(dir,'\');
+newdir = dir(1:idcs(end)-1);
+cd (newdir)
 addpath(genpath('.\misc'),...
         genpath('.\alt_min'),...
-        genpath('.\benchmarks')); 
-MC              = 1000;
+        genpath('.\altMinProposed'),...
+        genpath('.\benchmarks'));
+MC              = 3;
 SNR             = 100;
 d               = 100;
 m               = 50;
-r_              = [125];
+r_              = [10 20 50 100 125 200 250];
 n               = 1000;
 d_H_levsort     = zeros(1,length(r_));
 d_H_sls         = zeros(1,length(r_));
@@ -36,45 +42,39 @@ for j = 1 : length(r_)
                 Y_permuted       = Y(pi_,:);
                 Y_permuted_noisy = Y_permuted + W;
                 %---rlus  https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=9440727 
-                %t1_start = tic;
-%                 tic
-%                 pi_rlus          = rlus(B,Y_permuted_noisy,r_arr,rLocal);
-%                 toc
-                %toc(t1_start)
-%                 d_H              = sum(pi_ ~= pi_rlus)/n;
-%                 d_H_rlus(j)      = d_H + d_H_rlus(1,j);
+                pi_rlus          = rlus(B,Y_permuted_noisy,r_arr,rLocal);
+                d_H              = sum(pi_ ~= pi_rlus)/n;
+                d_H_rlus(j)      = d_H + d_H_rlus(1,j);
                 %---biconvex https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8849447
-%  				d_H_min = 1;
-%                 tic
-%                 for i = 1 : length(rho_) % cross validate across rho paramter
-%                    rho              = rho_(i);
-%                    pi_admm          = admm(B,Y_permuted_noisy,r_arr,rho);
-%                    d_H_             = sum(pi_ ~= pi_admm)/n;
-%                    if d_H_ < d_H_min
-%                       d_H_min = d_H_;
-%                    end
-%                 end
-%                 toc
-%                 d_H_biconvex(j) = d_H_biconvex(j) + d_H_min;
+  				d_H_min = 1;
+                for i = 1 : length(rho_) % cross validate across rho paramter
+                    rho              = rho_(i);
+                    pi_admm          = admm(B,Y_permuted_noisy,r_arr,rho);
+                    d_H_             = sum(pi_ ~= pi_admm)/n;
+                    if d_H_ < d_H_min
+                       d_H_min = d_H_;
+                    end
+                end
+                d_H_biconvex(j) = d_H_biconvex(j) + d_H_min;
                 %---icml https://proceedings.mlr.press/v119/zhang20n.html
-%                 pi_icml            = icml_20(B,Y_permuted_noisy,r_arr);
-%                 d_H_one_step(j)    = d_H_one_step(j) + sum(pi_ ~= pi_icml)/n;   
+                 pi_icml            = icml_20(B,Y_permuted_noisy,r_arr);
+                 d_H_one_step(j)    = d_H_one_step(j) + sum(pi_ ~= pi_icml)/n;   
                 %---slawski 
-%                 pi_sls             = slawski(B,Y_permuted_noisy,noise_var,r_arr);
-%                 d_H_sls(j)         = d_H_sls(j) + sum(pi_ ~= pi_sls)/n;                   
-%               %---levsort  https://people.eecs.berkeley.edu/~courtade/pdfs/DenoisingLinearModels_ISIT2017.pdf
-%                 pi_lev             = levsort(B,Y_permuted_noisy,r_arr);
-%                 d_H_levsort(j)     = d_H_levsort(j) + sum(pi_ ~= pi_lev)/n;                   
+                pi_sls             = slawski(B,Y_permuted_noisy,noise_var,r_arr);
+                d_H_sls(j)         = d_H_sls(j) + sum(pi_ ~= pi_sls)/n;                   
+                %---levsort  https://people.eecs.berkeley.edu/~courtade/pdfs/DenoisingLinearModels_ISIT2017.pdf
+                pi_lev             = levsort(B,Y_permuted_noisy,r_arr);
+                d_H_levsort(j)     = d_H_levsort(j) + sum(pi_ ~= pi_lev)/n;                   
                 %---alt-min/proposed
-                tic
+                timeVal = tic;
                 [pi_alt_min]       = AltMin(B,Y_permuted_noisy,r_arr,maxIter,rLocal,lsInit);
+                runTime = toc(timeVal);
+                sprintf('Prposed algorithm run-time = %.3f seconds', runTime)
                 d_H                = sum(pi_ ~= pi_alt_min)/n;
                 d_H_alt_min(j)     = d_H + d_H_alt_min(j); 
-                T = toc + T;
     end
     j
 end
-T/MC
 d_H_alt_min      = d_H_alt_min/MC;
 d_H_one_step     = d_H_one_step/MC;
 d_H_rlus         = d_H_rlus/MC;

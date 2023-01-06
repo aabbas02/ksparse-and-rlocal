@@ -81,6 +81,6 @@ function [assignment] =  admm(B,Y,r_,rho)
         end
         Pi_2(1:n,:) = Pi_2(assignment,:);
         mu  = mu + rho*(Pi_1 - Pi_2);
-        fval = -trace(Pi_1*P_B*Pi_2'*(Y*Y'))
+        fval = -trace(Pi_1*P_B*Pi_2'*(Y*Y'));
     end
 end

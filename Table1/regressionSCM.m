@@ -1,7 +1,6 @@
 % Dataset download URL:
 % Description: http://proceedings.mlr.press/v115/slawski20a/slawski20a.pdf
 % Preprocessing and dataset description: http://auai.org/uai2019/proceedings/papers/7.pdf
-rng("default")
 clc
 close all
 clear all

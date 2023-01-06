@@ -2,10 +2,10 @@ clc
 close all 
 clear all
 rng('default')
-mydir  = pwd;
+dir  = pwd;
 % For linux, replace '\' with '/'
-idcs   = strfind(mydir,'\');
-newdir = mydir(1:idcs(end)-1);
+idcs   = strfind(dir,'\');
+newdir = dir(1:idcs(end)-1);
 cd(newdir)
 addpath(genpath('.\misc'),...
         genpath('.\benchmarks'),...

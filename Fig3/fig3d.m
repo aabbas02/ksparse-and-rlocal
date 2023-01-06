@@ -1,17 +1,21 @@
 clc
 close all;
 clear all
+dir = pwd;
+% For linux, replace '\' with '/'
+idcs   = strfind(dir,'\');
+newdir = dir(1:idcs(end)-1);
+cd (newdir)
 addpath(genpath('.\misc'),...
         genpath('.\alt_min'),...
         genpath('.\altMinProposed'),...
         genpath('.\benchmarks')); 
-tic
 n               = 200;
 d               = 20;
 m               = 10;
-k_              = round([100 105 110 115 120 125 130 135 140 145 150]);
+k_              = [100 105 110 115 120 125 130 135 140 145 150];
 SNR             = 100;
-MC              = 15;
+MC              = 3;
 d_H_levsort     = zeros(1,length(k_));
 d_H_one_step    = zeros(1,length(k_));
 d_H_biconvex    = zeros(1,length(k_));
@@ -107,7 +111,6 @@ xticks = 1:length(k_);
 set(gca, 'XTick', xticks, 'XTickLabel', k_,'Fontsize',14);
 grid('on');
 xlabel('number of shuffles $k$','interpreter','Latex','Fontsize',14);
-%ylabel('$d_H/n$','interpreter','Latex','Fontsize',14)
 Lgnd =  legend('show');
 set(Lgnd, 'Interpreter','Latex','Fontsize',12,'Location','Northwest')
 title(['$ \mathbf P^*_k \, n = $ ',num2str(n), ' $ m = $ ', num2str(m), ' $ d = $ ', num2str(d),...
