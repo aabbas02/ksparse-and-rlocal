@@ -17,7 +17,5 @@ function [assignment] = dsPlus(orthB,Y,seeds)
             c = P;
             M = matchpairs(-c,1e10);
             M(M(:,1)) = M(:,2);
-            assignment = M(:,1);
-            assignment(assignment) = 1:n; % cvx program returns estimate
-                                          % of Pstar tranpose
+            assignment = M(M(:,1)); % estimate of P* transpose
 end

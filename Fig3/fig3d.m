@@ -13,9 +13,9 @@ addpath(genpath('.\misc'),...
 n               = 200;
 d               = 20;
 m               = 10;
-k_              = [100 105 110 115 120 125 130 135 140 145 150];
-SNR             = 100;
-MC              = 3;
+k_              = round([100 105 110 115 120 125 130 135 140 145 150]);
+SNR             = 1e10;
+MC              = 15;
 d_H_levsort     = zeros(1,length(k_));
 d_H_one_step    = zeros(1,length(k_));
 d_H_biconvex    = zeros(1,length(k_));
@@ -70,15 +70,12 @@ for j = 1 : length(k_)
 		%---DS+
         orthB = B*pinv(B);
         orthB = eye(n) - orthB;
- 		[PhatDS] = dsPlus(orthB,Y_permuted_noisy,numAssigned);
- 		temp = eye(n);
-        piMat = temp(pi_,:);
-        d_H_DS(j)  = d_H_DS(j) + sum(sum(PhatDS ~= piMat))/(2*n);
- 		%d_H_DS(j)  = d_H_DS(j) + sum(pi_ ~= c)/n;
+ 		piDsPlus = dsPlus(orthB,Y_permuted_noisy,numAssigned);
+        d_H_DS(j)  = d_H_DS(j) + sum(pi_ ~= piDsPlus)/n;
         %---alt-min/proposed
-        [pi_alt_min]  = AltMin(B,Y_permuted_noisy,r_arr,maxIter,rLocal,0);
-        d_H = sum(pi_ ~= pi_alt_min)/n;
-        d_H_alt_min(j) = d_H + d_H_alt_min(j);
+%         [pi_alt_min]  = AltMin(B,Y_permuted_noisy,r_arr,maxIter,rLocal,0);
+%         d_H = sum(pi_ ~= pi_alt_min)/n;
+%         d_H_alt_min(j) = d_H + d_H_alt_min(j);
     end
     j
 end

@@ -1,7 +1,7 @@
 % This script redproduce the value of the coefficient of determination R2 
 % reported in Table 2 of /https://arxiv.org/pdf/1907.07148.pdf. 
 % The scripted is intended to validate/verify/confirm this MATLAB 
-% implementation of the algorithm in 
+% implementation of the algorithm in the work above.
 clc 
 close all 
 clear all
@@ -67,10 +67,10 @@ rLocal = 1;
 Y_permuted = Y(pi_,:);
 %---------------- oracle -----------------------------------
 Btrue = X \ Y;
-R2_true  = 1 - norm(Y-X*Btrue,'fro')^2/norm(Y - mean(Y,1),'fro')^2
+R2_true  = 1 - norm(Y-X*Btrue,'fro')^2/norm(Y - mean(Y,1),'fro')^2;
 %---------------- naive ------------------------------------
 Bnaive = X \ Y_permuted;
-R2_naive  = 1 - norm(Y-X*Bnaive,'fro')^2/norm(Y,'fro')^2
+R2_naive  = 1 - norm(Y-X*Bnaive,'fro')^2/norm(Y,'fro')^2;
 %---------------- proposed ----------------------------------
 maxIter = 25;
 lsInit = 0;
@@ -83,12 +83,8 @@ beta_sls     = X(pi_hat,:) \ Y_permuted;
 beta_sls_err = norm(beta_sls - Btrue,2)/norm(Btrue,2); 
 R2_sls       = 1 - norm(Y-X*beta_sls,'fro')^2/norm(Y,'fro')^2;
 
-num_blocks = length(r_)
+%num_blocks = length(r_)
 R2_true 
 R2_naive
 R2_sls
-R2_proLS
-R2_pro
 
-beta_naive_err
-beta_sls_err

@@ -6,8 +6,8 @@ function [assignment,X_hat] = slawski(B,Y,noise_var,r_)
     sqrt_n   = round(sqrt(n),3);
     lambda_1 = round(1/(2*n*m),3);
     lambda_2 = round(1*sqrt(noise_var)*(1/sqrt(n*m)),3);
-           cvx_begin quiet
-           cvx_precision medium
+           cvx_begin %quiet
+           cvx_precision low
            cvx_solver sedumi
            variable X(d,m)
            variable Z(n,m)
@@ -23,7 +23,6 @@ function [assignment,X_hat] = slawski(B,Y,noise_var,r_)
         start  = sum(r_(1:t)) - r_(t) +1;
         stop   = sum(r_(1:t));
         c      = Y(start:stop,:)*Y_hat(start:stop,:)';
-        %temp = munkres(-c);
         M = matchpairs(-c,1e10);
         M(M(:,1)) = M(:,2);
         temp = M(:,1);
