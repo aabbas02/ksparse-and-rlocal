@@ -1,4 +1,4 @@
-% This script redproduce the value of the coefficient of determination R2 
+% This script redproduces the value of the coefficient of determination R2 
 % reported in Table 2 of /https://arxiv.org/pdf/1907.07148.pdf. 
 % The scripted is intended to validate/verify/confirm this MATLAB 
 % implementation of the algorithm in the work above.
@@ -74,7 +74,7 @@ R2_naive  = 1 - norm(Y-X*Bnaive,'fro')^2/norm(Y,'fro')^2;
 %---------------- proposed ----------------------------------
 maxIter = 25;
 lsInit = 0;
-%------------------ slawski ---------------------------------
+%---------------- slawski ---------------------------------
 noise_var    = norm(Y_permuted-X*Bnaive,'fro')^2/(size(Y,1)*size(Y,2));
 tic
 [pi_hat,~]   = slawski(X,Y_permuted,noise_var,r_);
@@ -82,7 +82,6 @@ tSLS         = toc;
 beta_sls     = X(pi_hat,:) \ Y_permuted;
 beta_sls_err = norm(beta_sls - Btrue,2)/norm(Btrue,2); 
 R2_sls       = 1 - norm(Y-X*beta_sls,'fro')^2/norm(Y,'fro')^2;
-
 %num_blocks = length(r_)
 R2_true 
 R2_naive

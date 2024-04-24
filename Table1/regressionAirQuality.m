@@ -28,7 +28,7 @@ Y = A(:,[6,7,8,9,11]);
 A = A(~TF,:);
 Y = sqrt(Y);
 X = zeros(size(A,1),27);
-% WPSM is column 16, instead of column 17; column 16 delted above
+% WPSM is column 16, instead of column 17; column 16 deleted above
 X(:,1:6) = A(:,[10,12,13,14,15,16]); 
 X(:,7:12) = X(:,1:6).^2;
 t=13;
@@ -76,7 +76,7 @@ beta_naive_err = norm(Bnaive - Btrue,2)/norm(Btrue,2)
 %---------------- proposed ----------------------------------
 maxIter = 25;
 lsInit = 0;
-%---------------- w collapsed init --------------------------
+%--------------- w collapsed init --------------------------
 [pi_hat,fVal] = AltMin(X,Y_permuted,r_,maxIter,rLocal,lsInit);
 Bpro     = X(pi_hat,:) \ Y_permuted;
 BproErr  = norm(Bpro - Btrue,2)/norm(Btrue,2);
