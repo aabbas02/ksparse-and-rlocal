@@ -18,7 +18,7 @@ function [pi_hat,fval] =  AltMin(B,Y,r_,maxIter,rLocal,lsInit)
         r_      = n;
     end
     if lsInit
-        disp('ls init')
+        %disp('ls init')
         Xhat = pinv(B)*Y;
         Yhat = B*Xhat;
     end

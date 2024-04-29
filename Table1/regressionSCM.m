@@ -23,8 +23,9 @@ Y = Y - mean(Y,1);
 % make one of the features the block label and round that feature to sf
 % significant figures
 sf = 1;
-numBlocks = length(unique(round(X(:,7),sf))); %~= 2800 blocks
-blkLabel = round(X(:,7),sf);
+col = 7;
+numBlocks = length(unique(round(X(:,col),sf))); %~= 2800 blocks
+blkLabel = round(X(:,col),sf);
 [blkLabelSorted,idx] = sort(blkLabel);
 % order blockwise
 Y = Y(idx,:);
@@ -92,3 +93,4 @@ BproErr
 BproLSerr
 BslsErr
 BrlusErr
+cd(dir)

@@ -20,10 +20,9 @@ Y = A(:,end-5:end);
 X = X - mean(X,1);
 Y = Y - mean(Y,1);
 % make one of the features the block label and round that feature to sf
-% significant figures
-sf = 0;
-col = 29;
-numBlocks = length(unique(round(X(:,col),sf)));
+% significant figures sf = 0; col = 1;
+sf = -1;
+col = 15;
 blkLabel = round(X(:,col),sf);
 % sort blockwise
 [blkLabelSorted,idx]  = sort(blkLabel);
@@ -39,7 +38,6 @@ for i = 1:length(temp)
 end
 n   = size(Y,1);
 pi_ = get_permutation_r(n,r_);
-rLocal = 1;
 Y_permuted = Y(pi_,:);
 [U,S,V] = svd(X,'econ');
 % retain top d = 30 prinicpal components
@@ -55,8 +53,9 @@ R2_naive =  1 - norm(Y-Yhat,'fro')^2/norm(Y,'fro')^2;
 beta_naive_err = norm(Bnaive - Btrue,2)/norm(Btrue,2);
 %----------- proposed ----------------------------------
 maxIter = 25;
-lsInit = 0;
 %---------- w collapsed init --------------------------
+rLocal = 1;
+lsInit = 0;
 [pi_hat,fVal] = AltMin(X,Y_permuted,r_,maxIter,rLocal,lsInit);
 Bpro    = X(pi_hat,:) \ Y_permuted;
 beta_pro_err = norm(Bpro - Btrue,2)/norm(Btrue,2);
@@ -83,14 +82,16 @@ R2_rlus  = 1 - norm(Y-X*beta_RLUS,'fro')^2/norm(Y,'fro')^2;
 tRlus = toc;
 beta_rlus_err = norm(beta_RLUS - Btrue,2)/norm(Btrue,2);
 %----------------------------------------------------------------
+numBlocks = length(unique(round(X(:,col),sf)));
 R2_true 
 R2_naive
 R2_rlus
 R2_sls
 R2_proLS
 R2_pro
-beta_naive_err
-beta_rlus_err
-beta_sls_err
-BproLSerr
-beta_pro_err
+cd(dir)
+% beta_naive_err
+% beta_rlus_err
+% beta_sls_err
+% BproLSerr
+% beta_pro_err

@@ -40,7 +40,6 @@ for i = 1 : 6
 end
 X = X - mean(X,1);
 Y = Y - mean(Y,1);
-
 [U,S,V] = svd(X,'econ');
 % improve conditioning
 X = U;
