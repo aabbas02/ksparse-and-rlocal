@@ -22,7 +22,7 @@ Y = Y - mean(Y,1);
 % make one of the features the block label and round that feature to sf
 % significant figures sf = 0; col = 1;
 sf = -1;
-col = 15;
+col = 19;
 blkLabel = round(X(:,col),sf);
 % sort blockwise
 [blkLabelSorted,idx]  = sort(blkLabel);
