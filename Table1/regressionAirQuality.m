@@ -46,7 +46,7 @@ X = U;
 % A(:,2,3,4,5) - year,month,day,hour
 % get block assignment
 %--------------------------------------
-%blkLabel = A(:,3) + 1e9*A(:,4);  % month and day
+blkLabel = A(:,3) + 1e9*A(:,4);  % month and day
 blkLabel = A(:,4) + 1e9*A(:,5);  % day and hour
 %--------------------------------------
 [blkLabelSorted,idx] = sort(blkLabel);
@@ -87,9 +87,7 @@ Bpro = X(pi_hat,:) \ Y_permuted;
 R2_proLS  = 1 - norm(Y-X*Bpro,'fro')^2/norm(Y,'fro')^2;
 BproLSerr = norm(Bpro - Btrue,2)/norm(Btrue,2);
 %------------------ slawski ---------------------------------
-%noise_var    = norm(Y_permuted-X*Bnaive,'fro')^2/(size(Y,1)*size(Y,2));
-%noise_var    = norm(Y_permuted-Y,'fro')^2/(size(Y,1)*size(Y,2));
-noise_var    = norm(Y_permuted-X*Btrue,'fro')^2/(size(Y,1)*size(Y,2));
+noise_var    = norm(Y_permuted-X*Bnaive,'fro')^2/(size(Y,1)*size(Y,2));
 tic
 [pi_hat,~]   = slawski(X,Y_permuted,noise_var,r_);
 tSLS         = toc;
