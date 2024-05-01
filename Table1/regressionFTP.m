@@ -20,7 +20,7 @@ Y = A(:,end-5:end);
 X = X - mean(X,1);
 Y = Y - mean(Y,1);
 % make one of the features the block label and round that feature to sf
-% significant figures sf = 0; col = 1;
+% significant figures sf = 0; col = 1; or sf = -1, col = 19
 sf = -1;
 col = 19;
 blkLabel = round(X(:,col),sf);
