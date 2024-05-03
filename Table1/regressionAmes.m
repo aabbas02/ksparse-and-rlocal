@@ -15,51 +15,33 @@ load("Ames.mat")
 [row, col] = find(isnan(horzcat(X,Y)));
 X = X(setdiff(1:size(X,1),row),:);
 Y = Y(setdiff(1:size(Y,1),row),:);
-% 30     3    14    21    22    10    11    15     4    20     5    18     6    19     7 
-%X = X(:,[3,14,21,22,10,11,15,4,20,5]); %sf = -2;
-%X = X(:,[3,14,21,22,10,11,15,4,20,5]); col = 5; sf = -2;
-%X = X(:,[3,14,21,22,10,11,15,4,20,5,18,6,19,7]);
-%X = X(:,[3,14,21,22,10,11,15,4,20]);
-%X = X(:,[3,14,21,22,10,11]);
 X = X - mean(X,1);
 Y = log10(Y);
 Y = Y - mean(Y,1);
 sf = 0;
 col = 5;
-blkLabel = round(X(:,col),sf);
-numBlocks = length(unique(round(X(:,col),sf)));
-% sort blockwise
-[blkLabelSorted,idx]  = sort(blkLabel);
-X = X(idx,:);
-Y = Y(idx,:);
-% permute within block
-temp = unique(blkLabel);
-r_ = zeros(1,length(temp));
-for i = 1:length(temp)
-    t1 = find(blkLabelSorted == temp(i),1,'first');
-    t2 = find(blkLabelSorted == temp(i),1,'last');
-    r_(i) = t2-t1+1;
-end
-n   = size(Y,1);
-pi_ = get_permutation_r(n,r_);
-rLocal = 1;
+randPerm = 0;
+n = size(Y,1);
+r = floor(n/20);
+[pi_,numBlocks,r_,X,Y] = getPermRealData(randPerm, n, r, X, Y,sf, col);
 Y_permuted = Y(pi_,:);
 [U,S,V] = svd(X,'econ');
 X = U;
 %------------ oracle ---------------------------------------------------
 Btrue = X\Y;
 Yhat = X*Btrue;
-R2_true =  1 - norm(Y-Yhat,'fro')^2/norm(Y,'fro')^2
+R2_true =  1 - norm(Y-Yhat,'fro')^2/norm(Y,'fro')^2;
 %----------- naive -----------------------------------------------------
 Bnaive = X\Y_permuted;
 Yhat = X*Bnaive;
-R2_naive =  1 - norm(Y-Yhat,'fro')^2/norm(Y,'fro')^2
+R2_naive =  1 - norm(Y-Yhat,'fro')^2/norm(Y,'fro')^2;
 beta_naive_err = norm(Bnaive - Btrue,2)/norm(Btrue,2);
 %----------- proposed ----------------------------------
 maxIter = 25;
 lsInit = 0;
 %---------- w collapsed init --------------------------
 tic
+rLocal = 1;
 [pi_hat,fVal] = AltMin(X,Y_permuted,r_,maxIter,rLocal,lsInit);
 tAltMin = toc
 Bpro    = X(pi_hat,:) \ Y_permuted;
