@@ -23,21 +23,10 @@ Y = Y - mean(Y,1);
 % significant figures sf = 0; col = 1; or sf = -1, col = 19
 sf = -1;
 col = 19;
-blkLabel = round(X(:,col),sf);
-% sort blockwise
-[blkLabelSorted,idx]  = sort(blkLabel);
-X = X(idx,:);
-Y = Y(idx,:);
-% permute within block
-temp = unique(blkLabel);
-r_ = zeros(1,length(temp));
-for i = 1:length(temp)
-    t1 = find(blkLabelSorted == temp(i),1,'first');
-    t2 = find(blkLabelSorted == temp(i),1,'last');
-    r_(i) = t2-t1+1;
-end
-n   = size(Y,1);
-pi_ = get_permutation_r(n,r_);
+randPerm = 0;
+n = size(Y,1);
+r = floor(n/20);
+[pi_,numBlocks,r_,X,Y] = getPermRealData(randPerm, n, r, X, Y,sf, col);
 Y_permuted = Y(pi_,:);
 [U,S,V] = svd(X,'econ');
 % retain top d = 30 prinicpal components
