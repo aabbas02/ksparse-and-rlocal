@@ -91,7 +91,5 @@ beta_pro_err
 BproLSerr
 beta_sls_err
 beta_rlus_err
-
-
 save('sarcosResults')
 
