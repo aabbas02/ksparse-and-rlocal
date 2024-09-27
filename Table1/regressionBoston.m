@@ -12,29 +12,15 @@ addpath(genpath('.\misc'),...
 cd(dir)
 % load Boston Housing Data set
 [X, Y] = loadAndProcessHousingData();
-% center the response and predictor variables
+n = size(X,1);
+r = floor(n/20);
+% center the response and predictor variable
 X = X - mean(X,1);
 Y = Y - mean(Y,1);
-% make one of the features the block label and round that feature to sf
-% significant figures
+randPerm = 0;
 sf = 0;
-col = size(X,2) - 1;
-numBlocks = length(unique(round(X(:,col),sf))); 
-blkLabel = round(X(:,col),sf);
-% sort blockwise
-[blkLabelSorted,idx]  = sort(blkLabel);
-X = X(idx,:);
-Y = Y(idx,:);
-% permute within block
-temp = unique(blkLabel);
-r_ = zeros(1,length(temp));
-for i = 1:length(temp)
-    t1 = find(blkLabelSorted == temp(i),1,'first');
-    t2 = find(blkLabelSorted == temp(i),1,'last');
-    r_(i) = t2-t1+1;
-end
-n   = size(Y,1);
-pi_ = get_permutation_r(n,r_);
+col =  size(X,2) - 1;
+[pi_,numBlocks,r_,X,Y] = getPermRealData(randPerm, n, r, X, Y,sf, col);
 Y_permuted = Y(pi_,:);
 % replace by SVD - often helps the collapsed initialization
 [U,S,V] = svd(X,'econ');
