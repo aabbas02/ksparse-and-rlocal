@@ -50,21 +50,21 @@ maxIter = 25;
 lsInit = 0;
 % %---------- w collapsed init --------------------------
 % % tic
-tStart = tic;
-[pi_hat,fVal] = AltMin(X,Y_permuted,r_,maxIter,rLocal,lsInit);
+%tStart = tic;
+%[pi_hat,fVal] = AltMin(X,Y_permuted,r_,maxIter,rLocal,lsInit);
 %tAltMin = toc
-Bpro    = X(pi_hat,:) \ Y_permuted;
-beta_pro_err = norm(Bpro - Btrue,2)/norm(Btrue,2);
-R2_pro       = 1 - norm(Y-X*Bpro,'fro')^2/norm(Y,'fro')^2;
-tAltMinCllpsd = toc(tStart);
+%Bpro    = X(pi_hat,:) \ Y_permuted;
+%beta_pro_err = norm(Bpro - Btrue,2)/norm(Btrue,2);
+%R2_pro       = 1 - norm(Y-X*Bpro,'fro')^2/norm(Y,'fro')^2;
+%tAltMinCllpsd = toc(tStart);
 % % %---------- w least-squares init -----------------------
-tStart = tic;
-lsInit       = 1;
-[pi_hat,fValLS]   = AltMin(X,Y_permuted,r_,maxIter,rLocal,lsInit);
-Bpro         = X(pi_hat,:) \ Y_permuted;
-R2_proLS     = 1 - norm(Y-X*Bpro,'fro')^2/norm(Y,'fro')^2;
-BproLSerr = norm(Bpro - Btrue,2)/norm(Btrue,2);
-tAltMinLSInit = toc(tStart);
+%tStart = tic;
+%lsInit       = 1;
+%[pi_hat,fValLS]   = AltMin(X,Y_permuted,r_,maxIter,rLocal,lsInit);
+%Bpro         = X(pi_hat,:) \ Y_permuted;
+%R2_proLS     = 1 - norm(Y-X*Bpro,'fro')^2/norm(Y,'fro')^2;
+%BproLSerr = norm(Bpro - Btrue,2)/norm(Btrue,2);
+%tAltMinLSInit = toc(tStart);
 %------------------ slawski ---------------------------------
 %noise_var    = norm(Y_permuted-X*Bnaive,'fro')^2/(size(Y,1)*size(Y,2));
 %tic
