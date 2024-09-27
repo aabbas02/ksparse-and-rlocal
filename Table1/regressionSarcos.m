@@ -8,14 +8,15 @@ close all
 clear all
 rng('default')
 dir = pwd;
-cd .. 
+% For linux, replace '\' with '/'
+idcs   = strfind(dir,'\');
+newdir = dir(1:idcs(end)-1);
+cd (newdir)
 addpath(genpath('.\misc'),...
         genpath('.\benchmarks'),...
-        genpath('.\altGDMin'),...
         genpath('.\altMinProposed'),...
         genpath('.\dataSets'))
 load('sarcos_inv.mat')
-cd(dir)
 X = sarcos_inv(:,1:21);
 Y = sarcos_inv(:,22:28);
 % zero-mean the columns 
@@ -77,16 +78,6 @@ R2_rlus  = 1 - norm(Y-X*beta_RLUS,'fro')^2/norm(Y,'fro')^2;
 tRlus = toc;
 beta_rlus_err = norm(beta_RLUS - Btrue,2)/norm(Btrue,2);
 %----------------------------------------------------------------
-%---------------- altGDMin  w rLocal Init--------------------------------------
-tic
-lsInit = 0;
-maxIter = 100;
-[pi_hat,fvalAltGDMin] = altGDMin(X,Y_permuted,r_,maxIter,rLocal,lsInit);
-beta_altGDMin = X(pi_hat,:) \ Y_permuted;
-R2_altGDMin  = 1 - norm(Y-X*beta_altGDMin,'fro')^2/norm(Y,'fro')^2;
-beta_altGDMin_err = norm(beta_altGDMin - Btrue,2)/norm(Btrue,2);
-taltGDmin = toc;
-%--------------------------------------------------------------------------
 numBlocks
 R2_true 
 R2_naive
@@ -94,13 +85,11 @@ R2_pro
 R2_proLS
 R2_sls
 R2_rlus
-R2_altGDMin
-%--------------------------------------------------------------------------
+
 beta_naive_err
 beta_pro_err
 BproLSerr
 beta_sls_err
 beta_rlus_err
-beta_altGDMin_er
 save('sarcosResults')
 
