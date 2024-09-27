@@ -23,27 +23,15 @@ Y = Y - mean(Y,1);
 % significant figures
 sf = 1;
 col = 7;
-numBlocks = length(unique(round(X(:,col),sf))); %~= 2800 blocks
-blkLabel = round(X(:,col),sf);
-[blkLabelSorted,idx] = sort(blkLabel);
-% order blockwise
-Y = Y(idx,:);
-X = X(idx,:);
-% get lengths of blocks
-temp = unique(blkLabelSorted);
-r_ = zeros(1,length(temp));
-for i = 1:length(temp)
-    t1 = find(blkLabelSorted == temp(i),1,'first');
-    t2 = find(blkLabelSorted == temp(i),1,'last');
-    r_(i) = t2-t1+1;
-end
+randPerm = 0;
+n = size(Y,1);
+r = floor(n/20);
+[pi_,numBlocks,r_,X,Y] = getPermRealData(randPerm, n, r, X, Y,sf, col);
+Y_permuted = Y(pi_,:);
 [U,S,V] = svd(X,'econ');
 % retain top d = 35 principal components
 X = U(:,1:35);
 n   = size(Y,1);
-pi_ = get_permutation_r(n,r_);
-rLocal = 1;
-Y_permuted = Y(pi_,:);
 %---------------- oracle -----------------------------------
 Btrue = X \ Y;
 R2_true  = 1 - norm(Y-X*Btrue,'fro')^2/norm(Y - mean(Y,1),'fro')^2;
@@ -54,9 +42,8 @@ beta_naive_err = norm(Bnaive - Btrue,2)/norm(Btrue,2);
 %---------------- AltMin ----------------------------------
 maxIter = 25;
 lsInit = 0;
-%---------------- AltMin w collapsed init --------------------------
-tStart = tic;
-tic
+%---------------- w collapsed init --------------------------
+rLocal = 1;
 [pi_hat,fVal] = AltMin(X,Y_permuted,r_,maxIter,rLocal,lsInit);
 Bpro     = X(pi_hat,:) \ Y_permuted;
 BproErr  = norm(Bpro - Btrue,2)/norm(Btrue,2);
