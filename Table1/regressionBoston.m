@@ -3,14 +3,13 @@ close all
 clear all
 rng('default')
 dir = pwd;
-% For linux, replace '\' with '/'
-idcs   = strfind(dir,'\');
-newdir = dir(1:idcs(end)-1);
-cd (newdir)
+cd .. 
 addpath(genpath('.\misc'),...
         genpath('.\benchmarks'),...
+        genpath('.\altGDMin'),...
         genpath('.\altMinProposed'),...
         genpath('.\dataSets'))
+cd(dir)
 % load Boston Housing Data set
 [X, Y] = loadAndProcessHousingData();
 n = size(X,1);
@@ -36,7 +35,7 @@ Bnaive = X\Y_permuted;
 Yhat = X*Bnaive;
 R2_naive =  1 - norm(Y-Yhat,'fro')^2/norm(Y,'fro')^2
 beta_naive_err = norm(Bnaive - Btrue,2)/norm(Btrue,2);
-%----------- proposed ----------------------------------
+%----------- proposed AltMin ----------------------------------
 maxIter = 25;
 %---------- w collapsed init --------------------------
 tic
@@ -53,6 +52,21 @@ lsInit       = 1;
 Bpro         = X(pi_hat,:) \ Y_permuted;
 R2_proLS     = 1 - norm(Y-X*Bpro,'fro')^2/norm(Y,'fro')^2;
 BproLSerr = norm(Bpro - Btrue,2)/norm(Btrue,2);
+%---------- AltGDMin w collapsed init --------------------------
+tic
+rLocal = 1;
+lsInit = 0;
+[pi_hat,~] = altGDMin(X,Y_permuted,r_,maxIter,rLocal,lsInit);
+tAltMin = toc;
+B_altGDMin = X(pi_hat,:) \ Y_permuted;
+beta_pro_altGDMin_err = norm(B_altGDMin - Btrue,2)/norm(Btrue,2);
+R2_altGDMin = 1 - norm(Y-X*B_altGDMin,'fro')^2/norm(Y,'fro')^2;
+% %---------- AltGDMin w least-squares init -----------------------
+lsInit = 1;
+[pi_hat,~] = altGDMin(X,Y_permuted,r_,maxIter,rLocal,lsInit);
+B_altGDMin         = X(pi_hat,:) \ Y_permuted;
+R2_altGDMinLS     = 1 - norm(Y-X*B_altGDMin,'fro')^2/norm(Y,'fro')^2;
+BproAltGDMinLSerr = norm(B_altGDMin - Btrue,2)/norm(Btrue,2);
 %------------------ slawski ---------------------------------
 noise_var    = norm(Y_permuted-X*Bnaive,'fro')^2/(size(Y,1)*size(Y,2));
 tic
@@ -68,20 +82,23 @@ beta_RLUS = X(pi_hat,:) \ Y_permuted;
 R2_rlus  = 1 - norm(Y-X*beta_RLUS,'fro')^2/norm(Y,'fro')^2;
 tRlus = toc;
 beta_rlus_err = norm(beta_RLUS - Btrue,2)/norm(Btrue,2);
-%----------------------------------------------------------------
+%---------------------------------------------------------------
 R2_true 
 R2_naive
 R2_pro
 R2_proLS
 R2_sls
 R2_rlus
+R2_altGDMin
+R2_altGDMinLS
 
 beta_naive_err
 beta_pro_err
 BproLSerr
 beta_sls_err
 beta_rlus_err
-
+beta_pro_altGDMin_err
+BproAltGDMinLSerr
 cd(dir)
 
 function [X, Y] = loadAndProcessHousingData()

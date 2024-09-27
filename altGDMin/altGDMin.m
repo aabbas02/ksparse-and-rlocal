@@ -1,4 +1,4 @@
-function [pi_hat,fval] =  AltMin(B,Y,r_,maxIter,rLocal,lsInit)
+function [pi_hat,fval] =  altGDMin(B,Y,r_,maxIter,rLocal,lsInit)
     d        = size(B,2);
     n        = size(B,1);
     if rLocal 
@@ -26,11 +26,16 @@ function [pi_hat,fval] =  AltMin(B,Y,r_,maxIter,rLocal,lsInit)
     fval = 1e9;
     fold = 1e10;
     i = 0;
+    L = norm(B)^2;
     while (fval/fold < 1.0 && i < maxIter)
             %tic
             pi_hat = solveLAP(Yhat,Y,r_);
             %toc
-            Xhat = B(pi_hat,:)\Y;
+            gradF = B(pi_hat,:)'*(B(pi_hat,:)*Xhat-Y);
+            %eta = 0.05/L;
+            eta = 0.5/L;
+            Xhat = Xhat - eta*gradF;
+            %Xhat = B(pi_hat,:)\Y;
             Yhat = B*Xhat;
             fold = fval;
             fval = norm(Y-Yhat(pi_hat,:),'fro');

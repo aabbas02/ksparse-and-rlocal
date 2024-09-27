@@ -27,10 +27,22 @@ Y = Y(:,2:end);
 % significant figures
 sf = 2;
 col = 9;
-randPerm = 0;
-n = size(Y,1);
-r = floor(n/20);
-[pi_,numBlocks,r_,X,Y] = getPermRealData(randPerm, n, r, X, Y,sf, col);
+numBlocks = length(unique(round(X(:,col),sf))); 
+blkLabel = round(X(:,col),sf);
+% sort blockwise
+[blkLabelSorted,idx]  = sort(blkLabel);
+X = X(idx,:);
+Y = Y(idx,:);
+% permute within block
+temp = unique(blkLabel);
+r_ = zeros(1,length(temp));
+for i = 1:length(temp)
+    t1 = find(blkLabelSorted == temp(i),1,'first');
+    t2 = find(blkLabelSorted == temp(i),1,'last');
+    r_(i) = t2-t1+1;
+end
+n   = size(Y,1);
+pi_ = get_permutation_r(n,r_);
 rLocal = 1;
 Y_permuted = Y(pi_,:);
 [U,S,V] = svd(X,'econ');
@@ -86,7 +98,7 @@ beta_altGDMin = X(pi_hat,:) \ Y_permuted;
 R2_altGDMin  = 1 - norm(Y-X*beta_altGDMin,'fro')^2/norm(Y,'fro')^2;
 beta_altGDMin_err = norm(beta_altGDMin - Btrue,2)/norm(Btrue,2);
 taltGDmin = toc;
-%--------------------------------------------------------------------------
+%--------------------------------
 numBlocks
 R2_true 
 R2_naive
@@ -94,13 +106,12 @@ R2_pro
 R2_proLS
 R2_sls
 R2_rlus
-R2_altGDMin
-%--------------------------------------------------------------------------
+
 beta_naive_err
 beta_pro_err
 BproLSerr
 beta_sls_err
 beta_rlus_err
-beta_altGDMin_er
+
 save('sarcosResults')
 
