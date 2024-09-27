@@ -2,14 +2,12 @@ clc
 close all;
 clear all
 dir = pwd;
-% For linux, replace '\' with '/'
-idcs   = strfind(dir,'\');
-newdir = dir(1:idcs(end)-1);
-cd (newdir)
+cd ..
 addpath(genpath('.\misc'),...
         genpath('.\alt_min'),...
         genpath('.\altMinProposed'),...
-        genpath('.\benchmarks'));
+        genpath('.\benchmarks'),...
+        genpath('.\altGDMin'));
 MC              = 125;
 SNR             = 100;
 d               = 100;
@@ -36,7 +34,7 @@ for j = 1 : length(r_)
                 Y_permuted       = Y(pi_,:);
                 Y_permuted_noisy = Y_permuted + W;
                 %---altGDMin 
-                pi_altGDMin             = altGDMin(B,Y_permuted_noisy,r_arr,4*maxIter,rLocal,lsInit);
+                pi_altGDMin             = altGDMin(B,Y_permuted_noisy,r_arr,100*maxIter,rLocal,lsInit);
                 d_H_altGDMin(j)         = d_H_altGDMin(j) + sum(pi_ ~= pi_altGDMin)/n;                   
                 %---alt-min/proposed
                 timeVal = tic;

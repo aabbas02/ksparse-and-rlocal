@@ -2,26 +2,24 @@ clc
 close all;
 clear all
 dir = pwd;
-% For linux, replace '\' with '/'
-idcs   = strfind(dir,'\');
-newdir = dir(1:idcs(end)-1);
-cd (newdir)
+cd ..
 addpath(genpath('.\misc'),...
         genpath('.\alt_min'),...
         genpath('.\altMinProposed'),...
-        genpath('.\benchmarks'));
-MC              = 25;
-SNR             = 100;
-n               = 1000;
+        genpath('.\benchmarks'),...
+        genpath('.\altGDMin'));
+MC              = 5;
+SNR             = 10000;
+n               = 10000;
 d               = 100;
-m               = 50;
-k_              = [850 860 870 890 900];
+m               = 1;
+k_              = [2,3,4,5,6,7,8,9,10];
 d_H_altGDMin    = zeros(1,length(k_));
 d_H_alt_min     = zeros(1,length(k_));
 rLocal          = 0;
 lsInit          = 1;
 T = 0;
-maxIter         = 25;
+maxIter         = 100;
 r_arr           = n;
 for j = 1 : length(k_)
     k = k_(j);
