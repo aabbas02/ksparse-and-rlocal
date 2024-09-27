@@ -4,13 +4,13 @@ clear all
 rng('default')
 dir  = pwd;
 % For linux, replace '\' with '/'
-cd .. 
+idcs   = strfind(dir,'\');
+newdir = dir(1:idcs(end)-1);
+cd(newdir)
 addpath(genpath('.\misc'),...
         genpath('.\benchmarks'),...
-        genpath('.\altGDMin'),...
         genpath('.\altMinProposed'),...
         genpath('.\dataSets'))
-cd(dir)
 A = readmatrix('air_quality_data.csv');
 % retain rows of data from years 
 idx1 = find(A(:,2) == 2013, 1 );
@@ -75,13 +75,6 @@ beta_naive_err = norm(Bnaive - Btrue,2)/norm(Btrue,2)
 %---------------- proposed ----------------------------------
 maxIter = 25;
 lsInit = 0;
-%---------------- altGDMin --------------------------------------
-tic
-[pi_hat,fvalAltGDMin] = altGDMin(X,Y_permuted,r_,maxIter,rLocal,lsInit);
-beta_altGDMin = X(pi_hat,:) \ Y_permuted;
-R2_altGDMin  = 1 - norm(Y-X*beta_altGDMin,'fro')^2/norm(Y,'fro')^2;
-beta_altGDMin_err = norm(beta_altGDMin - Btrue,2)/norm(Btrue,2);
-taltGDmin = toc;
 %--------------- w collapsed init --------------------------
 [pi_hat,fVal] = AltMin(X,Y_permuted,r_,maxIter,rLocal,lsInit);
 Bpro     = X(pi_hat,:) \ Y_permuted;
@@ -115,11 +108,8 @@ R2_rlus
 R2_sls
 R2_proLS
 R2_pro
-R2_altGDMin
-%-----------------------------------------------------------------
 BproLSerr
 BproErr
 beta_sls_err
 beta_rlus_err
 beta_naive_err
-beta_altGDMin_err
