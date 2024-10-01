@@ -39,7 +39,6 @@ for j = 1 : length(r_)
                 noise_var   	 = 1*norm(X,'fro')^2  / (SNR*m);
                 W                = sqrt(noise_var)*randn(n,m);
                 pi_              = get_permutation_r(n,r_arr); 
-                %pi_              = get_permutation_k(n,n/5);
                 Y_permuted       = Y(pi_,:);
                 Y_permuted_noisy = Y_permuted + W;
                 %---rlus  https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=9440727 

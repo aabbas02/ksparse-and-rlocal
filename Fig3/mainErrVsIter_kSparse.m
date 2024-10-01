@@ -6,22 +6,22 @@ cd ..
 addpath(genpath('.\misc'),...
         genpath('.\altMinProposed'),...
         genpath('.\altGDMin'));
-MC              = 125;
-SNR             = 100;
+MC              = 1;
+SNR             = 10000;
+n               = 10000;
 d               = 100;
 m               = 50;
-r_              = [100];
-n               = 1000;
-d_H_altGDMin     = zeros(1,length(r_));
-d_H_alt_min     = zeros(1,length(r_));
-rLocal          = 1;
-lsInit          = 0;
+k_              = [875];
+d_H_altGDMin    = zeros(1,length(k_));
+d_H_alt_min     = zeros(1,length(k_));
+rLocal          = 0;
+lsInit          = 1;
 T = 0;
-maxIter         = 100;
-for j = 1 : length(r_)
-	r = r_(j);
-    r_arr = ones(1,n/r)*r;
-    for k = 1 : MC
+r_arr           = n;
+maxIter         = 75;
+for j = 1 : length(k_)
+    k = k_(j);
+    for t = 1 : MC
                 B                = randn(n,d);
                 X                = randn(d,m);
                 Y                = B*X;  
@@ -32,12 +32,12 @@ for j = 1 : length(r_)
                 Y_permuted       = Y(pi_,:);
                 Y_permuted_noisy = Y_permuted + W;
                 %---altGDMin 
-                [pi_altGDMin,permErrAltGDMin_] = altGDMinwithErr(B,Y_permuted_noisy,r_arr,maxIter,rLocal,lsInit,pi_);
+                [pi_altGDMin,~, permErrAltGDMin_] = altGDMinwithErr(B,Y_permuted_noisy,r_arr,maxIter,rLocal,lsInit,pi_);
                 d_H             = sum(pi_ ~= pi_altGDMin)/n;
                 d_H_altGDMin(j) = d_H_altGDMin(j) + d_H;                   
                 %---alt-min/proposed
                 timeVal = tic;
-                [pi_alt_min,permErrAltMin_] = AltMinwithErr(B,Y_permuted_noisy,r_arr,maxIter,rLocal,lsInit, pi_);
+                [pi_alt_min,~, permErrAltMin_] = AltMinwithErr(B,Y_permuted_noisy,r_arr,maxIter,rLocal,lsInit, pi_);
                 runTime = toc(timeVal);
                 d_H                = sum(pi_ ~= pi_alt_min)/n;
                 d_H_alt_min(j)     = d_H + d_H_alt_min(j); 
@@ -68,6 +68,7 @@ set(Lgnd, 'Interpreter','Latex','Fontsize',12,'Location','Southeast')
 title(['$ \mathbf P^*_r, \, n = $ ',num2str(n), ',  $ m = $ ', num2str(m), ', $ d = $ ', num2str(d),...
         ', $\mathbf{B} \sim N(0,1)$'],...
         'interpreter','Latex','Fontsize',16)
+cd(dir)
 %set(gca,'FontSize',16)
 %ax = gca;
 %exportgraphics(ax,['3a_ID_',num2str(ID),'.pdf'],'Resolution',300) 

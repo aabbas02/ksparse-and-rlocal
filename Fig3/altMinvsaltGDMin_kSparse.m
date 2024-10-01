@@ -4,9 +4,7 @@ clear all
 dir = pwd;
 cd ..
 addpath(genpath('.\misc'),...
-        genpath('.\alt_min'),...
         genpath('.\altMinProposed'),...
-        genpath('.\benchmarks'),...
         genpath('.\altGDMin'));
 MC              = 5;
 SNR             = 10000;
@@ -33,11 +31,11 @@ for j = 1 : length(k_)
                 Y_permuted       = Y(pi_,:);
                 Y_permuted_noisy = Y_permuted + W;
                 %---altGDMin 
-                pi_altGDMin             = altGDMin(B,Y_permuted_noisy,r_arr,4*maxIter,rLocal,lsInit);
+                pi_altGDMin             = altGDMinwWithErr(B,Y_permuted_noisy,r_arr,maxIter,rLocal,lsInit,pi_);
                 d_H_altGDMin(j)         = d_H_altGDMin(j) + sum(pi_ ~= pi_altGDMin)/n;                   
                 %---alt-min/proposed
                 timeVal = tic;
-                [pi_alt_min] = AltMin(B,Y_permuted_noisy,r_arr,maxIter,rLocal,lsInit);
+                [pi_alt_min] = AltMinWithErr(B,Y_permuted_noisy,r_arr,maxIter,rLocal,lsInit, pi_);
                 runTime = toc(timeVal);
                 %sprintf('Prposed algorithm run-time = %.3f seconds', runTime)
                 d_H                = sum(pi_ ~= pi_alt_min)/n;
