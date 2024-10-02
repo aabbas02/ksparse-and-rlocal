@@ -6,21 +6,23 @@ cd ..
 addpath(genpath('.\misc'),...
         genpath('.\altMinProposed'),...
         genpath('.\altGDMin'));
-MC              = 25;
+cd(dir)
+
+MC              = 1;
 SNR             = 100;
 d               = 100;
 m               = 50;
-r_              = [200];
-n               = 1000;
+r_              = [100];
+n               = 600;
 d_H_altGDMin     = zeros(1,length(r_));
 d_H_alt_min     = zeros(1,length(r_));
 rLocal          = 1;
 lsInit          = 0;
 T = 0;
-maxIter         = 50;
+maxIter         = 10000;
 permErrAltGDMin = zeros(MC,maxIter);
-permErrAltMin = zeros(MC,maxIter);
-eta_c = 0.9999999999999999999999;
+permErrAltMin = zeros(MC,25);
+eta_c = 0.005;
 for j = 1 : length(r_)
 	r = r_(j);
     r_arr = ones(1,n/r)*r;
@@ -41,7 +43,7 @@ for j = 1 : length(r_)
                 d_H_altGDMin(j) = d_H_altGDMin(j) + d_H;                   
                 %---alt-min/proposed
                 timeVal = tic;
-                [pi_alt_min,~, permErrAltMin(k,:)] = AltMinwithErr(B,Y_permuted_noisy,r_arr,maxIter,rLocal,lsInit, pi_);
+                [pi_alt_min,~, permErrAltMin(k,:)] = AltMinwithErr(B,Y_permuted_noisy,r_arr,25,rLocal,lsInit, pi_);
                 runTime = toc(timeVal);
                 d_H                = sum(pi_ ~= pi_alt_min)/n;
                 d_H_alt_min(j)     = d_H + d_H_alt_min(j); 
@@ -88,11 +90,10 @@ xlabel('Iterations (t)','interpreter','Latex','Fontsize',12);
 ylabel('$(d_H/n)^{(t)}$','interpreter','Latex','Fontsize',12)
 Lgnd =  legend('show');
 set(Lgnd, 'Interpreter','Latex','Fontsize',12)
-title(['$ \mathbf P^*_r, r = ', num2str(r),  '\, n = $ ',num2str(n), ',  $ m = $ ', num2str(m), ', $ d = $ ', num2str(d),...
-        ', $\mathbf{B} \sim N(0,1)$'],...
-        'interpreter','Latex','Fontsize',16)
+title(['$r = ', num2str(r),  ', \, n = $ ',num2str(n), ',  $ m = $ ', num2str(m), ', $ d = $ ', num2str(d),...
+        ', $\mathbf{B} \sim N(0,1)$', ', $\eta =$', num2str(eta_c), '$/\sigma_{\max}^2(\mathbf{B}^{(0)})$'],...
+        'interpreter','Latex','Fontsize',11)
 
-cd(dir)
 
 %set(gca,'FontSize',16)
 %ax = gca;

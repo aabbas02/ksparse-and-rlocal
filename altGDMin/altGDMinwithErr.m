@@ -33,7 +33,7 @@ function [pi_hat,fval,permErr_] =  altGDMinwithErr(B,Y,r_,maxIter,rLocal,lsInit,
             d_H = sum(pi_ ~= pi_hat)/n;
             gradF = B(pi_hat,:)'*(B(pi_hat,:)*Xhat-Y);
             %Xhat = B(pi_hat,:)\Y;
-            %L = norm(B)^2;
+            L = norm(B)^2;
             eta = eta_c/L;
             Xhat = Xhat - eta*gradF;
             Yhat = B*Xhat;
