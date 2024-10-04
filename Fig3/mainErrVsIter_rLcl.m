@@ -8,7 +8,7 @@ addpath(genpath('.\misc'),...
         genpath('.\altGDMin'));
 cd(dir)
 
-MC              = 100001;
+MC              = 10001;
 SNR             = 100;
 d               = 100;
 m               = 35;
@@ -19,16 +19,17 @@ d_H_alt_min     = zeros(1,length(r_));
 rLocal          = 1;
 lsInit          = 0;
 T               = 0;
-maxIter         = 35;
-permErrAltGDMin = zeros(MC, maxIter);
+maxIterAltGDMin         = 50;
+permErrAltGDMin = zeros(MC, maxIterAltGDMin);
 numAltGDMin = 0;
+timeAltGDMin = zeros(MC, maxIterAltGDMin+1);
 %------------------------------------
-permErrAltMin = zeros(MC, maxIter);
+maxIterAltMin    = 25;
+permErrAltMin = zeros(MC, maxIterAltMin);
 numAltMin = 0;
+timeAltMin = zeros(MC, maxIterAltMin+1);
 %-----------------------------------
-timeAltGDMin = zeros(MC, maxIter+1);
-timeAltMin = zeros(MC, maxIter+1);
-eta_c = 0.5;
+eta_c = 2.0;
 for j = 1 : length(r_)
 	r = r_(j);
     r_arr = ones(1,n/r)*r;
@@ -44,14 +45,14 @@ for j = 1 : length(r_)
                 Y_permuted       = Y(pi_,:);
                 Y_permuted_noisy = Y_permuted + W;
                 %---altGDMin 
-                [pi_altGDMin,~, permErrAltGDMin(k,:),timeAltGDMin(k,:)] = altGDMinwithErr(B,Y_permuted_noisy,r_arr,maxIter,rLocal,lsInit,pi_,eta_c);
+                [pi_altGDMin,~, permErrAltGDMin(k,:),timeAltGDMin(k,:)] = altGDMinwithErr(B,Y_permuted_noisy,r_arr,maxIterAltGDMin,rLocal,lsInit,pi_,eta_c);
                 d_H             = sum(pi_ ~= pi_altGDMin)/n;
                 if d_H == 0
                     numAltGDMin = numAltGDMin + 1;
                 end
                 d_H_altGDMin(j) = d_H_altGDMin(j) + d_H;                   
                 %---alt-min/proposed
-                [pi_alt_min,~, permErrAltMin(k,:),timeAltMin(k,:)] = AltMinwithErr(B,Y_permuted_noisy,r_arr,maxIter,rLocal,lsInit, pi_);
+                [pi_alt_min,~, permErrAltMin(k,:),timeAltMin(k,:)] = AltMinwithErr(B,Y_permuted_noisy,r_arr,maxIterAltMin,rLocal,lsInit, pi_);
                 d_H                = sum(pi_ ~= pi_alt_min)/n;
                 if d_H == 0
                     numAltMin = numAltMin + 1;
@@ -101,13 +102,13 @@ plot(log10(permErrAltMinAvg+10^-16),'-x','Color','#7E2F8E',...
     'DisplayName','altMin',...
     'MarkerSize',9,'Linewidth',2.05);
 grid('on');
-xticks = 1:maxIter;
+xticks = 1:maxIterAltGDMin;
 set(gca, 'XTick', xticks, 'XTickLabel', xticks,'Fontsize',11);
 xlabel('Iterations (t)','interpreter','Latex','Fontsize',12);
 ylabel('$log_{10}[(d_H/n)^{(t)}]$','interpreter','Latex','Fontsize',12)
 Lgnd =  legend('show');
 set(Lgnd, 'Interpreter','Latex','Fontsize',11)
-title(['$r = ', num2str(r),  ', \, n = $ ',num2str(n), ',  $ m = $ ', num2str(m), ', $ d = $ ', num2str(d),...
+title(['MC =' , num2str(MC), ', $r = ', num2str(r),  ', \, n = $ ',num2str(n), ',  $ m = $ ', num2str(m), ', $ d = $ ', num2str(d),...
         ', $\mathbf{B} \sim N(0,1)$', ', $\eta =$', num2str(eta_c), '$/\sigma_{\max}^2(\mathbf{B}^{(0)})$'],...
         'interpreter','Latex','Fontsize',11)
 
@@ -116,10 +117,10 @@ exportgraphics(gcf,[stringTitle,'.pdf'])
 %--- Error vs Time plot -------------------------
 figure
 hold on;
-plot(timeAltGDMinAvg(1:maxIter), log10(permErrAltGDMinAvg+10^-16),'-x','Color','#EDB120',...
+plot(timeAltGDMinAvg(1:maxIterAltGDMin), log10(permErrAltGDMinAvg+10^-16),'-x','Color','#EDB120',...
     'DisplayName','altGDMin',...
     'MarkerSize',9,'Linewidth',2.05);
-plot(timeAltMinAvg(1:maxIter), log10(permErrAltMinAvg+10^-16),'-x','Color','#7E2F8E',...
+plot(timeAltMinAvg(1:maxIterAltMin), log10(permErrAltMinAvg+10^-16),'-x','Color','#7E2F8E',...
     'DisplayName','altMin',...
     'MarkerSize',9,'Linewidth',2.05);
 grid('on');
@@ -128,7 +129,7 @@ xlabel('Times /s','interpreter','Latex','Fontsize',12);
 ylabel('$log_{10}[(d_H/n)^{(t)}]$','interpreter','Latex','Fontsize',12)
 Lgnd =  legend('show');
 set(Lgnd, 'Interpreter','Latex','Fontsize',11)
-title(['$r = ', num2str(r),  ', \, n = $ ',num2str(n), ',  $ m = $ ', num2str(m), ', $ d = $ ', num2str(d),...
+title(['MC = ', num2str(MC), ', $r = ', num2str(r),  ', \, n = $ ',num2str(n), ',  $ m = $ ', num2str(m), ', $ d = $ ', num2str(d),...
         ', $\mathbf{B} \sim N(0,1)$', ', $\eta =$', num2str(eta_c), '$/\sigma_{\max}^2(\mathbf{B}^{(0)})$'],...
         'interpreter','Latex','Fontsize',11)
 
