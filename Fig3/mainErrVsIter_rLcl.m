@@ -62,9 +62,6 @@ for j = 1 : length(r_)
                 end
                 d_H_altGDMin(j) = d_H_altGDMin(j) + d_H;                   
                 %---alt-min/proposed
-                timeVal = tic;
-                [pi_alt_min,~, permErrAltMin(k,:)] = AltMinwithErr(B,Y_permuted_noisy,r_arr,25,rLocal,lsInit, pi_);
-                runTime = toc(timeVal);
                 [pi_alt_min,~, permErrAltMin(k,:),timeAltMin(k,:)] = AltMinwithErr(B,Y_permuted_noisy,r_arr,maxIterAltMin,rLocal,lsInit, pi_);
                 d_H                = sum(pi_ ~= pi_alt_min)/n;
                 if d_H == 0
