@@ -6,15 +6,21 @@ cd ..
 addpath(genpath('.\misc'),...
         genpath('.\altMinProposed'),...
         genpath('.\altGDMin'));
+MC              = 5;
 SNR             = 100;
 d               = 100;
 m               = 50;
+r_              = [100];
+n               = 600;
 d_H_altGDMin     = zeros(1,length(r_));
 d_H_alt_min     = zeros(1,length(r_));
 rLocal          = 1;
 lsInit          = 0;
 T = 0;
+maxIter         = 2000;
 permErrAltGDMin = zeros(MC,maxIter);
+permErrAltMin = zeros(MC,25);
+eta_c = 2.0;
 for j = 1 : length(r_)
 	r = r_(j);
     r_arr = ones(1,n/r)*r;
@@ -35,6 +41,7 @@ for j = 1 : length(r_)
                 d_H_altGDMin(j) = d_H_altGDMin(j) + d_H;                   
                 %---alt-min/proposed
                 timeVal = tic;
+                [pi_alt_min,~, permErrAltMin(k,:)] = AltMinwithErr(B,Y_permuted_noisy,r_arr,25,rLocal,lsInit, pi_);
                 runTime = toc(timeVal);
                 d_H                = sum(pi_ ~= pi_alt_min)/n;
                 d_H_alt_min(j)     = d_H + d_H_alt_min(j); 
