@@ -6,15 +6,8 @@ cd ..
 addpath(genpath('.\misc'),...
         genpath('.\altMinProposed'),...
         genpath('.\altGDMin'));
-MC              = 5;
-SNR             = 100;
-d               = 100;
-m               = 50;
-r_              = [100];
-n               = 600;
 cd(dir)
-
-MC              = 10001;
+MC              = 10005;
 SNR             = 100;
 d               = 100;
 m               = 35;
@@ -24,12 +17,8 @@ d_H_altGDMin     = zeros(1,length(r_));
 d_H_alt_min     = zeros(1,length(r_));
 rLocal          = 1;
 lsInit          = 0;
-T = 0;
-maxIter         = 2000;
-permErrAltGDMin = zeros(MC,maxIter);
-permErrAltMin = zeros(MC,25);
-T               = 0;
-maxIterAltGDMin         = 50;
+%-------------------------------------
+maxIterAltGDMin         = 1000;
 permErrAltGDMin = zeros(MC, maxIterAltGDMin);
 numAltGDMin = 0;
 timeAltGDMin = zeros(MC, maxIterAltGDMin+1);
@@ -39,7 +28,7 @@ permErrAltMin = zeros(MC, maxIterAltMin);
 numAltMin = 0;
 timeAltMin = zeros(MC, maxIterAltMin+1);
 %-----------------------------------
-eta_c = 2.0;
+eta_c = 0.5;
 for j = 1 : length(r_)
 	r = r_(j);
     r_arr = ones(1,n/r)*r;
@@ -62,12 +51,12 @@ for j = 1 : length(r_)
                 end
                 d_H_altGDMin(j) = d_H_altGDMin(j) + d_H;                   
                 %---alt-min/proposed
-                [pi_alt_min,~, permErrAltMin(k,:),timeAltMin(k,:)] = AltMinwithErr(B,Y_permuted_noisy,r_arr,maxIterAltMin,rLocal,lsInit, pi_);
-                d_H                = sum(pi_ ~= pi_alt_min)/n;
-                if d_H == 0
-                    numAltMin = numAltMin + 1;
-                end
-                d_H_alt_min(j)     = d_H + d_H_alt_min(j); 
+                %[pi_alt_min,~, permErrAltMin(k,:),timeAltMin(k,:)] = AltMinwithErr(B,Y_permuted_noisy,r_arr,maxIterAltMin,rLocal,lsInit, pi_);
+                %d_H                = sum(pi_ ~= pi_alt_min)/n;
+                %if d_H == 0
+                %    numAltMin = numAltMin + 1;
+                %end
+                %d_H_alt_min(j)     = d_H + d_H_alt_min(j); 
     end
     j
 end
@@ -105,15 +94,16 @@ title(['$ \mathbf P^*_r, \, n = $ ',num2str(n), ',  $ m = $ ', num2str(m), ', $ 
 %--- Error vs Iteration plot ------------------
 figure
 hold on;
+%idx = 1:5:length(permErrAltGDMinAvg);
 plot(log10(permErrAltGDMinAvg+10^-16),'-x','Color','#EDB120',...
     'DisplayName','altGDMin',...
     'MarkerSize',9,'Linewidth',2.05);
-plot(log10(permErrAltMinAvg+10^-16),'-x','Color','#7E2F8E',...
-    'DisplayName','altMin',...
-    'MarkerSize',9,'Linewidth',2.05);
+% plot(log10(permErrAltMinAvg+10^-16),'-x','Color','#7E2F8E',...
+%     'DisplayName','altMin',...
+%     'MarkerSize',9,'Linewidth',2.05);
 grid('on');
-xticks = 1:maxIterAltGDMin;
-set(gca, 'XTick', xticks, 'XTickLabel', xticks,'Fontsize',11);
+%xticks = 1:maxIterAltGDMin;
+%set(gca, 'XTick', xticks, 'XTickLabel', xticks,'Fontsize',11);
 xlabel('Iterations (t)','interpreter','Latex','Fontsize',12);
 ylabel('$log_{10}[(d_H/n)^{(t)}]$','interpreter','Latex','Fontsize',12)
 Lgnd =  legend('show');
@@ -130,9 +120,9 @@ hold on;
 plot(timeAltGDMinAvg(1:maxIterAltGDMin), log10(permErrAltGDMinAvg+10^-16),'-x','Color','#EDB120',...
     'DisplayName','altGDMin',...
     'MarkerSize',9,'Linewidth',2.05);
-plot(timeAltMinAvg(1:maxIterAltMin), log10(permErrAltMinAvg+10^-16),'-x','Color','#7E2F8E',...
-    'DisplayName','altMin',...
-    'MarkerSize',9,'Linewidth',2.05);
+%plot(timeAltMinAvg(1:maxIterAltMin), log10(permErrAltMinAvg+10^-16),'-x','Color','#7E2F8E',...
+%    'DisplayName','altMin',...
+%    'MarkerSize',9,'Linewidth',2.05);
 grid('on');
 %set(gca, 'XTick', xticks, 'XTickLabel', xticks,'Fontsize',11);
 xlabel('Times /s','interpreter','Latex','Fontsize',12);

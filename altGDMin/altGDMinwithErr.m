@@ -18,7 +18,6 @@ function [pi_hat,fval,permErr_,time_] =  altGDMinwithErr(B,Y,r_,maxIter,rLocal,l
         r_      = n;
     end
     if lsInit
-        %disp('ls init')
         Xhat = pinv(B)*Y;
         Yhat = B*Xhat;
     end
@@ -31,18 +30,14 @@ function [pi_hat,fval,permErr_,time_] =  altGDMinwithErr(B,Y,r_,maxIter,rLocal,l
             pi_hat = solveLAP(Yhat,Y,r_);
             d_H = sum(pi_ ~= pi_hat)/n;
             gradF = B(pi_hat,:)'*(B(pi_hat,:)*Xhat-Y);
-            %Xhat = B(pi_hat,:)\Y;
-            %L = norm(B)^2;
             eta = eta_c/L;
             Xhat = Xhat - eta*gradF;
             Yhat = B*Xhat;
             tEnd = toc(tStart);
-            %fold = fval;
             fval = norm(Y-Yhat(pi_hat,:),'fro');
             i = i + 1;
             permErr_(i) = d_H;
             time_(i+1) = time_(i) + tEnd;
     end
     permErr_  = permErr_(1:i);
-    %fval
 end
