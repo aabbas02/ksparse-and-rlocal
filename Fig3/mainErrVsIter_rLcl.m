@@ -2,12 +2,13 @@ clc
 close all;
 clear all
 dir = pwd;
+rng(1)
 cd ..
 addpath(genpath('.\misc'),...
         genpath('.\altMinProposed'),...
         genpath('.\altGDMin'));
 cd(dir)
-MC              = 10005;
+MC              = 5;
 SNR             = 100;
 d               = 100;
 m               = 35;
@@ -18,6 +19,7 @@ d_H_alt_min     = zeros(1,length(r_));
 rLocal          = 1;
 lsInit          = 0;
 %-------------------------------------
+eta_c = 0.5;
 maxIterAltGDMin         = 1000;
 permErrAltGDMin = zeros(MC, maxIterAltGDMin);
 numAltGDMin = 0;
@@ -28,7 +30,6 @@ permErrAltMin = zeros(MC, maxIterAltMin);
 numAltMin = 0;
 timeAltMin = zeros(MC, maxIterAltMin+1);
 %-----------------------------------
-eta_c = 0.5;
 for j = 1 : length(r_)
 	r = r_(j);
     r_arr = ones(1,n/r)*r;
