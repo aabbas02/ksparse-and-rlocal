@@ -77,7 +77,7 @@ maxIter = 50;
 lsInit = 0;
 %---------------- altGDMin --------------------------------------
 tStart = tic;
-eta_c = 0.5;
+eta_c = 0.05;
 [pi_hat,fvalAltGDMin] = altGDMin(X,Y_permuted,r_,maxIter,rLocal,lsInit,eta_c);
 beta_altGDMin = X(pi_hat,:) \ Y_permuted;
 R2_altGDMin  = 1 - norm(Y-X*beta_altGDMin,'fro')^2/norm(Y,'fro')^2;

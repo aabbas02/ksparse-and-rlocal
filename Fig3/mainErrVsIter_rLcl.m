@@ -11,7 +11,7 @@ cd(dir)
 MC              = 5;
 SNR             = 100;
 d               = 100;
-m               = 35;
+m               = 30;
 r_              = [125];
 n               = 1000;
 d_H_altGDMin     = zeros(1,length(r_));
@@ -19,8 +19,12 @@ d_H_alt_min     = zeros(1,length(r_));
 rLocal          = 1;
 lsInit          = 0;
 %-------------------------------------
+<<<<<<< HEAD
 eta_c = 0.5;
 maxIterAltGDMin         = 1000;
+=======
+maxIterAltGDMin         = 5000;
+>>>>>>> 87b6cdf2f1034f3604844bf6f85fca8a3ce1feb6
 permErrAltGDMin = zeros(MC, maxIterAltGDMin);
 numAltGDMin = 0;
 timeAltGDMin = zeros(MC, maxIterAltGDMin+1);
@@ -30,6 +34,10 @@ permErrAltMin = zeros(MC, maxIterAltMin);
 numAltMin = 0;
 timeAltMin = zeros(MC, maxIterAltMin+1);
 %-----------------------------------
+<<<<<<< HEAD
+=======
+eta_c = 0.05;
+>>>>>>> 87b6cdf2f1034f3604844bf6f85fca8a3ce1feb6
 for j = 1 : length(r_)
 	r = r_(j);
     r_arr = ones(1,n/r)*r;

@@ -56,7 +56,7 @@ R2_pro       = 1 - norm(Y-X*Bpro,'fro')^2/norm(Y,'fro')^2;
 tic
 rLocal = 1;
 lsInit = 0;
-eta_c = 0.5;
+eta_c = 2.5;
 [pi_hat,~] = altGDMin(X,Y_permuted,r_,maxIter,rLocal,lsInit,eta_c);
 tAltGDMin = toc;
 B_altGDMin    = X(pi_hat,:) \ Y_permuted;
