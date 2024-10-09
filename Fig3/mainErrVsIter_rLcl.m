@@ -8,7 +8,7 @@ addpath(genpath('.\misc'),...
         genpath('.\altMinProposed'),...
         genpath('.\altGDMin'));
 cd(dir)
-MC              = 5;
+MC              = 10005;
 SNR             = 100;
 d               = 100;
 m               = 30;
@@ -113,7 +113,7 @@ title(['MC =' , num2str(MC), ', $r = ', num2str(r),  ', \, n = $ ',num2str(n), '
         ', $\mathbf{B} \sim N(0,1)$', ', $\eta =$', num2str(eta_c), '$/\sigma_{\max}^2(\mathbf{B}^{(0)})$'],...
         'interpreter','Latex','Fontsize',11)
 
-stringTitle = ['Iter_r_',num2str(r),'_n_',num2str(n),'_m_',num2str(m),'_d_',num2str(d),'_MC_',num2str(MC),'_ID_',num2str(ID)];
+stringTitle = ['Smal_Eta_Iter_r_',num2str(r),'_n_',num2str(n),'_m_',num2str(m),'_d_',num2str(d),'_MC_',num2str(MC),'_ID_',num2str(ID)];
 exportgraphics(gcf,[stringTitle,'.pdf']) 
 %--- Error vs Time plot -------------------------
 figure
@@ -134,5 +134,5 @@ title(['MC = ', num2str(MC), ', $r = ', num2str(r),  ', \, n = $ ',num2str(n), '
         ', $\mathbf{B} \sim N(0,1)$', ', $\eta =$', num2str(eta_c), '$/\sigma_{\max}^2(\mathbf{B}^{(0)})$'],...
         'interpreter','Latex','Fontsize',11)
 
-stringTitle = ['Time_r_',num2str(r),'_n_',num2str(n),'_m_',num2str(m),'_d_',num2str(d),'_MC_',num2str(MC),'_ID_',num2str(ID)];
+stringTitle = ['Small_Eta_Time_r_',num2str(r),'_n_',num2str(n),'_m_',num2str(m),'_d_',num2str(d),'_MC_',num2str(MC),'_ID_',num2str(ID)];
 exportgraphics(gcf,[stringTitle,'.pdf']) 
