@@ -1,4 +1,4 @@
-function [pi_hat,fval,permErr_] =  altGDMinwithErr(B,Y,r_,maxIter,rLocal,lsInit,pi_,eta_c)
+function [pi_hat,fval,permErr_,time_] =  altGDMinwithErr(B,Y,r_,maxIter,rLocal,lsInit,pi_,eta_c)
     d        = size(B,2);
     n        = size(B,1);
     if rLocal 
@@ -18,30 +18,26 @@ function [pi_hat,fval,permErr_] =  altGDMinwithErr(B,Y,r_,maxIter,rLocal,lsInit,
         r_      = n;
     end
     if lsInit
-        %disp('ls init')
         Xhat = pinv(B)*Y;
         Yhat = B*Xhat;
     end
-    %fInit = norm(Y - Yhat,'fro')
-    %fval = 1e9;
-    %fold = 1e10;
-    i = 0;
     L = norm(B)^2;
+	time_ = zeros(maxIter+1,1);
     permErr_ = zeros(maxIter,1);
-    while (i < maxIter)
+    i = 0;
+    while i < maxIter
+			tStart = tic;
             pi_hat = solveLAP(Yhat,Y,r_);
             d_H = sum(pi_ ~= pi_hat)/n;
             gradF = B(pi_hat,:)'*(B(pi_hat,:)*Xhat-Y);
-            %Xhat = B(pi_hat,:)\Y;
-            L = norm(B)^2;
             eta = eta_c/L;
             Xhat = Xhat - eta*gradF;
             Yhat = B*Xhat;
-            %fold = fval;
+            tEnd = toc(tStart);
             fval = norm(Y-Yhat(pi_hat,:),'fro');
             i = i + 1;
             permErr_(i) = d_H;
+            time_(i+1) = time_(i) + tEnd;
     end
     permErr_  = permErr_(1:i);
-    %fval
 end

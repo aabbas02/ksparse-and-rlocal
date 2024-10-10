@@ -50,35 +50,44 @@ Bpro    = X(pi_hat,:) \ Y_permuted;
 beta_pro_err = norm(Bpro - Btrue,2)/norm(Btrue,2);
 R2_pro       = 1 - norm(Y-X*Bpro,'fro')^2/norm(Y,'fro')^2;
 %---------- w least-squares init -----------------------
-lsInit       = 1;
-[pi_hat,fValLS]   = AltMin(X,Y_permuted,r_,maxIter,rLocal,lsInit);
-Bpro         = X(pi_hat,:) \ Y_permuted;
-R2_proLS     = 1 - norm(Y-X*Bpro,'fro')^2/norm(Y,'fro')^2;
-BproLSerr = norm(Bpro - Btrue,2)/norm(Btrue,2);
+%lsInit       = 1;
+%[pi_hat,fValLS]   = AltMin(X,Y_permuted,r_,maxIter,rLocal,lsInit);
+%Bpro         = X(pi_hat,:) \ Y_permuted;
+%R2_proLS     = 1 - norm(Y-X*Bpro,'fro')^2/norm(Y,'fro')^2;
+%BproLSerr = norm(Bpro - Btrue,2)/norm(Btrue,2);
 %------------------ slawski ---------------------------------
-noise_var    = norm(Y_permuted-X*Bnaive,'fro')^2/(size(Y,1)*size(Y,2));
-tic
-[pi_hat,~]   = slawski(X,Y_permuted,noise_var,r_);
-tSLS         = toc;
-beta_sls     = X(pi_hat,:)\Y_permuted;
-beta_sls_err = norm(beta_sls - Btrue,2)/norm(Btrue,2); 
-R2_sls       = 1 - norm(Y-X*beta_sls,'fro')^2/norm(Y,'fro')^2;
+%noise_var    = norm(Y_permuted-X*Bnaive,'fro')^2/(size(Y,1)*size(Y,2));
+%tic
+%[pi_hat,~]   = slawski(X,Y_permuted,noise_var,r_);
+%tSLS         = toc;
+%beta_sls     = X(pi_hat,:)\Y_permuted;
+%beta_sls_err = norm(beta_sls - Btrue,2)/norm(Btrue,2); 
+%R2_sls       = 1 - norm(Y-X*beta_sls,'fro')^2/norm(Y,'fro')^2;
 %----------------- RLUS ---------------------------------------
-tic
-[pi_hat] = rlus(X,Y_permuted,r_,rLocal);
-beta_RLUS = X(pi_hat,:) \ Y_permuted;
-R2_rlus  = 1 - norm(Y-X*beta_RLUS,'fro')^2/norm(Y,'fro')^2;
-tRlus = toc;
-beta_rlus_err = norm(beta_RLUS - Btrue,2)/norm(Btrue,2);
+%tic
+%[pi_hat] = rlus(X,Y_permuted,r_,rLocal);
+%beta_RLUS = X(pi_hat,:) \ Y_permuted;
+%R2_rlus  = 1 - norm(Y-X*beta_RLUS,'fro')^2/norm(Y,'fro')^2;
+%tRlus = toc;
+%beta_rlus_err = norm(beta_RLUS - Btrue,2)/norm(Btrue,2);
 %----------------------------------------------------------------
+%---------------- altGDMin --------------------------------------
+tStart = tic;
+eta_c = 0.5;
+[pi_hat,fvalAltGDMin] = altGDMin(X,Y_permuted,r_,maxIter,rLocal,lsInit,eta_c);
+beta_altGDMin = X(pi_hat,:) \ Y_permuted;
+R2_altGDMin  = 1 - norm(Y-X*beta_altGDMin,'fro')^2/norm(Y,'fro')^2;
+beta_altGDMin_err = norm(beta_altGDMin - Btrue,2)/norm(Btrue,2);
+taltGDmin = toc(tStart);
+%-------------------------------------------
 numBlocks = length(unique(round(X(:,col),sf)));
 R2_true 
 R2_naive
-R2_rlus
-R2_sls
-R2_proLS
+%R2_rlus
+%R2_sls
+%R2_proLS
 R2_pro
-cd(dir)
+R2_altGDMin
 % beta_naive_err
 % beta_rlus_err
 % beta_sls_err
