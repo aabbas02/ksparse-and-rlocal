@@ -11,7 +11,7 @@ cd(dir)
 MC              = 10005;
 SNR             = 100;
 d               = 100;
-m               = 30;
+m               = 35;
 r_              = [125];
 n               = 1000;
 d_H_altGDMin     = zeros(1,length(r_));
