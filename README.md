@@ -1,6 +1,8 @@
-# Alternating Minimization Algorithm for k-sparse and r-local Unlabeled Sensing
+# Alternating minimization algorithm for unlabeled sensing and linked linear regression
 This repository contains the MATLAB implementation of the alternating minimization algorithm proposed in the [Alternating Minimization algorithm for unlabeled sensing and
 linked linear regression](https://arxiv.org/pdf/2211.07621).
+
+DOI: https://doi.org/10.1016/j.sigpro.2025.109927
 
 ## Instructions
 * For linux systems, replace ' \ ' at the beginning of the the main.m files in the `figures` folder by ' / '.
