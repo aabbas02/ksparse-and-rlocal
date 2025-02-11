@@ -5,7 +5,7 @@ linked linear regression](https://arxiv.org/pdf/2211.07621).
 DOI: https://doi.org/10.1016/j.sigpro.2025.109927
 
 ## Instructions
-* For linux systems, replace ' \ ' at the beginning of the the main.m files in the `figures` folder by ' / '.
+* For linux systems, replace '\' at the beginning of the the main.m files in the `figures` folder by '/'.
 * To reproduce any of the results in [1], run the corerresponding file in the `figures` folder. For example, to reproduce Fig. 3(a), run  the `fig3a.m` file in the folder `Fig3`. 
 * To reproduce the results on real-datasets in Table 1, please first install [CVX](https://cvxr.com/cvx/).
 * The `sarcos` dataset (see Table 1 of Reference) is a large dataset, with a long run-time. The results for that dataset are provided in the MATLAB data file `sarcos.mat`
