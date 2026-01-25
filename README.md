@@ -33,7 +33,7 @@ Please email any feedback to the author Ahmed Ali Abbasi at aabbasi1@iastate.edu
 ## Citation
 Please cite the following papers on Unlabeled Sensing if you use this code and if these papers are relevant to your paper. Thank you!
 
-
+```
 1. @ARTICLE{9440727,
   author={Abbasi, Ahmed Ali and Tasissa, Abiy and Aeron, Shuchin},
   journal={IEEE Open Journal of Signal Processing}, 
@@ -44,8 +44,9 @@ Please cite the following papers on Unlabeled Sensing if you use this code and i
   pages={309-317},
   keywords={Sensors;Loss measurement;Covariance matrices;Signal processing algorithms;Signal processing;Task analysis;Minimization;Graph matching;multi-view;unlabeled sensing},
   doi={10.1109/OJSP.2021.3083479}}
+```
 
-
+```
 2. @INPROCEEDINGS{9746201,
   author={Abbasi, Ahmed Ali and Tasissa, Abiy and Aeron, Shuchin},
   booktitle={ICASSP 2022 - 2022 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)}, 
@@ -56,7 +57,9 @@ Please cite the following papers on Unlabeled Sensing if you use this code and i
   pages={5593-5597},
   keywords={Geometry;Linear systems;Signal processing algorithms;Signal processing;Minimization;Mathematical models;Sensors;Unlabeled sensing;unassigned distance geometry problem;proximal alternating minimization},
   doi={10.1109/ICASSP43922.2022.9746201}}
+```
 
+```
 3.@article{ABBASI2025109927,
 title = {Alternating minimization algorithm for unlabeled sensing and linked linear regression},
 journal = {Signal Processing},
@@ -67,3 +70,4 @@ issn = {0165-1684},
 doi = {https://doi.org/10.1016/j.sigpro.2025.109927},
 url = {https://www.sciencedirect.com/science/article/pii/S0165168425000428},
 author = {Ahmed Ali Abbasi and Shuchin Aeron and Abiy Tasissa}} 
+```
