@@ -1,6 +1,3 @@
-
-
-
 # Alternating minimization algorithm for unlabeled sensing and linked linear regression
 This repository contains the MATLAB implementation of the alternating minimization algorithm proposed in the paper [Alternating Minimization algorithm for unlabeled sensing and
 linked linear regression](https://arxiv.org/pdf/2211.07621).
@@ -9,7 +6,7 @@ DOI: https://doi.org/10.1016/j.sigpro.2025.109927
 
 ## Repository Structure
 The repository has 6 foldes: "Fig3", "Table1", "altMinProposed", "benchmarks", "dataSets", "misc". Below, I describe each of these folders and the files they contain.
-* `Fig3:`  To reproduce the results in Figure 3 of the paper. For example, to reproduce Fig. 3(a), run  the `fig3a.m` file in the folder `Fig3`. 
+* `Fig3:` To reproduce the results in Figure 3 of the paper. For example, to reproduce Fig. 3(a), run  the `fig3a.m` file in the folder `Fig3`.  The Python code for the stochastic EM benchmark algorithm in this folder was taken from the authors' own implementation at https://github.com/abidlabs/stochastic-em-shuffled-regression/tree/master,
 * `Table1:` To reproduce the results in Table 1 of the paper.  
 * `altMinProposed:` Code for the implementation of the proposed Alternating Minimization algorithm/
 * `benchmarks:` Code for the benchmark methods proposed in other works.
@@ -32,3 +29,44 @@ The repository has 6 foldes: "Fig3", "Table1", "altMinProposed", "benchmarks", "
 
 ## Feedback
 Please email any feedback to the author Ahmed Ali Abbasi at aabbasi1@iastate.edu.
+
+## Citation
+Please cite the following papers on Unlabeled Sensing if you use this code and if these papers are relevant to your paper. Thank you!
+
+
+1. @ARTICLE{9440727,
+  author={Abbasi, Ahmed Ali and Tasissa, Abiy and Aeron, Shuchin},
+  journal={IEEE Open Journal of Signal Processing}, 
+  title={R-Local Unlabeled Sensing: A Novel Graph Matching Approach for Multiview Unlabeled Sensing Under Local Permutations}, 
+  year={2021},
+  volume={2},
+  number={},
+  pages={309-317},
+  keywords={Sensors;Loss measurement;Covariance matrices;Signal processing algorithms;Signal processing;Task analysis;Minimization;Graph matching;multi-view;unlabeled sensing},
+  doi={10.1109/OJSP.2021.3083479}}
+
+
+2. @INPROCEEDINGS{9746201,
+  author={Abbasi, Ahmed Ali and Tasissa, Abiy and Aeron, Shuchin},
+  booktitle={ICASSP 2022 - 2022 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)}, 
+  title={r-Local Unlabeled Sensing: Improved Algorithm and Applications}, 
+  year={2022},
+  volume={},
+  number={},
+  pages={5593-5597},
+  keywords={Geometry;Linear systems;Signal processing algorithms;Signal processing;Minimization;Mathematical models;Sensors;Unlabeled sensing;unassigned distance geometry problem;proximal alternating minimization},
+  doi={10.1109/ICASSP43922.2022.9746201}}
+
+3.@article{ABBASI2025109927,
+title = {Alternating minimization algorithm for unlabeled sensing and linked linear regression},
+journal = {Signal Processing},
+volume = {232},
+pages = {109927},
+year = {2025},
+issn = {0165-1684},
+doi = {https://doi.org/10.1016/j.sigpro.2025.109927},
+url = {https://www.sciencedirect.com/science/article/pii/S0165168425000428},
+author = {Ahmed Ali Abbasi and Shuchin Aeron and Abiy Tasissa},
+keywords = {Unlabeled sensing, Linear regression, Without correspondence, Record linkage, -local, Partially shuffled, Alternating minimization},
+abstract = {Unlabeled sensing is a linear inverse problem with permuted measurements. We propose an alternating minimization (AltMin) algorithm with a suitable initialization for two widely considered permutation models: partially shuffled/k-sparse permutations and r-local/block diagonal permutations. Key to the performance of the AltMin algorithm is the initialization. For the exact unlabeled sensing problem, assuming either a Gaussian measurement matrix or a sub-Gaussian signal, we bound the initialization error in terms of the number of blocks s and the number of shuffles k. Experimental results show that our algorithm is fast, applicable to both permutation models, and robust to choice of measurement matrix. We also test our algorithm on several real datasets for the ‘linked linear regression’ problem and show superior performance compared to baseline methods.}
+} 
