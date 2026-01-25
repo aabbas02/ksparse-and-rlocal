@@ -66,7 +66,4 @@ year = {2025},
 issn = {0165-1684},
 doi = {https://doi.org/10.1016/j.sigpro.2025.109927},
 url = {https://www.sciencedirect.com/science/article/pii/S0165168425000428},
-author = {Ahmed Ali Abbasi and Shuchin Aeron and Abiy Tasissa},
-keywords = {Unlabeled sensing, Linear regression, Without correspondence, Record linkage, -local, Partially shuffled, Alternating minimization},
-abstract = {Unlabeled sensing is a linear inverse problem with permuted measurements. We propose an alternating minimization (AltMin) algorithm with a suitable initialization for two widely considered permutation models: partially shuffled/k-sparse permutations and r-local/block diagonal permutations. Key to the performance of the AltMin algorithm is the initialization. For the exact unlabeled sensing problem, assuming either a Gaussian measurement matrix or a sub-Gaussian signal, we bound the initialization error in terms of the number of blocks s and the number of shuffles k. Experimental results show that our algorithm is fast, applicable to both permutation models, and robust to choice of measurement matrix. We also test our algorithm on several real datasets for the ‘linked linear regression’ problem and show superior performance compared to baseline methods.}
-} 
+author = {Ahmed Ali Abbasi and Shuchin Aeron and Abiy Tasissa}} 
